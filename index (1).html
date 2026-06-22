@@ -151,7 +151,29 @@ tailwind.config = {
         <h2 class="font-headline-sm text-on-surface">Checklist de Temas</h2>
         <span class="font-label-sm text-outline uppercase tracking-wider checklist-counter" id="checklist-counter">3 pendientes</span>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-unit" id="checklist-container"></div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-unit" id="checklist-container">
+        <label class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group" data-checklist-id="0">
+          <input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb" data-checklist-id="0" type="checkbox">
+          <div class="flex flex-col checklist-text">
+            <span class="font-body-md font-semibold text-on-surface">Feedback Semanal</span>
+            <span class="font-label-sm text-outline">Revisión de métricas equipo A</span>
+          </div>
+        </label>
+        <label class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group" data-checklist-id="1">
+          <input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb" data-checklist-id="1" type="checkbox">
+          <div class="flex flex-col checklist-text">
+            <span class="font-body-md font-semibold text-on-surface">Objetivos Q4</span>
+            <span class="font-label-sm text-outline">Alineación con roadmap técnico</span>
+          </div>
+        </label>
+        <label class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group" data-checklist-id="2">
+          <input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb" data-checklist-id="2" type="checkbox">
+          <div class="flex flex-col checklist-text">
+            <span class="font-body-md font-semibold text-on-surface">Bloqueos Críticos</span>
+            <span class="font-label-sm text-outline">Infraestructura y despliegue</span>
+          </div>
+        </label>
+      </div>
     </section>
     <section class="space-y-stack-sm">
       <div class="flex justify-between items-baseline">
@@ -414,7 +436,29 @@ tailwind.config = {
             </div>
             <span class="bg-secondary-container/50 text-on-secondary-container font-label-md px-stack-md py-unit rounded-full border border-secondary/20 checklist-counter">3 Pendientes</span>
           </div>
-          <div class="space-y-unit flex-grow" id="transcripcion-checklist-container"></div>
+          <div class="space-y-unit flex-grow">
+            <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
+              <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="0" type="checkbox"></div>
+              <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
+                Enviar reporte de desempeño a Juan
+                <span class="block font-label-sm text-label-sm text-outline mt-1">Prioridad Alta • Viernes</span>
+              </label>
+            </div>
+            <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
+              <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="1" type="checkbox"></div>
+              <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
+                Revisar métricas de Q3 (Retención)
+                <span class="block font-label-sm text-label-sm text-outline mt-1">Análisis de Datos • Hoy</span>
+              </label>
+            </div>
+            <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
+              <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="2" type="checkbox"></div>
+              <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
+                Validar assets de campaña con Diseño
+                <span class="block font-label-sm text-label-sm text-outline mt-1">Reunión 15 min • Mañana</span>
+              </label>
+            </div>
+          </div>
           <button class="mt-4 w-full py-stack-md bg-primary text-on-primary rounded-lg font-label-md font-bold flex items-center justify-center gap-unit hover:opacity-90 active:scale-[0.98] transition-all shadow-sm">
             <span class="material-symbols-outlined">sync</span>
             Sincronizar con Calendario
@@ -530,58 +574,28 @@ function guardarEstado() {
 // ====== CHECKLIST COMPARTIDO ======
 function getChecklistForDate(dateStr) {
   const todayStr = new Date().toISOString().slice(0, 10);
-  const day = new Date(dateStr + 'T12:00:00').getDate();
-  const itemsPerDay = CHECKLIST_LABELS.length;
-  const expectedSize = itemsPerDay * day;
   if (dateStr === todayStr) {
-    while (state.checklist.length < expectedSize) state.checklist.push(false);
     return state.checklist;
   }
   if (!state.dailyHistory[dateStr]) {
-    state.dailyHistory[dateStr] = { checklist: new Array(expectedSize).fill(false), asistio: null };
+    state.dailyHistory[dateStr] = { checklist: [false, false, false], asistio: null };
   }
-  if (!state.dailyHistory[dateStr].checklist || state.dailyHistory[dateStr].checklist.length === 0) {
-    state.dailyHistory[dateStr].checklist = new Array(expectedSize).fill(false);
-  }
-  if (state.dailyHistory[dateStr].checklist.length < expectedSize) {
-    const old = [...state.dailyHistory[dateStr].checklist];
-    state.dailyHistory[dateStr].checklist = new Array(expectedSize).fill(false);
-    old.forEach((v, i) => { state.dailyHistory[dateStr].checklist[i] = v; });
+  if (!state.dailyHistory[dateStr].checklist) {
+    state.dailyHistory[dateStr].checklist = [false, false, false];
   }
   return state.dailyHistory[dateStr].checklist;
 }
 
 function actualizarChecklistUI() {
   const cl = getChecklistForDate(state.hoyDate);
-  const itemsPerDay = CHECKLIST_LABELS.length;
-  const mainContainer = document.getElementById('checklist-container');
-  if (mainContainer) {
-    mainContainer.innerHTML = cl.map((checked, i) => {
-      const dayNum = Math.floor(i / itemsPerDay) + 1;
-      const label = CHECKLIST_LABELS[i % itemsPerDay];
-      const doneClass = checked ? 'checklist-done' : '';
-      return '<label class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group" data-checklist-id="' + i + '">' +
-        '<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb" data-checklist-id="' + i + '" type="checkbox" ' + (checked ? 'checked' : '') + '>' +
-        '<div class="flex flex-col checklist-text ' + doneClass + '">' +
-        '<span class="font-body-md font-semibold text-on-surface">' + label.title + '</span>' +
-        '<span class="font-label-sm text-outline">' + label.desc + ' &bull; D\u00eda ' + dayNum + '</span>' +
-        '</div></label>';
-    }).join('');
-  }
-  const transContainer = document.getElementById('transcripcion-checklist-container');
-  if (transContainer) {
-    transContainer.innerHTML = cl.map((checked, i) => {
-      const dayNum = Math.floor(i / itemsPerDay) + 1;
-      const label = CHECKLIST_LABELS[i % itemsPerDay];
-      const doneClass = checked ? 'checklist-done' : '';
-      return '<div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">' +
-        '<div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="' + i + '" type="checkbox" ' + (checked ? 'checked' : '') + '></div>' +
-        '<label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text ' + doneClass + '">' +
-        label.title +
-        '<span class="block font-label-sm text-label-sm text-outline mt-1">' + label.desc + ' &bull; D\u00eda ' + dayNum + '</span>' +
-        '</label></div>';
-    }).join('');
-  }
+  document.querySelectorAll('.checklist-cb').forEach(cb => {
+    const id = parseInt(cb.dataset.checklistId);
+    cb.checked = cl[id] || false;
+    const textEl = cb.closest('.group')?.querySelector('.checklist-text');
+    if (textEl) {
+      if (cb.checked) { textEl.classList.add('checklist-done'); } else { textEl.classList.remove('checklist-done'); }
+    }
+  });
   const pendientes = cl.filter(v => !v).length;
   const counters = document.querySelectorAll('.checklist-counter, #checklist-counter');
   counters.forEach(el => { if (el) el.textContent = pendientes === 1 ? '1 pendiente' : pendientes + ' pendientes'; });
