@@ -94,7 +94,7 @@ tailwind.config = {
 <header class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant px-margin-mobile md:px-margin-desktop h-16 flex justify-between items-center">
   <div class="flex items-center gap-unit">
     <button class="material-symbols-outlined text-primary p-unit hover:bg-surface-container-low transition-colors rounded-full">menu</button>
-    <h1 class="font-headline-sm text-headline-sm font-bold text-on-surface" id="page-title">Hoy</h1>
+    <h1 class="font-headline-sm text-headline-sm font-bold text-on-surface cursor-pointer" id="page-title" onclick="if(curPage==='hoy')document.getElementById('hoy-date-input').showPicker()">Seleccionar fecha</h1>
   </div>
   <div class="flex items-center gap-stack-md">
     <div class="hidden md:flex gap-gutter items-center">
@@ -115,7 +115,6 @@ tailwind.config = {
         <p class="text-xs font-medium text-outline uppercase tracking-widest mb-0.5" id="date-dayname"></p>
         <div class="flex items-center gap-2">
           <h1 class="text-2xl font-heading font-bold text-on-surface" id="date-full"></h1>
-          <button onclick="document.getElementById('hoy-date-input').showPicker()" class="text-xs text-outline hover:text-on-surface underline underline-offset-2 transition-colors cursor-pointer bg-transparent border-none p-0 font-label-md">Seleccionar fecha</button>
           <input type="date" id="hoy-date-input" class="hidden" onchange="cambiarFechaHoy(this.value)">
         </div>
       </div>
@@ -913,8 +912,10 @@ function navigateTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
-  const titles = { hoy:'Hoy', calendario:'Calendario', metricas:'Metricas', ajustes:'Ajustes' };
-  document.getElementById('page-title').textContent = titles[page] || 'Hoy';
+  const titles = { hoy:'Seleccionar fecha', calendario:'Calendario', metricas:'Metricas', ajustes:'Ajustes' };
+  const el = document.getElementById('page-title');
+  el.textContent = titles[page] || 'Hoy';
+  el.style.cursor = page === 'hoy' ? 'pointer' : 'default';
   curPage = page;
 }
 
