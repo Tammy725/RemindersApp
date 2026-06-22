@@ -95,8 +95,8 @@ tailwind.config = {
   <div class="flex items-center gap-unit">
     <button class="material-symbols-outlined text-primary p-unit hover:bg-surface-container-low transition-colors rounded-full">menu</button>
     <div class="relative">
-      <button class="flex items-center gap-1 bg-transparent border-none p-0 cursor-pointer font-headline-sm font-bold text-on-surface whitespace-nowrap" id="page-title" onclick="if(curPage==='hoy'){ var inp=document.getElementById('hoy-date-input'); inp.showPicker ? inp.showPicker() : inp.focus(); }">Seleccionar fecha <span class="material-symbols-outlined text-[16px]">expand_more</span></button>
-      <input type="date" id="hoy-date-input" class="absolute top-full right-0 mt-1 z-50" onchange="cambiarFechaHoy(this.value)" style="display:none">
+      <button class="flex items-center gap-1 bg-transparent border-none p-0 cursor-pointer font-headline-sm font-bold text-on-surface whitespace-nowrap" id="page-title" onclick="if(curPage==='hoy')document.getElementById('hoy-date-input').showPicker()">Seleccionar fecha <span class="material-symbols-outlined text-[16px]">expand_more</span></button>
+      <input type="date" id="hoy-date-input" class="absolute top-10 right-0 z-50 opacity-0 h-0 overflow-hidden pointer-events-none" onchange="cambiarFechaHoy(this.value)">
     </div>
   </div>
   <div class="flex items-center gap-stack-md">
