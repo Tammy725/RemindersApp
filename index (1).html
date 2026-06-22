@@ -272,9 +272,9 @@ tailwind.config = {
             <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#d4d4d4" stroke-width="3.5"/>
             <circle id="kpi-asistencia-ring" cx="21" cy="21" r="15.9155" fill="none" stroke="#000000" stroke-width="3.5" stroke-dasharray="0 100" stroke-linecap="round"/>
           </svg>
-          <span class="absolute text-4xl font-bold text-primary" id="kpi-asistencia">0%</span>
+          <span class="absolute text-4xl font-bold text-primary" id="kpi-asistencia-chart">0%</span>
         </div>
-        <span class="text-label-sm text-on-surface-variant mt-4" id="kpi-asistencia-det">0 / 0 reuniones realizadas</span>
+        <span class="text-label-sm text-on-surface-variant mt-4" id="kpi-asistencia-det-chart">0 / 0 reuniones realizadas</span>
       </div>
       <div class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
         <h3 class="text-body-lg font-headline-sm text-primary mb-6">Tareas y Checklist</h3>
@@ -282,22 +282,22 @@ tailwind.config = {
           <div>
             <div class="flex justify-between text-label-md text-on-surface-variant mb-1">
               <span>Tareas</span>
-              <span class="font-semibold" id="kpi-tareas">0%</span>
+              <span class="font-semibold" id="kpi-tareas-chart">0%</span>
             </div>
             <div class="h-3 bg-surface-container rounded-full overflow-hidden">
               <div id="kpi-tareas-bar" class="h-full bg-[#000000] rounded-full" style="width:0%"></div>
             </div>
-            <span class="text-label-sm text-outline mt-1 block" id="kpi-tareas-det">0 / 0 completadas</span>
+            <span class="text-label-sm text-outline mt-1 block" id="kpi-tareas-det-chart">0 / 0 completadas</span>
           </div>
           <div>
             <div class="flex justify-between text-label-md text-on-surface-variant mb-1">
               <span>Checklist</span>
-              <span class="font-semibold" id="kpi-checklist">0%</span>
+              <span class="font-semibold" id="kpi-checklist-chart">0%</span>
             </div>
             <div class="h-3 bg-surface-container rounded-full overflow-hidden">
               <div id="kpi-checklist-bar" class="h-full bg-[#000000] rounded-full" style="width:0%"></div>
             </div>
-            <span class="text-label-sm text-outline mt-1 block" id="kpi-checklist-det">0 / 0 completadas</span>
+            <span class="text-label-sm text-outline mt-1 block" id="kpi-checklist-det-chart">0 / 0 completadas</span>
           </div>
         </div>
       </div>
@@ -797,9 +797,13 @@ function actualizarMetricas() {
   const asistEl = document.getElementById('kpi-asistencia');
   const asistDet = document.getElementById('kpi-asistencia-det');
   const asistRing = document.getElementById('kpi-asistencia-ring');
+  const asistChart = document.getElementById('kpi-asistencia-chart');
+  const asistDetChart = document.getElementById('kpi-asistencia-det-chart');
   if (asistEl) asistEl.textContent = pctAsistencia + '%';
   if (asistDet) asistDet.textContent = meetingAttended + ' / ' + meetingDays + ' reuniones realizadas';
   if (asistRing) asistRing.setAttribute('stroke-dasharray', pctAsistencia + ' ' + (100 - pctAsistencia));
+  if (asistChart) asistChart.textContent = pctAsistencia + '%';
+  if (asistDetChart) asistDetChart.textContent = meetingAttended + ' / ' + meetingDays + ' reuniones realizadas';
 
   // --- Tareas (mensual) ---
   const monthStr = year + '-' + (month + 1).toString().padStart(2, '0');
@@ -810,9 +814,13 @@ function actualizarMetricas() {
   const tareasEl = document.getElementById('kpi-tareas');
   const tareasDet = document.getElementById('kpi-tareas-det');
   const tareasBar = document.getElementById('kpi-tareas-bar');
+  const tareasChart = document.getElementById('kpi-tareas-chart');
+  const tareasDetChart = document.getElementById('kpi-tareas-det-chart');
   if (tareasEl) tareasEl.textContent = pctTareas + '%';
   if (tareasDet) tareasDet.textContent = todoCompleted + ' / ' + todoTotal + ' completadas';
   if (tareasBar) tareasBar.style.width = pctTareas + '%';
+  if (tareasChart) tareasChart.textContent = pctTareas + '%';
+  if (tareasDetChart) tareasDetChart.textContent = todoCompleted + ' / ' + todoTotal + ' completadas';
 
   // --- Checklist (mensual desde dailyHistory) ---
   let checkDone = 0;
@@ -830,9 +838,13 @@ function actualizarMetricas() {
   const checkEl = document.getElementById('kpi-checklist');
   const checkDet = document.getElementById('kpi-checklist-det');
   const checkBar = document.getElementById('kpi-checklist-bar');
+  const checkChart = document.getElementById('kpi-checklist-chart');
+  const checkDetChart = document.getElementById('kpi-checklist-det-chart');
   if (checkEl) checkEl.textContent = pctChecklist + '%';
   if (checkDet) checkDet.textContent = checkDone + ' / ' + checkTotal + ' completadas';
   if (checkBar) checkBar.style.width = pctChecklist + '%';
+  if (checkChart) checkChart.textContent = pctChecklist + '%';
+  if (checkDetChart) checkDetChart.textContent = checkDone + ' / ' + checkTotal + ' completadas';
 
   // --- Racha (días consecutivos con asistencia) ---
   let streak = 0;
