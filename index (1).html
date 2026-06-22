@@ -94,7 +94,7 @@ tailwind.config = {
 <header class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant px-margin-mobile md:px-margin-desktop h-16 flex justify-between items-center">
   <div class="flex items-center gap-unit">
     <button class="material-symbols-outlined text-primary p-unit hover:bg-surface-container-low transition-colors rounded-full">menu</button>
-    <h1 class="font-headline-sm text-headline-sm font-bold text-on-surface cursor-pointer" id="page-title" onclick="if(curPage==='hoy')document.getElementById('hoy-date-input').showPicker()">Seleccionar fecha</h1>
+    <button class="flex items-center gap-1 bg-transparent border-none p-0 cursor-pointer font-headline-sm font-bold text-on-surface" id="page-title" onclick="if(curPage==='hoy')document.getElementById('hoy-date-input').showPicker()">Seleccionar fecha <span class="material-symbols-outlined text-[16px]">expand_more</span></button>
   </div>
   <div class="flex items-center gap-stack-md">
     <div class="hidden md:flex gap-gutter items-center">
@@ -914,8 +914,13 @@ function navigateTo(page) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
   const titles = { hoy:'Seleccionar fecha', calendario:'Calendario', metricas:'Metricas', ajustes:'Ajustes' };
   const el = document.getElementById('page-title');
-  el.textContent = titles[page] || 'Hoy';
-  el.style.cursor = page === 'hoy' ? 'pointer' : 'default';
+  if (page === 'hoy') {
+    el.innerHTML = 'Seleccionar fecha <span class="material-symbols-outlined text-[16px]">expand_more</span>';
+    el.style.cursor = 'pointer';
+  } else {
+    el.textContent = titles[page] || 'Hoy';
+    el.style.cursor = 'default';
+  }
   curPage = page;
 }
 
