@@ -113,7 +113,11 @@ tailwind.config = {
     <section class="flex items-start justify-between">
       <div>
         <p class="text-xs font-medium text-outline uppercase tracking-widest mb-0.5" id="date-dayname"></p>
-        <h1 class="text-2xl font-heading font-bold text-on-surface" id="date-full"></h1>
+        <div class="flex items-center gap-2">
+          <h1 class="text-2xl font-heading font-bold text-on-surface" id="date-full"></h1>
+          <button onclick="document.getElementById('hoy-date-input').showPicker()" class="text-xs text-outline hover:text-on-surface underline underline-offset-2 transition-colors cursor-pointer bg-transparent border-none p-0 font-label-md">Seleccionar fecha</button>
+          <input type="date" id="hoy-date-input" class="hidden" onchange="cambiarFechaHoy(this.value)">
+        </div>
       </div>
       <div class="flex gap-2">
         <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 text-center shadow-sm">
@@ -544,6 +548,7 @@ function estadoBase() {
     todos: [],
     todoIdCounter: 0,
     dailyHistory: {},
+    hoyDate: todayStr,
     asistio: null,
     grabando: false,
     hora: 9,
@@ -590,16 +595,31 @@ function guardarEstado() {
 }
 
 // ====== CHECKLIST COMPARTIDO ======
+function getChecklistForDate(dateStr) {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  if (dateStr === todayStr) {
+    return state.checklist;
+  }
+  if (!state.dailyHistory[dateStr]) {
+    state.dailyHistory[dateStr] = { checklist: [false, false, false], asistio: null };
+  }
+  if (!state.dailyHistory[dateStr].checklist) {
+    state.dailyHistory[dateStr].checklist = [false, false, false];
+  }
+  return state.dailyHistory[dateStr].checklist;
+}
+
 function actualizarChecklistUI() {
+  const cl = getChecklistForDate(state.hoyDate);
   document.querySelectorAll('.checklist-cb').forEach(cb => {
     const id = parseInt(cb.dataset.checklistId);
-    cb.checked = state.checklist[id] || false;
+    cb.checked = cl[id] || false;
     const textEl = cb.closest('.group')?.querySelector('.checklist-text');
     if (textEl) {
       if (cb.checked) { textEl.classList.add('checklist-done'); } else { textEl.classList.remove('checklist-done'); }
     }
   });
-  const pendientes = state.checklist.filter(v => !v).length;
+  const pendientes = cl.filter(v => !v).length;
   const counters = document.querySelectorAll('.checklist-counter, #checklist-counter');
   counters.forEach(el => { if (el) el.textContent = pendientes === 1 ? '1 pendiente' : pendientes + ' pendientes'; });
   actualizarContadores();
@@ -609,22 +629,30 @@ function actualizarChecklistUI() {
 document.addEventListener('change', function(e) {
   if (e.target.classList.contains('checklist-cb')) {
     const id = parseInt(e.target.dataset.checklistId);
-    if (!isNaN(id) && id >= 0 && id < state.checklist.length) {
-      state.checklist[id] = e.target.checked;
-      guardarEstado();
-      actualizarChecklistUI();
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (state.hoyDate === todayStr) {
+      if (!isNaN(id) && id >= 0 && id < state.checklist.length) {
+        state.checklist[id] = e.target.checked;
+      }
+    } else {
+      const cl = getChecklistForDate(state.hoyDate);
+      if (!isNaN(id) && id >= 0 && id < cl.length) {
+        cl[id] = e.target.checked;
+        state.dailyHistory[state.hoyDate].checklist = cl;
+      }
     }
+    guardarEstado();
+    actualizarChecklistUI();
   }
 });
 
 // ====== TODO ======
 function renderTodos() {
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const dayTodos = state.todos.filter(t => t.date === todayStr);
+  const dayTodos = state.todos.filter(t => t.date === state.hoyDate);
   const container = document.getElementById('todo-container');
   if (!container) return;
   if (dayTodos.length === 0) {
-    container.innerHTML = '<div class="p-stack-md text-center text-outline text-sm">No hay tareas para hoy</div>';
+    container.innerHTML = '<div class="p-stack-md text-center text-outline text-sm">No hay tareas para esta fecha</div>';
   } else {
     container.innerHTML = dayTodos.map(t => {
       const checked = t.completed ? 'check_circle text-secondary' : 'radio_button_unchecked text-outline';
@@ -636,7 +664,7 @@ function renderTodos() {
         '</div>';
     }).join('');
   }
-  const pendientes = state.todos.filter(t => t.date === todayStr && !t.completed).length;
+  const pendientes = state.todos.filter(t => t.date === state.hoyDate && !t.completed).length;
   const counterEl = document.getElementById('todo-counter');
   if (counterEl) counterEl.textContent = pendientes === 1 ? '1 pendiente' : pendientes + ' pendientes';
   // Update KPI (metricas page)
@@ -722,12 +750,12 @@ document.addEventListener('click', function(e) {
 
 // ====== CONTADORES HEADER ======
 function actualizarContadores() {
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const dayTodos = state.todos.filter(t => t.date === todayStr);
+  const dayTodos = state.todos.filter(t => t.date === state.hoyDate);
   const todoDone = dayTodos.filter(t => t.completed).length;
   const todoTotal = dayTodos.length;
-  const checkDone = state.checklist.filter(Boolean).length;
-  const checkTotal = state.checklist.length;
+  const cl = getChecklistForDate(state.hoyDate);
+  const checkDone = cl.filter(Boolean).length;
+  const checkTotal = cl.length;
   const tEl = document.getElementById('counter-todos');
   const cEl = document.getElementById('counter-checklist');
   if (tEl) tEl.textContent = todoDone + '/' + todoTotal;
@@ -737,9 +765,11 @@ function actualizarContadores() {
 // ====== ANILLOS DE PROGRESO ======
 // ====== ASISTENCIA ======
 function actualizarAsistenciaUI() {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const asistioVal = state.hoyDate === todayStr ? state.asistio : (state.dailyHistory[state.hoyDate]?.asistio ?? null);
   document.querySelectorAll('.attendance-btn').forEach(btn => {
     const val = btn.dataset.value === 'true';
-    if (state.asistio === val) {
+    if (asistioVal === val) {
       btn.className = 'px-4 py-2 rounded-lg border border-on-surface text-on-surface bg-surface-container-low font-label-md transition-all attendance-btn';
     } else {
       btn.className = 'px-4 py-2 rounded-lg border border-outline-variant text-outline font-label-md hover:border-on-surface hover:text-on-surface transition-all attendance-btn';
@@ -750,7 +780,16 @@ function actualizarAsistenciaUI() {
 document.addEventListener('click', function(e) {
   if (e.target.classList.contains('attendance-btn')) {
     const val = e.target.dataset.value === 'true';
-    state.asistio = state.asistio === val ? null : val;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (state.hoyDate === todayStr) {
+      state.asistio = state.asistio === val ? null : val;
+    } else {
+      if (!state.dailyHistory[state.hoyDate]) {
+        state.dailyHistory[state.hoyDate] = { checklist: [false, false, false], asistio: null };
+      }
+      const current = state.dailyHistory[state.hoyDate].asistio;
+      state.dailyHistory[state.hoyDate].asistio = current === val ? null : val;
+    }
     guardarEstado();
     actualizarAsistenciaUI();
     actualizarMetricas();
@@ -896,18 +935,32 @@ function toggleTranscripcion() {
 }
 
 // ====== DATE ======
-(function() {
-  const d = new Date();
-  const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DAYS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function actualizarFechaHoyUI() {
+  const d = new Date(state.hoyDate + 'T12:00:00');
   const daynameEl = document.getElementById('date-dayname');
   const fullEl = document.getElementById('date-full');
-  if (daynameEl) daynameEl.textContent = days[d.getDay()];
-  if (fullEl) fullEl.textContent = d.getDate() + ' de ' + months[d.getMonth()] + ', ' + d.getFullYear();
-  document.getElementById('date-display').textContent = days[d.getDay()] + ', ' + d.getDate() + ' de ' + months[d.getMonth()];
+  if (daynameEl) daynameEl.textContent = DAYS[d.getDay()];
+  if (fullEl) fullEl.textContent = d.getDate() + ' de ' + MONTHS[d.getMonth()] + ', ' + d.getFullYear();
+  document.getElementById('date-display').textContent = DAYS[d.getDay()] + ', ' + d.getDate() + ' de ' + MONTHS[d.getMonth()];
   const dateInput = document.getElementById('todo-date');
-  if (dateInput) dateInput.value = d.toISOString().slice(0, 10);
-})();
+  if (dateInput) dateInput.value = state.hoyDate;
+}
+
+function cambiarFechaHoy(dateStr) {
+  if (!dateStr) return;
+  state.hoyDate = dateStr;
+  guardarEstado();
+  actualizarFechaHoyUI();
+  actualizarChecklistUI();
+  actualizarAsistenciaUI();
+  renderTodos();
+  actualizarContadores();
+}
+
+actualizarFechaHoyUI();
 
 // ====== TIME PICKER ======
 function refreshClockUI() {
