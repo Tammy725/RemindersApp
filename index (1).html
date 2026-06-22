@@ -265,61 +265,39 @@ tailwind.config = {
       </div>
     </section>
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-      <div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
-        <div class="flex justify-between items-center mb-stack-md">
-          <div>
-            <h3 class="text-body-lg font-headline-sm text-primary">Checklist Diario</h3>
-            <p class="text-label-sm text-on-surface-variant">Progreso de objetivos clave esta semana</p>
-          </div>
-          <div class="flex gap-2">
-            <button class="text-label-md px-3 py-1 bg-surface-container rounded-lg text-on-surface">Semana</button>
-            <button class="text-label-md px-3 py-1 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">Mes</button>
-          </div>
-        </div>
-        <div class="relative h-64 w-full">
-          <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300">
-            <defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#006c49" stop-opacity="0.2"/><stop offset="100%" stop-color="#006c49" stop-opacity="0"/></linearGradient></defs>
-            <path d="M0,280 Q100,220 200,240 T400,170 T600,120 T800,200 T1000,70 L1000,300 L0,300 Z" fill="url(#areaGrad)"/>
-            <path d="M0,280 Q100,220 200,240 T400,170 T600,120 T800,200 T1000,70" fill="none" stroke="#006c49" stroke-width="3" id="chart-check-path"/>
-            <circle cx="200" cy="240" fill="#006c49" r="5"/><circle cx="400" cy="170" fill="#006c49" r="5"/>
-            <circle cx="600" cy="120" fill="#006c49" r="5"/><circle cx="800" cy="200" fill="#006c49" r="5"/>
-            <circle cx="1000" cy="70" fill="#006c49" r="5"/>
+      <div class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm flex flex-col items-center justify-center py-8">
+        <h3 class="text-body-lg font-headline-sm text-primary mb-6">Asistencia a Reuniones</h3>
+        <div class="relative inline-flex items-center justify-center">
+          <svg width="160" height="160" viewBox="0 0 42 42" class="-rotate-90">
+            <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#e0e3e5" stroke-width="3.5"/>
+            <circle id="kpi-asistencia-ring" cx="21" cy="21" r="15.9155" fill="none" stroke="#006c49" stroke-width="3.5" stroke-dasharray="0 100" stroke-linecap="round"/>
           </svg>
-          <div class="absolute bottom-0 w-full flex justify-between px-2 text-label-sm text-on-surface-variant">
-            <span>LUN</span><span>MAR</span><span>MIE</span><span>JUE</span><span>VIE</span><span>SAB</span><span>DOM</span>
-          </div>
+          <span class="absolute text-4xl font-bold text-primary" id="kpi-asistencia">0%</span>
         </div>
+        <span class="text-label-sm text-on-surface-variant mt-4" id="kpi-asistencia-det">0 / 0 reuniones realizadas</span>
       </div>
-      <div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
-        <h3 class="text-body-lg font-headline-sm text-primary mb-4">Asistencia a Reuniones</h3>
-        <div class="space-y-5">
-          <div><div class="flex justify-between text-label-md text-on-surface-variant mb-1"><span>Q1 Ejecutivo</span><span>98%</span></div><div class="h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-secondary w-[98%] rounded-full"></div></div></div>
-          <div><div class="flex justify-between text-label-md text-on-surface-variant mb-1"><span>Operaciones Semanal</span><span>82%</span></div><div class="h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-on-primary-fixed-variant w-[82%] rounded-full"></div></div></div>
-          <div><div class="flex justify-between text-label-md text-on-surface-variant mb-1"><span>Directorio</span><span>100%</span></div><div class="h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-secondary w-full rounded-full"></div></div></div>
-          <div><div class="flex justify-between text-label-md text-on-surface-variant mb-1"><span>Sync Producto</span><span>65%</span></div><div class="h-2 bg-surface-container rounded-full overflow-hidden"><div class="h-full bg-error w-[65%] rounded-full"></div></div></div>
-        </div>
-      </div>
-      <div class="lg:col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
-        <div class="flex justify-between items-center mb-stack-md">
+      <div class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
+        <h3 class="text-body-lg font-headline-sm text-primary mb-6">Tareas y Checklist</h3>
+        <div class="space-y-8">
           <div>
-            <h3 class="text-body-lg font-headline-sm text-primary">Volumen de Tareas</h3>
-            <div class="flex gap-4 mt-1">
-              <span class="flex items-center gap-2 text-label-sm text-on-surface-variant"><span class="w-3 h-3 rounded-full bg-primary-container"></span>Total Asignadas</span>
-              <span class="flex items-center gap-2 text-label-sm text-on-surface-variant"><span class="w-3 h-3 rounded-full bg-secondary"></span>Completadas</span>
+            <div class="flex justify-between text-label-md text-on-surface-variant mb-1">
+              <span>Tareas</span>
+              <span class="font-semibold" id="kpi-tareas">0%</span>
             </div>
+            <div class="h-3 bg-surface-container rounded-full overflow-hidden">
+              <div id="kpi-tareas-bar" class="h-full bg-secondary rounded-full" style="width:0%"></div>
+            </div>
+            <span class="text-label-sm text-outline mt-1 block" id="kpi-tareas-det">0 / 0 completadas</span>
           </div>
-        </div>
-        <div class="relative h-64 w-full">
-          <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 200">
-            <line stroke="#eceef0" stroke-width="1" x1="0" y1="40" x2="1000" y2="40"/>
-            <line stroke="#eceef0" stroke-width="1" x1="0" y1="80" x2="1000" y2="80"/>
-            <line stroke="#eceef0" stroke-width="1" x1="0" y1="120" x2="1000" y2="120"/>
-            <line stroke="#eceef0" stroke-width="1" x1="0" y1="160" x2="1000" y2="160"/>
-            <path d="M0,160 C100,140 200,100 300,120 S500,70 600,90 S800,50 1000,60" fill="none" stroke="#131b2e" stroke-dasharray="4" stroke-width="2" id="chart-total-path"/>
-            <path d="M0,170 C100,150 200,120 300,135 S500,90 600,110 S800,70 1000,80" fill="none" stroke="#006c49" stroke-width="3" id="chart-completed-path"/>
-          </svg>
-          <div class="flex justify-between mt-2 text-label-sm text-on-surface-variant">
-            <span>Lun</span><span>Mar</span><span>Mie</span><span>Jue</span><span>Vie</span><span>Sab</span>
+          <div>
+            <div class="flex justify-between text-label-md text-on-surface-variant mb-1">
+              <span>Checklist</span>
+              <span class="font-semibold" id="kpi-checklist">0%</span>
+            </div>
+            <div class="h-3 bg-surface-container rounded-full overflow-hidden">
+              <div id="kpi-checklist-bar" class="h-full bg-secondary rounded-full" style="width:0%"></div>
+            </div>
+            <span class="text-label-sm text-outline mt-1 block" id="kpi-checklist-det">0 / 0 completadas</span>
           </div>
         </div>
       </div>
@@ -815,20 +793,26 @@ function actualizarMetricas() {
       if (entry.asistio) meetingAttended++;
     }
   }
+  const pctAsistencia = meetingDays > 0 ? Math.round(meetingAttended / meetingDays * 100) : 0;
   const asistEl = document.getElementById('kpi-asistencia');
   const asistDet = document.getElementById('kpi-asistencia-det');
-  if (asistEl) asistEl.textContent = meetingDays > 0 ? Math.round(meetingAttended / meetingDays * 100) + '%' : '0%';
+  const asistRing = document.getElementById('kpi-asistencia-ring');
+  if (asistEl) asistEl.textContent = pctAsistencia + '%';
   if (asistDet) asistDet.textContent = meetingAttended + ' / ' + meetingDays + ' reuniones realizadas';
+  if (asistRing) asistRing.setAttribute('stroke-dasharray', pctAsistencia + ' ' + (100 - pctAsistencia));
 
   // --- Tareas (mensual) ---
   const monthStr = year + '-' + (month + 1).toString().padStart(2, '0');
   const monthTodos = state.todos.filter(t => t.date && t.date.startsWith(monthStr));
   const todoCompleted = monthTodos.filter(t => t.completed).length;
   const todoTotal = monthTodos.length;
+  const pctTareas = todoTotal > 0 ? Math.round(todoCompleted / todoTotal * 100) : 0;
   const tareasEl = document.getElementById('kpi-tareas');
   const tareasDet = document.getElementById('kpi-tareas-det');
-  if (tareasEl) tareasEl.textContent = todoTotal > 0 ? Math.round(todoCompleted / todoTotal * 100) + '%' : '0%';
+  const tareasBar = document.getElementById('kpi-tareas-bar');
+  if (tareasEl) tareasEl.textContent = pctTareas + '%';
   if (tareasDet) tareasDet.textContent = todoCompleted + ' / ' + todoTotal + ' completadas';
+  if (tareasBar) tareasBar.style.width = pctTareas + '%';
 
   // --- Checklist (mensual desde dailyHistory) ---
   let checkDone = 0;
@@ -842,10 +826,13 @@ function actualizarMetricas() {
       });
     }
   }
+  const pctChecklist = checkTotal > 0 ? Math.round(checkDone / checkTotal * 100) : 0;
   const checkEl = document.getElementById('kpi-checklist');
   const checkDet = document.getElementById('kpi-checklist-det');
-  if (checkEl) checkEl.textContent = checkTotal > 0 ? Math.round(checkDone / checkTotal * 100) + '%' : '0%';
+  const checkBar = document.getElementById('kpi-checklist-bar');
+  if (checkEl) checkEl.textContent = pctChecklist + '%';
   if (checkDet) checkDet.textContent = checkDone + ' / ' + checkTotal + ' completadas';
+  if (checkBar) checkBar.style.width = pctChecklist + '%';
 
   // --- Racha (días consecutivos con asistencia) ---
   let streak = 0;
