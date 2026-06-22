@@ -231,57 +231,37 @@ tailwind.config = {
 <div id="page-metricas" class="page">
   <main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-10 space-y-6">
     <section class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
-      <!-- Reuniones: Donut chart -->
-      <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm flex flex-col items-center">
-        <div class="flex justify-between items-start mb-2 w-full">
+      <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm">
+        <div class="flex justify-between items-start mb-2">
           <span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Reuniones</span>
           <span class="material-symbols-outlined text-secondary text-xl">groups</span>
         </div>
-        <div class="relative inline-flex items-center justify-center my-1">
-          <svg width="80" height="80" viewBox="0 0 42 42" class="-rotate-90">
-            <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#e0e3e5" stroke-width="3"/>
-            <circle id="kpi-asistencia-ring" cx="21" cy="21" r="15.9155" fill="none" stroke="#006c49" stroke-width="3" stroke-dasharray="0 100" stroke-linecap="round"/>
-          </svg>
-          <span class="absolute text-headline-sm font-headline-md text-primary" id="kpi-asistencia">0%</span>
-        </div>
-        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-1" id="kpi-asistencia-det">0 / 0 reuniones realizadas</span>
+        <span class="text-headline-md font-headline-md text-primary" id="kpi-asistencia">0%</span>
+        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2" id="kpi-asistencia-det">0 / 0 reuniones realizadas</span>
       </div>
-      <!-- Tareas: Horizontal progress bar -->
       <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm">
         <div class="flex justify-between items-start mb-2">
           <span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Tareas</span>
           <span class="material-symbols-outlined text-secondary text-xl">task_alt</span>
         </div>
-        <div class="flex items-baseline gap-2 mb-2">
-          <span class="text-headline-md font-headline-md text-primary" id="kpi-tareas">0%</span>
-        </div>
-        <div class="h-2.5 bg-surface-container rounded-full overflow-hidden mb-2">
-          <div id="kpi-tareas-bar" class="h-full bg-secondary rounded-full" style="width:0%"></div>
-        </div>
-        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit" id="kpi-tareas-det">0 / 0 completadas</span>
+        <span class="text-headline-md font-headline-md text-primary" id="kpi-tareas">0%</span>
+        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2" id="kpi-tareas-det">0 / 0 completadas</span>
       </div>
-      <!-- Checklist: Horizontal progress bar -->
       <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm">
         <div class="flex justify-between items-start mb-2">
           <span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Checklist</span>
           <span class="material-symbols-outlined text-secondary text-xl">checklist</span>
         </div>
-        <div class="flex items-baseline gap-2 mb-2">
-          <span class="text-headline-md font-headline-md text-primary" id="kpi-checklist">0%</span>
-        </div>
-        <div class="h-2.5 bg-surface-container rounded-full overflow-hidden mb-2">
-          <div id="kpi-checklist-bar" class="h-full bg-secondary rounded-full" style="width:0%"></div>
-        </div>
-        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit" id="kpi-checklist-det">0 / 0 completadas</span>
+        <span class="text-headline-md font-headline-md text-primary" id="kpi-checklist">0%</span>
+        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2" id="kpi-checklist-det">0 / 0 completadas</span>
       </div>
-      <!-- Racha: Simple number, no graph -->
       <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm">
         <div class="flex justify-between items-start mb-2">
           <span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Racha</span>
           <span class="material-symbols-outlined text-secondary text-xl" style="font-variation-settings:'FILL'1;">local_fire_department</span>
         </div>
         <span class="text-headline-md font-headline-md text-primary" id="kpi-racha">0</span>
-        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2">días consecutivos</span>
+        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2">Reuniones consecutivos</span>
       </div>
     </section>
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
@@ -835,26 +815,20 @@ function actualizarMetricas() {
       if (entry.asistio) meetingAttended++;
     }
   }
-  const pctAsistencia = meetingDays > 0 ? Math.round(meetingAttended / meetingDays * 100) : 0;
   const asistEl = document.getElementById('kpi-asistencia');
   const asistDet = document.getElementById('kpi-asistencia-det');
-  const asistRing = document.getElementById('kpi-asistencia-ring');
-  if (asistEl) asistEl.textContent = pctAsistencia + '%';
+  if (asistEl) asistEl.textContent = meetingDays > 0 ? Math.round(meetingAttended / meetingDays * 100) + '%' : '0%';
   if (asistDet) asistDet.textContent = meetingAttended + ' / ' + meetingDays + ' reuniones realizadas';
-  if (asistRing) asistRing.setAttribute('stroke-dasharray', pctAsistencia + ' ' + (100 - pctAsistencia));
 
   // --- Tareas (mensual) ---
   const monthStr = year + '-' + (month + 1).toString().padStart(2, '0');
   const monthTodos = state.todos.filter(t => t.date && t.date.startsWith(monthStr));
   const todoCompleted = monthTodos.filter(t => t.completed).length;
   const todoTotal = monthTodos.length;
-  const pctTareas = todoTotal > 0 ? Math.round(todoCompleted / todoTotal * 100) : 0;
   const tareasEl = document.getElementById('kpi-tareas');
   const tareasDet = document.getElementById('kpi-tareas-det');
-  const tareasBar = document.getElementById('kpi-tareas-bar');
-  if (tareasEl) tareasEl.textContent = pctTareas + '%';
+  if (tareasEl) tareasEl.textContent = todoTotal > 0 ? Math.round(todoCompleted / todoTotal * 100) + '%' : '0%';
   if (tareasDet) tareasDet.textContent = todoCompleted + ' / ' + todoTotal + ' completadas';
-  if (tareasBar) tareasBar.style.width = pctTareas + '%';
 
   // --- Checklist (mensual desde dailyHistory) ---
   let checkDone = 0;
@@ -868,13 +842,10 @@ function actualizarMetricas() {
       });
     }
   }
-  const pctChecklist = checkTotal > 0 ? Math.round(checkDone / checkTotal * 100) : 0;
   const checkEl = document.getElementById('kpi-checklist');
   const checkDet = document.getElementById('kpi-checklist-det');
-  const checkBar = document.getElementById('kpi-checklist-bar');
-  if (checkEl) checkEl.textContent = pctChecklist + '%';
+  if (checkEl) checkEl.textContent = checkTotal > 0 ? Math.round(checkDone / checkTotal * 100) + '%' : '0%';
   if (checkDet) checkDet.textContent = checkDone + ' / ' + checkTotal + ' completadas';
-  if (checkBar) checkBar.style.width = pctChecklist + '%';
 
   // --- Racha (días consecutivos con asistencia) ---
   let streak = 0;
