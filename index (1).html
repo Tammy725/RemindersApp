@@ -229,7 +229,7 @@ tailwind.config = {
 
 <!-- PAGE: METRICAS -->
 <div id="page-metricas" class="page">
-  <main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-10 space-y-6">
+  <main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-1 space-y-6">
     <section class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
       <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm">
         <div class="flex justify-between items-start mb-2">
@@ -302,15 +302,13 @@ tailwind.config = {
         <span class="text-label-sm text-on-surface-variant mt-4" id="kpi-asistencia-det-chart">0 / 0 reuniones realizadas</span>
       </div>
     </section>
-    <section class="bg-primary-container text-on-primary-fixed rounded-xl p-stack-md flex flex-col md:flex-row justify-between items-center gap-gutter">
-      <div class="space-y-2">
-        <h4 class="text-headline-sm font-headline-sm">Resumen de Eficiencia</h4>
-        <p class="text-body-md text-on-primary-container max-w-2xl" id="eficiencia-texto">Has mantenido un nivel de productividad del 92% durante la última semana. Tu horario más eficiente son las primeras 3 horas de la mañana.</p>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mt-8 mb-2">
+      <div class="lg:col-span-6 lg:col-start-4">
+        <button class="w-full bg-black text-gray-300 px-gutter py-3 rounded-full font-label-md text-label-md hover:brightness-150 transition-all cursor-pointer" onclick="descargarPDF()">
+          DESCARGAR REPORTE PDF
+        </button>
       </div>
-      <button class="bg-secondary-container text-on-secondary-container px-gutter py-3 rounded-full font-label-md text-label-md hover:brightness-105 transition-all whitespace-nowrap shadow-lg" onclick="descargarPDF()">
-        DESCARGAR REPORTE PDF
-      </button>
-    </section>
+    </div>
   </main>
 </div>
 
@@ -910,6 +908,8 @@ function navigateTo(page) {
   transOpen = false;
   document.getElementById('fab-icon').textContent = 'mic';
   document.getElementById('fab-mic').className = 'fab';
+  document.getElementById('fab-mic').style.background = '';
+  document.getElementById('fab-mic').style.display = page === 'hoy' ? 'flex' : 'none';
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
@@ -926,6 +926,7 @@ function navigateTo(page) {
 }
 
 function toggleTranscripcion() {
+  if (curPage !== 'hoy') { navigateTo('hoy'); return; }
   transOpen = !transOpen;
   if (transOpen) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
