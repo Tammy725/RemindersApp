@@ -823,16 +823,15 @@ function actualizarMetricas() {
   if (tareasChart) tareasChart.textContent = pctTareas + '%';
   if (tareasDetChart) tareasDetChart.textContent = todoCompleted + ' / ' + todoTotal + ' completadas';
 
-  // --- Checklist (mensual desde dailyHistory) ---
+  // --- Checklist (mensual: total = itemsPerDay * díaActual) ---
+  const itemsPerDay = CHECKLIST_LABELS.length;
+  const currentDay = today.getDate();
   let checkDone = 0;
-  let checkTotal = 0;
+  const checkTotal = itemsPerDay * currentDay;
   for (const [dateStr, entry] of Object.entries(state.dailyHistory)) {
     const d = new Date(dateStr);
     if (d.getMonth() === month && d.getFullYear() === year && entry.checklist) {
-      entry.checklist.forEach(v => {
-        checkTotal++;
-        if (v) checkDone++;
-      });
+      entry.checklist.forEach(v => { if (v) checkDone++; });
     }
   }
   const pctChecklist = checkTotal > 0 ? Math.round(checkDone / checkTotal * 100) : 0;
