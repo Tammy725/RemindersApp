@@ -667,6 +667,7 @@ document.addEventListener('click', function(e) {
         guardarEstado();
         renderTodos();
         actualizarCalTodos();
+        renderCalendar();
       }
     }
   }
@@ -679,6 +680,7 @@ document.addEventListener('click', function(e) {
       guardarEstado();
       renderTodos();
       actualizarCalTodos();
+      renderCalendar();
     }
   }
 });
@@ -701,6 +703,7 @@ document.addEventListener('click', function(e) {
     guardarEstado();
     renderTodos();
     actualizarCalTodos();
+    renderCalendar();
   }
 });
 
@@ -1048,9 +1051,17 @@ function renderCalendar() {
     const dateKey = state.anioCal + '-' + (state.mesCal + 1).toString().padStart(2, '0') + '-' + d.toString().padStart(2, '0');
     const hasReunion = state.dailyHistory[dateKey]?.asistio === true;
     const noReunion = state.dailyHistory[dateKey]?.asistio === false;
+    const hasPendingTodos = state.todos.some(t => t.date === dateKey && !t.completed);
     let cls = 'py-2 font-body-md relative cursor-pointer rounded-lg transition-colors';
-    if (isSel) cls += ' bg-primary text-on-primary font-bold shadow-sm';
-    else { cls += ' hover:bg-surface-container-low text-on-surface'; if (isToday) cls += ' font-bold'; }
+    if (isSel) {
+      cls += ' bg-primary font-bold shadow-sm';
+      cls += hasPendingTodos ? ' text-[#e57373]' : ' text-on-primary';
+    } else {
+      cls += ' hover:bg-surface-container-low';
+      if (hasPendingTodos) cls += ' text-error font-bold';
+      else cls += ' text-on-surface';
+      if (isToday) cls += ' font-bold';
+    }
     html += '<div class="'+cls+'" data-day="'+d+'" onclick="selectDay('+d+')">'+d;
     if (hasReunion) html += '<span class="active-dot" style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#006c49;"></span>';
     else if (noReunion) html += '<span class="active-dot" style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#ba1a1a;"></span>';
@@ -1155,6 +1166,7 @@ document.addEventListener('change', function(e) {
     state.dailyHistory[date].checklist[idx] = e.target.checked;
     guardarEstado();
     actualizarCalTodos();
+    renderCalendar();
   }
 });
 
@@ -1170,6 +1182,7 @@ document.addEventListener('click', function(e) {
         guardarEstado();
         renderTodos();
         actualizarCalTodos();
+        renderCalendar();
       }
     }
   }
