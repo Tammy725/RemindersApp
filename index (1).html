@@ -86,6 +86,11 @@ tailwind.config = {
   .cal-today { background: #006c49; color: #fff; font-weight: 700; border-radius: 8px; }
   .wave-bar { background-color: #006c49; }
   .recording-active ~ .wave-bar { background-color: #ba1a1a; }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .modal-overlay.active { display: flex; }
+  .modal-content { background: #fff; border-radius: 16px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
 </style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen pb-28 md:pb-0">
@@ -199,7 +204,7 @@ tailwind.config = {
         <h1 class="font-headline-md text-headline-md text-primary">Calendario</h1>
         <p class="text-on-surface-variant font-body-md mt-2">Presiona la fecha para ver la lista de tareas de ese día.</p>
       </div>
-      <button class="px-4 py-2 rounded-lg font-label-md transition-transform active:scale-95 flex items-center gap-2 shadow-sm text-on-surface font-body-md" onclick="navigateTo('ajustes')">
+      <button class="px-4 py-2 rounded-lg font-label-md transition-transform active:scale-95 flex items-center gap-2 shadow-sm text-on-surface font-body-md" onclick="abrirModalHorario()">
         <span class="material-symbols-outlined text-[18px]">add</span>Configurar horario (reuniones diarias)
       </button>
     </section>
@@ -312,13 +317,19 @@ tailwind.config = {
   </main>
 </div>
 
-<!-- PAGE: AJUSTES -->
-<div id="page-ajustes" class="page">
-  <main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-screen-md mx-auto pb-10 flex flex-col items-center justify-center">
-    <div class="text-center mb-6">
-      <h1 class="text-display-lg-mobile md:text-display-lg text-primary font-bold mb-2">Configura tu reunión</h1>
-      <p class="font-body-md text-body-md text-on-surface-variant max-w-sm mx-auto">Elige tu hora diaria para recibir el recordatorio</p>
+<!-- PAGE: AJUSTES (empty - config moved to modal) -->
+<div id="page-ajustes" class="page"></div>
+
+<!-- MODAL: Configurar horario -->
+<div class="modal-overlay" id="modal-horario" onclick="if(event.target===this)cerrarModalHorario()">
+  <div class="modal-content p-stack-md">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-headline-md text-headline-md text-primary">Configura tu reunión</h2>
+      <button class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center" onclick="cerrarModalHorario()">
+        <span class="material-symbols-outlined text-outline">close</span>
+      </button>
     </div>
+    <p class="font-body-md text-body-md text-on-surface-variant mb-4">Elige tu hora diaria para recibir el recordatorio</p>
     <div class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
       <div class="absolute -right-20 -top-20 w-64 h-64 opacity-5 pointer-events-none">
         <span class="material-symbols-outlined text-[200px]">schedule</span>
@@ -408,12 +419,11 @@ tailwind.config = {
       </div>
     </div>
     <div class="mt-6 w-full flex flex-col items-center gap-3">
-      <button class="w-full md:w-64 h-12 bg-primary text-on-secondary rounded-full font-headline-md flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-secondary/10" id="save-btn" onclick="guardarHorario()">
+      <button class="w-full md:w-64 h-12 bg-primary text-on-secondary rounded-full font-headline-md flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-secondary/10" id="save-btn-modal" onclick="guardarHorario()">
         <span>Guardar</span><span class="material-symbols-outlined">done_all</span>
       </button>
-      <p class="font-label-sm text-label-sm text-outline">Podrás cambiar esto más tarde en los ajustes del perfil.</p>
     </div>
-  </main>
+  </div>
 </div>
 
 <!-- PAGE: TRANSCRIPCION (via FAB) -->
@@ -514,10 +524,10 @@ tailwind.config = {
     <span class="material-symbols-outlined">insights</span>
     <span class="font-label-sm text-[10px] mt-1">Métricas</span>
   </button>
-  <button class="flex flex-col items-center justify-center text-outline hover:text-primary transition-colors px-stack-md py-unit nav-btn" data-page="ajustes" onclick="navigateTo('ajustes')">
+  <div class="flex flex-col items-center justify-center text-outline px-stack-md py-unit opacity-50">
     <span class="material-symbols-outlined">settings</span>
     <span class="font-label-sm text-[10px] mt-1">Ajustes</span>
-  </button>
+  </div>
 </nav>
 
 <!-- DESKTOP SIDEBAR -->
@@ -532,9 +542,9 @@ tailwind.config = {
     <span class="material-symbols-outlined">insights</span>
   </button>
   <div class="mt-auto mb-stack-md">
-    <button class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-surface-container-low text-outline hover:text-primary transition-all nav-btn" data-page="ajustes" onclick="navigateTo('ajustes')" title="Ajustes">
+    <div class="w-12 h-12 flex items-center justify-center text-outline opacity-50 cursor-default">
       <span class="material-symbols-outlined">settings</span>
-    </button>
+    </div>
   </div>
 </aside>
 
@@ -934,6 +944,7 @@ let transOpen = false;
 
 function navigateTo(page) {
   if (page === 'transcripcion') { toggleTranscripcion(); return; }
+  if (page === 'ajustes') { abrirModalHorario(); return; }
   transOpen = false;
   document.getElementById('fab-icon').textContent = 'mic';
   document.getElementById('fab-mic').className = 'fab';
@@ -942,7 +953,7 @@ function navigateTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
-  const titles = { hoy:'Seleccionar fecha', calendario:'Calendario', metricas:'Metricas', ajustes:'Ajustes' };
+  const titles = { hoy:'Seleccionar fecha', calendario:'Calendario', metricas:'Metricas' };
   const el = document.getElementById('page-title');
   if (page === 'hoy') {
     el.innerHTML = 'Seleccionar fecha <span class="material-symbols-outlined text-[16px]">expand_more</span>';
@@ -1057,14 +1068,27 @@ function cambiarUbicacion(val) {
   if (textEl) textEl.textContent = val || 'Seleccionar ubicación';
 }
 
+
+function abrirModalHorario() {
+  document.getElementById('modal-horario').classList.add('active');
+}
+
+function cerrarModalHorario() {
+  document.getElementById('modal-horario').classList.remove('active');
+  const btn = document.getElementById('save-btn-modal');
+  if (btn) { btn.innerHTML = '<span>Guardar</span><span class="material-symbols-outlined">done_all</span>'; btn.classList.remove('opacity-80'); }
+}
+
 function guardarHorario() {
-  const btn = document.getElementById('save-btn');
+  const btn = document.getElementById('save-btn-modal');
+  if (!btn) return;
   btn.innerHTML = '<span>Guardado</span><span class="material-symbols-outlined">done_all</span>';
   btn.classList.add('opacity-80');
   guardarEstado();
   setTimeout(() => {
+    cerrarModalHorario();
     navigateTo('calendario');
-  }, 300);
+  }, 400);
 }
 
 refreshClockUI();
