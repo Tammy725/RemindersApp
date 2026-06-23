@@ -364,9 +364,29 @@ tailwind.config = {
         </div>
         <div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/50">
           <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Ubicación</label>
-          <div class="flex items-center justify-between">
-            <span class="font-body-md text-body-md text-primary">Bicsa</span>
-            <span class="material-symbols-outlined text-outline">public</span>
+          <div class="relative">
+            <select id="ubicacion-select" class="w-full appearance-none bg-transparent font-body-md text-body-md text-primary pr-6 cursor-pointer outline-none" onchange="cambiarUbicacion(this.value)">
+              <option value="">Seleccionar ubicación</option>
+              <optgroup label="Sucursal El Fuerte">
+                <option value="El Fuerte, San Miguelito">San Miguelito</option>
+                <option value="El Fuerte, Westland">Westland</option>
+                <option value="El Fuerte, Villa Zaita">Villa Zaita</option>
+                <option value="El Fuerte, 24 de Diciembre">24 de Diciembre</option>
+                <option value="El Fuerte, Federal Mall">Federal Mall</option>
+                <option value="El Fuerte, Burunga">Burunga</option>
+              </optgroup>
+              <optgroup label="Sucursal La Onda">
+                <option value="La Onda, Los Pueblos">Los Pueblos</option>
+                <option value="La Onda, Villa Lucre">Villa Lucre</option>
+                <option value="La Onda, El Dorado">El Dorado</option>
+                <option value="La Onda, Gran Estación">Gran Estación</option>
+                <option value="La Onda, Calidonia">Calidonia</option>
+                <option value="La Onda, Los Andes">Los Andes</option>
+              </optgroup>
+              <option value="Torre BICSA">Torre BICSA</option>
+              <option value="Century, Tumba Muerto">Century, Tumba Muerto</option>
+            </select>
+            <span class="absolute right-0 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline pointer-events-none">expand_more</span>
           </div>
         </div>
         <div class="flex gap-2">
@@ -531,6 +551,7 @@ function estadoBase() {
     hora: 9,
     minuto: 30,
     periodo: 'AM',
+    ubicacion: '',
     mesCal: today.getMonth(),
     anioCal: today.getFullYear(),
     diaSel: today.getDate()
@@ -1023,6 +1044,11 @@ function presetTime(h,m,p) {
   guardarEstado(); refreshClockUI();
 }
 
+function cambiarUbicacion(val) {
+  state.ubicacion = val;
+  guardarEstado();
+}
+
 function guardarHorario() {
   const btn = document.getElementById('save-btn');
   btn.innerHTML = '<span>Guardado</span><span class="material-symbols-outlined">done_all</span>';
@@ -1211,6 +1237,8 @@ actualizarAsistenciaUI();
 actualizarCalTodos();
 actualizarMetricas();
 actualizarHoraReunion();
+const sel = document.getElementById('ubicacion-select');
+if (sel) sel.value = state.ubicacion || '';
 </script>
 
 </body>
