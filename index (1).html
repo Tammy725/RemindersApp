@@ -426,84 +426,85 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- PAGE: TRANSCRIPCION (via FAB) -->
-<div id="page-transcripcion" class="page">
-  <main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-10">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-      <div class="lg:col-span-7 space-y-gutter">
-        <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md bento-card">
-          <div class="flex justify-between items-center mb-stack-md">
-            <h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-unit">
-              <span class="material-symbols-outlined text-secondary">description</span>
-              Transcripción
-            </h2>
-            <div class="voice-wave">
-              <div class="wave-bar" style="animation-delay:0.1s;height:17px;"></div>
-              <div class="wave-bar" style="animation-delay:0.3s;height:11px;"></div>
-              <div class="wave-bar" style="animation-delay:0.2s;height:16px;"></div>
-              <div class="wave-bar" style="animation-delay:0.4s;height:16px;"></div>
-              <div class="wave-bar" style="animation-delay:0.1s;height:9px;"></div>
-            </div>
-          </div>
-          <div class="max-w-none">
-            <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              "Hola equipo, para la sesión de hoy necesito que nos enfoquemos en el cierre del trimestre. Es fundamental <span class="bg-secondary-container/20 border-b border-secondary/30 px-1 rounded-sm">enviar el reporte de desempeño a Juan</span> antes del viernes para que pueda revisarlo con la junta. Además, estuve viendo los números y es necesario <span class="bg-secondary-container/20 border-b border-secondary/30 px-1 rounded-sm">revisar las métricas de Q3</span> para identificar por qué bajó la retención en el sector de servicios. Por último, agendemos una breve reunión con diseño para validar los nuevos assets de la campaña."
-            </p>
-          </div>
-          <div class="mt-stack-lg flex gap-unit">
-            <button class="flex items-center gap-1 px-stack-md py-unit bg-surface-container-low border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-high transition-all">
-              <span class="material-symbols-outlined text-[18px]">content_copy</span> Copiar
-            </button>
-            <button class="flex items-center gap-1 px-stack-md py-unit bg-surface-container-low border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-high transition-all">
-              <span class="material-symbols-outlined text-[18px]">translate</span> Traducir
-            </button>
-          </div>
-        </section>
-      </div>
-      <div class="lg:col-span-5 space-y-gutter">
-        <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md bento-card flex flex-col h-full">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-unit">
-                <span class="material-symbols-outlined text-secondary">checklist</span>
-                Tareas Asignadas
-              </h2>
-              <p class="text-label-sm text-outline mt-1 uppercase tracking-wider">Flujo de trabajo</p>
-            </div>
-            <span class="bg-secondary-container/50 text-on-secondary-container font-label-md px-stack-md py-unit rounded-full border border-secondary/20 checklist-counter">3 Pendientes</span>
-          </div>
-          <div class="space-y-unit flex-grow">
-            <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
-              <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="0" type="checkbox"></div>
-              <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
-                Enviar reporte de desempeño a Juan
-                <span class="block font-label-sm text-label-sm text-outline mt-1">Prioridad Alta • Viernes</span>
-              </label>
-            </div>
-            <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
-              <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="1" type="checkbox"></div>
-              <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
-                Revisar métricas de Q3 (Retención)
-                <span class="block font-label-sm text-label-sm text-outline mt-1">Análisis de Datos • Hoy</span>
-              </label>
-            </div>
-            <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
-              <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="2" type="checkbox"></div>
-              <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
-                Validar assets de campaña con Diseño
-                <span class="block font-label-sm text-label-sm text-outline mt-1">Reunión 15 min • Mañana</span>
-              </label>
-            </div>
-          </div>
-          <button class="mt-4 w-full py-stack-md bg-primary text-on-primary rounded-lg font-label-md font-bold flex items-center justify-center gap-unit hover:opacity-90 active:scale-[0.98] transition-all shadow-sm">
-            <span class="material-symbols-outlined">sync</span>
-            Sincronizar con Calendario
-          </button>
-        </section>
+<!-- MODAL: Transcripcion -->
+<div class="modal-overlay" id="modal-transcripcion" onclick="if(event.target===this)cerrarModalTranscripcion()">
+  <div class="modal-content p-stack-md">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-unit">
+        <span class="material-symbols-outlined text-secondary">description</span>
+        Transcripción
+      </h2>
+      <div class="flex items-center gap-2">
+        <div class="voice-wave">
+          <div class="wave-bar" style="animation-delay:0.1s;height:17px;"></div>
+          <div class="wave-bar" style="animation-delay:0.3s;height:11px;"></div>
+          <div class="wave-bar" style="animation-delay:0.2s;height:16px;"></div>
+          <div class="wave-bar" style="animation-delay:0.4s;height:16px;"></div>
+          <div class="wave-bar" style="animation-delay:0.1s;height:9px;"></div>
+        </div>
+        <button class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center" onclick="cerrarModalTranscripcion()">
+          <span class="material-symbols-outlined text-outline">close</span>
+        </button>
       </div>
     </div>
-  </main>
+    <div class="max-w-none mb-4">
+      <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        "Hola equipo, para la sesión de hoy necesito que nos enfoquemos en el cierre del trimestre. Es fundamental <span class="bg-secondary-container/20 border-b border-secondary/30 px-1 rounded-sm">enviar el reporte de desempeño a Juan</span> antes del viernes para que pueda revisarlo con la junta. Además, estuve viendo los números y es necesario <span class="bg-secondary-container/20 border-b border-secondary/30 px-1 rounded-sm">revisar las métricas de Q3</span> para identificar por qué bajó la retención en el sector de servicios. Por último, agendemos una breve reunión con diseño para validar los nuevos assets de la campaña."
+      </p>
+    </div>
+    <div class="flex gap-unit mb-stack-md">
+      <button class="flex items-center gap-1 px-stack-md py-unit bg-surface-container-low border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-high transition-all">
+        <span class="material-symbols-outlined text-[18px]">content_copy</span> Copiar
+      </button>
+      <button class="flex items-center gap-1 px-stack-md py-unit bg-surface-container-low border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-high transition-all">
+        <span class="material-symbols-outlined text-[18px]">translate</span> Traducir
+      </button>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-unit">
+            <span class="material-symbols-outlined text-secondary">checklist</span>
+            Tareas Asignadas
+          </h3>
+          <p class="text-label-sm text-outline mt-1 uppercase tracking-wider">Flujo de trabajo</p>
+        </div>
+        <span class="bg-secondary-container/50 text-on-secondary-container font-label-md px-stack-md py-unit rounded-full border border-secondary/20 checklist-counter">3 Pendientes</span>
+      </div>
+      <div class="space-y-unit">
+        <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
+          <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="0" type="checkbox"></div>
+          <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
+            Enviar reporte de desempeño a Juan
+            <span class="block font-label-sm text-label-sm text-outline mt-1">Prioridad Alta • Viernes</span>
+          </label>
+        </div>
+        <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
+          <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="1" type="checkbox"></div>
+          <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
+            Revisar métricas de Q3 (Retención)
+            <span class="block font-label-sm text-label-sm text-outline mt-1">Análisis de Datos • Hoy</span>
+          </label>
+        </div>
+        <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
+          <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="2" type="checkbox"></div>
+          <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
+            Validar assets de campaña con Diseño
+            <span class="block font-label-sm text-label-sm text-outline mt-1">Reunión 15 min • Mañana</span>
+          </label>
+        </div>
+      </div>
+      <button class="mt-4 w-full py-stack-md bg-primary text-on-primary rounded-lg font-label-md font-bold flex items-center justify-center gap-unit hover:opacity-90 active:scale-[0.98] transition-all shadow-sm">
+        <span class="material-symbols-outlined">sync</span>
+        Sincronizar con Calendario
+      </button>
+    </div>
+  </div>
 </div>
+
+<!-- PAGE: TRANSCRIPCION (via FAB) -->
+<!-- PAGE: TRANSCRIPCION (moved to modal) -->
+<div id="page-transcripcion" class="page"></div>
 
 <!-- FAB -->
 <div class="fab" id="fab-mic" onclick="toggleTranscripcion()">
@@ -943,7 +944,6 @@ let curPage = 'hoy';
 let transOpen = false;
 
 function navigateTo(page) {
-  if (page === 'transcripcion') { toggleTranscripcion(); return; }
   if (page === 'ajustes') { abrirModalHorario(); return; }
   transOpen = false;
   document.getElementById('fab-icon').textContent = 'mic';
@@ -967,19 +967,20 @@ function navigateTo(page) {
 
 function toggleTranscripcion() {
   if (curPage !== 'hoy') { navigateTo('hoy'); return; }
-  transOpen = !transOpen;
-  if (transOpen) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-transcripcion').classList.add('active');
-    document.getElementById('fab-icon').textContent = 'close';
-    document.getElementById('fab-mic').className = 'fab';
-    document.getElementById('fab-mic').style.background = '#ba1a1a';
-    document.getElementById('page-title').textContent = 'Transcripcion';
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const modal = document.getElementById('modal-transcripcion');
+  if (modal.classList.contains('active')) {
+    cerrarModalTranscripcion();
   } else {
-    document.getElementById('fab-mic').style.background = '';
-    navigateTo(curPage);
+    modal.classList.add('active');
+    document.getElementById('fab-icon').textContent = 'close';
+    document.getElementById('fab-mic').style.background = '#ba1a1a';
   }
+}
+
+function cerrarModalTranscripcion() {
+  document.getElementById('modal-transcripcion').classList.remove('active');
+  document.getElementById('fab-icon').textContent = 'mic';
+  document.getElementById('fab-mic').style.background = '';
 }
 
 // ====== DATE ======
