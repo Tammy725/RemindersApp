@@ -433,6 +433,16 @@
           </div>
         </section>
 
+        <div class="flex justify-start -ml-3">
+          <button
+            class="px-4 py-2 rounded-lg font-label-md transition-transform active:scale-95 flex items-center gap-2 shadow-sm text-on-surface font-body-md"
+            onclick="abrirModalHorario()"
+          >
+            <span class="material-symbols-outlined text-[18px]">add</span
+            >Configurar horario (reuniones diarias)
+          </button>
+        </div>
+
         <!-- Asistencia -->
         <section
           class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md premium-card"
@@ -528,13 +538,6 @@
               Presiona la fecha para ver la lista de tareas de ese día.
             </p>
           </div>
-          <button
-            class="px-4 py-2 rounded-lg font-label-md transition-transform active:scale-95 flex items-center gap-2 shadow-sm text-on-surface font-body-md"
-            onclick="abrirModalHorario()"
-          >
-            <span class="material-symbols-outlined text-[18px]">add</span
-            >Configurar horario (reuniones diarias)
-          </button>
         </section>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
           <section
@@ -2092,14 +2095,20 @@
           }
         }
         const preview = document.getElementById("time-preview");
-        if (preview)
+        if (preview) {
+          const h24 = (state.hora % 12) + (state.periodo === "PM" ? 12 : 0);
+          let totalMin = h24 * 60 + state.minuto;
+          totalMin = (totalMin - 5 + 1440) % 1440;
+          const hh = Math.floor(totalMin / 60);
+          const mm = totalMin % 60;
           preview.textContent =
             "Recordatorio configurado: " +
-            state.hora.toString().padStart(2, "0") +
+            (hh === 0 ? 12 : hh > 12 ? hh - 12 : hh).toString().padStart(2, "0") +
             ":" +
-            state.minuto.toString().padStart(2, "0") +
+            mm.toString().padStart(2, "0") +
             " " +
-            state.periodo;
+            (hh < 12 ? "AM" : "PM");
+        }
         actualizarHoraReunion();
       }
 
@@ -2169,7 +2178,7 @@
         guardarEstado();
         setTimeout(() => {
           cerrarModalHorario();
-          navigateTo("calendario");
+          navigateTo("hoy");
         }, 400);
       }
 
@@ -2529,7 +2538,7 @@
             "py-2 font-body-md relative cursor-pointer rounded-lg transition-colors";
           if (isSel) {
             cls += " bg-primary font-bold shadow-sm";
-            cls += hasPendingTodos ? " text-[#e57373]" : " text-on-primary";
+            cls += hasPendingTodos ? " text-error" : " text-on-primary";
           } else {
             cls += " hover:bg-surface-container-low";
             if (hasPendingTodos) cls += " text-error font-bold";
