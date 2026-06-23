@@ -1,1279 +1,2381 @@
-<!DOCTYPE html>
+<!doctype html>
 <html class="light" lang="es">
-<head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>SyncManager - Dashboard</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-<script id="tailwind-config">
-tailwind.config = {
-  darkMode: "class",
-  theme: {
-    extend: {
-      colors: {
-        outline: "#76777d", "inverse-primary": "#bec6e0", "on-primary": "#ffffff",
-        "surface-container-lowest": "#ffffff", "on-secondary-fixed-variant": "#005236",
-        surface: "#f7f9fb", "primary-fixed-dim": "#bec6e0", "surface-bright": "#f7f9fb",
-        "primary-fixed": "#dae2fd", secondary: "#006c49", "inverse-on-surface": "#eff1f3",
-        "on-error": "#ffffff", "outline-variant": "#c6c6cd", "primary-container": "#131b2e",
-        "error-container": "#ffdad6", "tertiary-container": "#0b1c30",
-        "surface-container": "#eceef0", "on-primary-fixed-variant": "#3f465c",
-        tertiary: "#000000", "secondary-fixed": "#6ffbbe", primary: "#000000",
-        "on-error-container": "#93000a", "surface-dim": "#d8dadc",
-        "surface-container-high": "#e6e8ea", "on-primary-fixed": "#131b2e",
-        "on-tertiary-fixed-variant": "#38485d", "secondary-fixed-dim": "#4edea3",
-        "on-tertiary-container": "#75859d", "on-secondary-fixed": "#002113",
-        "on-surface": "#191c1e", "on-surface-variant": "#45464d", "on-background": "#191c1e",
-        error: "#ba1a1a", "tertiary-fixed-dim": "#b7c8e1", "surface-tint": "#565e74",
-        "secondary-container": "#6cf8bb", "on-secondary": "#ffffff",
-        "on-primary-container": "#7c839b", "on-tertiary": "#ffffff",
-        "inverse-surface": "#2d3133", "surface-container-highest": "#e0e3e5",
-        "surface-container-low": "#f2f4f6", "tertiary-fixed": "#d3e4fe",
-        background: "#f7f9fb", "surface-variant": "#e0e3e5",
-        "on-tertiary-fixed": "#0b1c30", "on-secondary-container": "#00714d"
-      },
-      borderRadius: { DEFAULT: "0.125rem", lg: "0.25rem", xl: "0.5rem", full: "0.75rem" },
-      spacing: { "stack-lg": "48px", "margin-mobile": "20px", "margin-desktop": "64px",
-        "container-max": "1440px", "stack-sm": "12px", gutter: "24px",
-        "margin-tablet": "32px", "stack-md": "24px", unit: "8px" },
-      fontFamily: { "body-md": ["Inter"], "label-md": ["Inter"], "display-lg": ["Inter"],
-        "headline-md": ["Inter"], "headline-sm": ["Inter"], "display-lg-mobile": ["Inter"],
-        "body-lg": ["Inter"], "label-sm": ["Inter"], "body-sm": ["Inter"] },
-      fontSize: { "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
-        "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
-        "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
-        "headline-md": ["30px", { lineHeight: "38px", letterSpacing: "-0.01em", fontWeight: "600" }],
-        "headline-sm": ["24px", { lineHeight: "32px", fontWeight: "600" }],
-        "display-lg-mobile": ["36px", { lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "700" }],
-        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
-        "label-sm": ["11px", { lineHeight: "14px", fontWeight: "500" }],
-        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }] }
-    }
-  }
-}
-</script>
-<style>
-  body { font-family: 'Inter', sans-serif; min-height: max(884px, 100dvh); }
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; line-height: 1; }
-  .page { display: none; }
-  .page.active { display: block; }
-  .nav-btn.active { color: #000; }
-  .nav-btn.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
-  .fab { position: fixed; bottom: 90px; right: 20px; z-index: 100; width: 56px; height: 56px; border-radius: 50%; background: #006c49; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,108,73,0.4); cursor: pointer; transition: all 0.2s; }
-  .fab:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,108,73,0.5); }
-  .fab:active { transform: scale(0.95); }
-  .premium-card { background: #fff; border: 1px solid #eceef0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); transition: transform 0.2s ease, box-shadow 0.2s ease; }
-  .premium-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04); }
-  .bento-card { transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1); }
-  .bento-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); }
-  .voice-wave { display: flex; align-items: center; gap: 2px; height: 20px; }
-  .wave-bar { width: 2px; background-color: #006c49; border-radius: 1px; animation: wave 1.2s ease-in-out infinite; }
-  @keyframes wave { 0%,100% { height: 4px; } 50% { height: 16px; } }
-  .voice-ripple { animation: ripple 2s infinite; }
-  @keyframes ripple { 0% { transform: scale(1); opacity: 0.2; } 100% { transform: scale(1.6); opacity: 0; } }
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
-  @media (min-width: 768px) { .fab { bottom: 40px; right: 40px; } }
-  .checklist-text.checklist-done { opacity: 0.4; text-decoration: line-through; }
-  .todo-done .todo-text { text-decoration: line-through; opacity: 0.5; }
-  .todo-text { cursor: pointer; }
-  .checklist-text { cursor: pointer; }
-  .recording-active { background-color: #ba1a1a !important; }
-  .recording-active:hover { background-color: #93000a !important; }
-  .cal-today { background: #006c49; color: #fff; font-weight: 700; border-radius: 8px; }
-  .wave-bar { background-color: #006c49; }
-  .recording-active ~ .wave-bar { background-color: #ba1a1a; }
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SyncManager - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              outline: "#76777d",
+              "inverse-primary": "#bec6e0",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed-variant": "#005236",
+              surface: "#f7f9fb",
+              "primary-fixed-dim": "#bec6e0",
+              "surface-bright": "#f7f9fb",
+              "primary-fixed": "#dae2fd",
+              secondary: "#006c49",
+              "inverse-on-surface": "#eff1f3",
+              "on-error": "#ffffff",
+              "outline-variant": "#c6c6cd",
+              "primary-container": "#131b2e",
+              "error-container": "#ffdad6",
+              "tertiary-container": "#0b1c30",
+              "surface-container": "#eceef0",
+              "on-primary-fixed-variant": "#3f465c",
+              tertiary: "#000000",
+              "secondary-fixed": "#6ffbbe",
+              primary: "#000000",
+              "on-error-container": "#93000a",
+              "surface-dim": "#d8dadc",
+              "surface-container-high": "#e6e8ea",
+              "on-primary-fixed": "#131b2e",
+              "on-tertiary-fixed-variant": "#38485d",
+              "secondary-fixed-dim": "#4edea3",
+              "on-tertiary-container": "#75859d",
+              "on-secondary-fixed": "#002113",
+              "on-surface": "#191c1e",
+              "on-surface-variant": "#45464d",
+              "on-background": "#191c1e",
+              error: "#ba1a1a",
+              "tertiary-fixed-dim": "#b7c8e1",
+              "surface-tint": "#565e74",
+              "secondary-container": "#6cf8bb",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#7c839b",
+              "on-tertiary": "#ffffff",
+              "inverse-surface": "#2d3133",
+              "surface-container-highest": "#e0e3e5",
+              "surface-container-low": "#f2f4f6",
+              "tertiary-fixed": "#d3e4fe",
+              background: "#f7f9fb",
+              "surface-variant": "#e0e3e5",
+              "on-tertiary-fixed": "#0b1c30",
+              "on-secondary-container": "#00714d",
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem",
+            },
+            spacing: {
+              "stack-lg": "48px",
+              "margin-mobile": "20px",
+              "margin-desktop": "64px",
+              "container-max": "1440px",
+              "stack-sm": "12px",
+              gutter: "24px",
+              "margin-tablet": "32px",
+              "stack-md": "24px",
+              unit: "8px",
+            },
+            fontFamily: {
+              "body-md": ["Inter"],
+              "label-md": ["Inter"],
+              "display-lg": ["Inter"],
+              "headline-md": ["Inter"],
+              "headline-sm": ["Inter"],
+              "display-lg-mobile": ["Inter"],
+              "body-lg": ["Inter"],
+              "label-sm": ["Inter"],
+              "body-sm": ["Inter"],
+            },
+            fontSize: {
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-md": [
+                "12px",
+                {
+                  lineHeight: "16px",
+                  letterSpacing: "0.05em",
+                  fontWeight: "600",
+                },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "headline-md": [
+                "30px",
+                {
+                  lineHeight: "38px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-sm": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "600" },
+              ],
+              "display-lg-mobile": [
+                "36px",
+                {
+                  lineHeight: "44px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "label-sm": ["11px", { lineHeight: "14px", fontWeight: "500" }],
+              "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        min-height: max(884px, 100dvh);
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+        display: inline-block;
+        line-height: 1;
+      }
+      .page {
+        display: none;
+      }
+      .page.active {
+        display: block;
+      }
+      .nav-btn.active {
+        color: #000;
+      }
+      .nav-btn.active .material-symbols-outlined {
+        font-variation-settings: "FILL" 1;
+      }
+      .fab {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        z-index: 100;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #006c49;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 108, 73, 0.4);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .fab:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 108, 73, 0.5);
+      }
+      .fab:active {
+        transform: scale(0.95);
+      }
+      .premium-card {
+        background: #fff;
+        border: 1px solid #eceef0;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.05),
+          0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .premium-card:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.08),
+          0 4px 6px -2px rgba(0, 0, 0, 0.04);
+      }
+      .bento-card {
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        box-shadow:
+          0 1px 3px 0 rgba(0, 0, 0, 0.1),
+          0 1px 2px -1px rgba(0, 0, 0, 0.1);
+      }
+      .bento-card:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      }
+      .voice-wave {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        height: 20px;
+      }
+      .wave-bar {
+        width: 2px;
+        background-color: #006c49;
+        border-radius: 1px;
+        animation: wave 1.2s ease-in-out infinite;
+      }
+      @keyframes wave {
+        0%,
+        100% {
+          height: 4px;
+        }
+        50% {
+          height: 16px;
+        }
+      }
+      .voice-ripple {
+        animation: ripple 2s infinite;
+      }
+      @keyframes ripple {
+        0% {
+          transform: scale(1);
+          opacity: 0.2;
+        }
+        100% {
+          transform: scale(1.6);
+          opacity: 0;
+        }
+      }
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+      }
+      @media (min-width: 768px) {
+        .fab {
+          bottom: 40px;
+          right: 40px;
+        }
+      }
+      .checklist-text.checklist-done {
+        opacity: 0.4;
+        text-decoration: line-through;
+      }
+      .todo-done .todo-text {
+        text-decoration: line-through;
+        opacity: 0.5;
+      }
+      .todo-text {
+        cursor: pointer;
+      }
+      .checklist-text {
+        cursor: pointer;
+      }
+      .recording-active {
+        background-color: #ba1a1a !important;
+      }
+      .recording-active:hover {
+        background-color: #93000a !important;
+      }
+      .cal-today {
+        background: #006c49;
+        color: #fff;
+        font-weight: 700;
+        border-radius: 8px;
+      }
+      .wave-bar {
+        background-color: #006c49;
+      }
+      .recording-active ~ .wave-bar {
+        background-color: #ba1a1a;
+      }
 
-  /* MODAL */
-  .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 16px; }
-  .modal-overlay.active { display: flex; }
-  .modal-content { background: #fff; border-radius: 16px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
-</style>
-</head>
-<body class="bg-surface text-on-surface min-h-screen pb-28 md:pb-0">
-
-<!-- TOP APP BAR -->
-<header class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant px-margin-mobile md:px-margin-desktop h-16 flex justify-between items-center">
-  <div class="flex items-center gap-unit">
-    <button class="material-symbols-outlined text-primary p-unit hover:bg-surface-container-low transition-colors rounded-full">menu</button>
-    <div class="relative">
-      <button class="flex items-center gap-1 bg-transparent border-none p-0 cursor-pointer font-headline-sm font-bold text-on-surface whitespace-nowrap" id="page-title" onclick="if(curPage==='hoy')document.getElementById('hoy-date-input').showPicker()">Seleccionar fecha <span class="material-symbols-outlined text-[16px]">expand_more</span></button>
-      <input type="date" id="hoy-date-input" class="absolute top-10 right-0 z-50 opacity-0 h-0 overflow-hidden pointer-events-none" onchange="cambiarFechaHoy(this.value)">
-    </div>
-  </div>
-  <div class="flex items-center gap-stack-md">
-    <div class="hidden md:flex gap-gutter items-center">
-      <span class="font-label-md text-label-md text-outline" id="date-display"></span>
-    </div>
-    <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant">
-      <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcVwcqLdHZUpCzbz0HBYtF3V1NNWP41A_FoprqU7nSGjmUxPQkSM-iFG9jNc5eovb9tgWuyqMxJYKuIlrPEpNAiavifRXn6w_cQOd3byUQzM5wFnuETPBEs0uO8lKBsLMjPwz4KuJyhGkOYqFiCMPFQRmW5TMU6fgWjF0Z1FAJ5Z4IkFm2nR5esNhahCIIznZNxhvxcbdq_7uvep3uBChk84yTOxutUwT7GkBtYcJcdH8RPtrVyPr6BYkVsMYsaqcw5Qdv96KylZs" alt="Profile">
-    </div>
-  </div>
-</header>
-
-<!-- PAGE: HOY -->
-<div id="page-hoy" class="page active">
-  <main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-10 space-y-stack-md">
-    <!-- Date Header + Counters -->
-    <section class="flex items-start justify-between">
-      <div>
-        <p class="text-xs font-medium text-outline uppercase tracking-widest mb-0.5" id="date-dayname"></p>
-        <div class="flex items-center gap-2">
-          <h1 class="text-2xl font-heading font-bold text-on-surface" id="date-full"></h1>
-        </div>
-      </div>
-      <div class="flex gap-2">
-        <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 text-center shadow-sm">
-          <p class="text-lg font-heading font-bold text-on-surface" id="counter-todos">0/0</p>
-          <p class="text-[11px] text-outline font-medium uppercase tracking-wide">Tareas</p>
-        </div>
-        <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 text-center shadow-sm">
-          <p class="text-lg font-heading font-bold text-on-surface" id="counter-checklist">0/0</p>
-          <p class="text-[11px] text-outline font-medium uppercase tracking-wide">Check</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Asistencia -->
-    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md premium-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="font-headline-sm text-headline-sm text-primary">Asistencia</h3>
-          <p class="font-label-sm text-outline">Reunión Diaria · <span id="meeting-time">09:00 AM</span></p>
-        </div>
-        <div class="flex gap-2">
-          <button class="px-4 py-2 rounded-lg border border-outline-variant text-outline font-label-md hover:border-on-surface hover:text-on-surface transition-all attendance-btn" data-value="true">Asistí</button>
-          <button class="px-4 py-2 rounded-lg border border-outline-variant text-outline font-label-md hover:border-on-surface hover:text-on-surface transition-all attendance-btn" data-value="false">No asistí</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="space-y-stack-sm">
-      <div class="flex justify-between items-baseline">
-        <h2 class="font-headline-sm text-on-surface">Checklist de Temas</h2>
-        <span class="font-label-sm text-outline uppercase tracking-wider checklist-counter" id="checklist-counter">3 pendientes</span>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-unit" id="checklist-container">
-        <label class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group" data-checklist-id="0">
-          <input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb" data-checklist-id="0" type="checkbox">
-          <div class="flex flex-col checklist-text">
-            <span class="font-body-md font-semibold text-on-surface">Feedback Semanal</span>
-            <span class="font-label-sm text-outline">Revisión de métricas equipo A</span>
-          </div>
-        </label>
-        <label class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group" data-checklist-id="1">
-          <input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb" data-checklist-id="1" type="checkbox">
-          <div class="flex flex-col checklist-text">
-            <span class="font-body-md font-semibold text-on-surface">Objetivos Q4</span>
-            <span class="font-label-sm text-outline">Alineación con roadmap técnico</span>
-          </div>
-        </label>
-        <label class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group" data-checklist-id="2">
-          <input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb" data-checklist-id="2" type="checkbox">
-          <div class="flex flex-col checklist-text">
-            <span class="font-body-md font-semibold text-on-surface">Bloqueos Críticos</span>
-            <span class="font-label-sm text-outline">Infraestructura y despliegue</span>
-          </div>
-        </label>
-      </div>
-    </section>
-    <section class="space-y-stack-sm">
-      <div class="flex justify-between items-baseline">
-        <h2 class="font-headline-sm text-on-surface">To-do del Día</h2>
-        <span class="font-label-sm text-outline uppercase tracking-wider" id="todo-counter">0 pendientes</span>
-      </div>
-      <div class="flex gap-unit items-center">
-        <input id="todo-input" class="flex-1 h-10 px-3 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-on-surface" placeholder="Escribe una tarea...">
-        <input id="todo-date" class="h-10 px-3 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-on-surface" type="date">
-        <button id="todo-add-btn" class="h-10 w-10 rounded-lg bg-primary text-on-primary text-xl font-bold flex items-center justify-center hover:opacity-90 transition-all">+</button>
-      </div>
-      <div class="premium-card rounded-xl overflow-hidden divide-y divide-outline-variant/30" id="todo-container"></div>
-    </section>
-
-  </main>
-</div>
-
-<!-- PAGE: CALENDARIO -->
-<div id="page-calendario" class="page">
-  <main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-10 space-y-stack-md">
-    <section class="mt-stack-md mb-stack-md flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-      <div>
-        <h1 class="font-headline-md text-headline-md text-primary">Calendario</h1>
-        <p class="text-on-surface-variant font-body-md mt-2">Presiona la fecha para ver la lista de tareas de ese día.</p>
-      </div>
-      <button class="px-4 py-2 rounded-lg font-label-md transition-transform active:scale-95 flex items-center gap-2 shadow-sm text-on-surface font-body-md" onclick="abrirModalHorario()">
-        <span class="material-symbols-outlined text-[18px]">add</span>Configurar horario (reuniones diarias)
-      </button>
-    </section>
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-      <section class="lg:col-span-5 bg-surface-container-lowest rounded-xl border border-outline-variant p-stack-md shadow-sm">
-        <div class="flex items-center justify-between mb-stack-md">
-          <h3 class="font-headline-sm text-headline-sm text-primary" id="cal-month-year"></h3>
-          <div class="flex gap-1">
-            <button class="p-2 hover:bg-surface-container-low rounded-full transition-colors" onclick="shiftMonth(-1)"><span class="material-symbols-outlined">chevron_left</span></button>
-            <button class="p-2 hover:bg-surface-container-low rounded-full transition-colors" onclick="shiftMonth(1)"><span class="material-symbols-outlined">chevron_right</span></button>
-          </div>
-        </div>
-        <div class="grid grid-cols-7 gap-y-4 text-center" id="cal-grid"></div>
-        <div class="mt-stack-md pt-stack-md border-t border-outline-variant flex gap-4 items-center">
-          <div class="flex items-center gap-2" id="cal-meeting-indicator"></div>
-        </div>
-      </section>
-      <section class="lg:col-span-7 space-y-4">
-        <h2 class="font-headline-sm text-on-surface">Tareas del <span id="cal-selected-date">23 Oct 2023</span></h2>
-        <div class="premium-card rounded-xl overflow-hidden divide-y divide-outline-variant/30" id="cal-todo-container"></div>
-        <h2 class="font-headline-sm text-on-surface pt-2">Checklist</h2>
-        <div class="premium-card rounded-xl overflow-hidden divide-y divide-outline-variant/30" id="cal-checklist-container"></div>
-      </section>
-    </div>
-  </main>
-</div>
-
-<!-- PAGE: METRICAS -->
-<div id="page-metricas" class="page">
-  <main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-1 space-y-6">
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
-      <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm">
-        <div class="flex justify-between items-start mb-2">
-          <span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Reuniones</span>
-          <span class="material-symbols-outlined text-secondary text-xl">groups</span>
-        </div>
-        <span class="text-headline-md font-headline-md text-primary" id="kpi-asistencia">0%</span>
-        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2" id="kpi-asistencia-det">0 / 0 reuniones realizadas</span>
-      </div>
-      <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm">
-        <div class="flex justify-between items-start mb-2">
-          <span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Tareas</span>
-          <span class="material-symbols-outlined text-secondary text-xl">task_alt</span>
-        </div>
-        <span class="text-headline-md font-headline-md text-primary" id="kpi-tareas">0%</span>
-        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2" id="kpi-tareas-det">0 / 0 completadas</span>
-      </div>
-      <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm">
-        <div class="flex justify-between items-start mb-2">
-          <span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Checklist</span>
-          <span class="material-symbols-outlined text-secondary text-xl">checklist</span>
-        </div>
-        <span class="text-headline-md font-headline-md text-primary" id="kpi-checklist">0%</span>
-        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2" id="kpi-checklist-det">0 / 0 completadas</span>
-      </div>
-      <div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm">
-        <div class="flex justify-between items-start mb-2">
-          <span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Racha</span>
-          <span class="material-symbols-outlined text-secondary text-xl" style="font-variation-settings:'FILL'1;">local_fire_department</span>
-        </div>
-        <span class="text-headline-md font-headline-md text-primary" id="kpi-racha">0</span>
-        <span class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2">Reuniones consecutivos</span>
-      </div>
-    </section>
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-      <div class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
-        <h3 class="text-body-lg font-headline-sm text-primary mb-6">Tareas y Checklist</h3>
-        <div class="space-y-8">
-          <div>
-            <div class="flex justify-between text-label-md text-on-surface-variant mb-1">
-              <span>Tareas</span>
-              <span class="font-semibold" id="kpi-tareas-chart">0%</span>
-            </div>
-            <div class="h-3 bg-surface-container rounded-full overflow-hidden">
-              <div id="kpi-tareas-bar" class="h-full bg-[#000000] rounded-full" style="width:0%"></div>
-            </div>
-            <span class="text-label-sm text-outline mt-1 block" id="kpi-tareas-det-chart">0 / 0 completadas</span>
-          </div>
-          <div>
-            <div class="flex justify-between text-label-md text-on-surface-variant mb-1">
-              <span>Checklist</span>
-              <span class="font-semibold" id="kpi-checklist-chart">0%</span>
-            </div>
-            <div class="h-3 bg-surface-container rounded-full overflow-hidden">
-              <div id="kpi-checklist-bar" class="h-full bg-[#000000] rounded-full" style="width:0%"></div>
-            </div>
-            <span class="text-label-sm text-outline mt-1 block" id="kpi-checklist-det-chart">0 / 0 completadas</span>
-          </div>
-        </div>
-      </div>
-      <div class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm flex flex-col items-center justify-center py-4">
-        <h3 class="text-body-lg font-headline-sm text-primary mb-6">Asistencia a Reuniones</h3>
-        <div class="relative inline-flex items-center justify-center">
-          <svg width="160" height="160" viewBox="0 0 42 42" class="-rotate-90">
-            <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#d4d4d4" stroke-width="3.5"/>
-            <circle id="kpi-asistencia-ring" cx="21" cy="21" r="15.9155" fill="none" stroke="#000000" stroke-width="3.5" stroke-dasharray="0 100" stroke-linecap="round"/>
-          </svg>
-          <span class="absolute text-3xl font-bold text-primary" id="kpi-asistencia-chart">0%</span>
-        </div>
-        <span class="text-label-sm text-on-surface-variant mt-4" id="kpi-asistencia-det-chart">0 / 0 reuniones realizadas</span>
-      </div>
-    </section>
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mt-8 mb-2">
-      <div class="lg:col-span-6 lg:col-start-4">
-        <button class="w-full bg-black text-gray-300 px-gutter py-3 rounded-full font-label-md text-label-md hover:brightness-150 transition-all cursor-pointer" onclick="descargarPDF()">
-          DESCARGAR REPORTE PDF
+      /* MODAL */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-content {
+        background: #fff;
+        border-radius: 16px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface min-h-screen pb-28 md:pb-0">
+    <!-- TOP APP BAR -->
+    <header
+      class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant px-margin-mobile md:px-margin-desktop h-16 flex justify-between items-center"
+    >
+      <div class="flex items-center gap-unit">
+        <button
+          class="material-symbols-outlined text-primary p-unit hover:bg-surface-container-low transition-colors rounded-full"
+        >
+          menu
         </button>
-      </div>
-    </div>
-  </main>
-</div>
-
-<!-- PAGE: AJUSTES (empty - config moved to modal) -->
-<div id="page-ajustes" class="page"></div>
-
-<!-- MODAL: Configurar horario -->
-<div class="modal-overlay" id="modal-horario" onclick="if(event.target===this)cerrarModalHorario()">
-  <div class="modal-content p-stack-md">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-headline-md text-headline-md text-primary">Configura tu reunión</h2>
-      <button class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center" onclick="cerrarModalHorario()">
-        <span class="material-symbols-outlined text-outline">close</span>
-      </button>
-    </div>
-    <p class="font-body-md text-body-md text-on-surface-variant mb-4">Elige tu hora diaria para recibir el recordatorio</p>
-    <div class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
-      <div class="absolute -right-20 -top-20 w-64 h-64 opacity-5 pointer-events-none">
-        <span class="material-symbols-outlined text-[200px]">schedule</span>
-      </div>
-      <div class="flex-1 w-full flex flex-col items-center justify-center">
-        <div class="flex items-center gap-xs" style="font-size:48px;line-height:56px;letter-spacing:-0.02em;font-weight:700;color:#000;">
-          <div class="flex flex-col items-center">
-            <button class="p-1 hover:bg-surface-container-low rounded-lg transition-colors group" onclick="adjHour(1)">
-              <span class="material-symbols-outlined text-outline group-hover:text-primary">expand_less</span>
-            </button>
-            <span class="w-20 text-center" id="hour-val">09</span>
-            <button class="p-1 hover:bg-surface-container-low rounded-lg transition-colors group" onclick="adjHour(-1)">
-              <span class="material-symbols-outlined text-outline group-hover:text-primary">expand_more</span>
-            </button>
-          </div>
-          <span>:</span>
-          <div class="flex flex-col items-center">
-            <button class="p-1 hover:bg-surface-container-low rounded-lg transition-colors group" onclick="adjMin(1)">
-              <span class="material-symbols-outlined text-outline group-hover:text-primary">expand_less</span>
-            </button>
-            <span class="w-20 text-center" id="min-val">30</span>
-            <button class="p-1 hover:bg-surface-container-low rounded-lg transition-colors group" onclick="adjMin(-1)">
-              <span class="material-symbols-outlined text-outline group-hover:text-primary">expand_more</span>
-            </button>
-          </div>
-          <div class="flex flex-col gap-0.5 ml-2">
-            <button class="px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all bg-surface-container-high text-on-surface" id="am-btn" onclick="setAmPm('AM')">AM</button>
-            <button class="px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all text-on-surface-variant" id="pm-btn" onclick="setAmPm('PM')">PM</button>
-          </div>
+        <div class="relative">
+          <button
+            class="flex items-center gap-1 bg-transparent border-none p-0 cursor-pointer font-headline-sm font-bold text-on-surface whitespace-nowrap"
+            id="page-title"
+            onclick="
+              if (curPage === 'hoy')
+                document.getElementById('hoy-date-input').showPicker();
+            "
+          >
+            Seleccionar fecha
+            <span class="material-symbols-outlined text-[16px]"
+              >expand_more</span
+            >
+          </button>
+          <input
+            type="date"
+            id="hoy-date-input"
+            class="absolute top-10 right-0 z-50 opacity-0 h-0 overflow-hidden pointer-events-none"
+            onchange="cambiarFechaHoy(this.value)"
+          />
         </div>
-        <p class="font-label-sm text-label-sm text-primary mt-4" id="time-preview">Recordatorio configurado: 09:30 AM</p>
       </div>
-      <div class="hidden md:block w-px h-40 bg-outline-variant"></div>
-      <div class="flex-1 w-full space-y-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
-            <span class="material-symbols-outlined text-outline">notifications_active</span>
-          </div>
+      <div class="flex items-center gap-stack-md">
+        <div class="hidden md:flex gap-gutter items-center">
+          <span
+            class="font-label-md text-label-md text-outline"
+            id="date-display"
+          ></span>
+        </div>
+        <div
+          class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant"
+        >
+          <img
+            class="w-8 h-8 object-contain"
+            src="security-code.png"
+            alt="Profile"
+          />
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE: HOY -->
+    <div id="page-hoy" class="page active">
+      <main
+        class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-10 space-y-stack-md"
+      >
+        <!-- Date Header + Counters -->
+        <section class="flex items-start justify-between">
           <div>
-            <h3 class="font-label-md text-label-md text-primary">Recordatorios Inteligentes</h3>
-            <p class="font-label-sm text-label-sm text-on-surface-variant">Se enviará una alerta 5 min antes.</p>
+            <p
+              class="text-xs font-medium text-outline uppercase tracking-widest mb-0.5"
+              id="date-dayname"
+            ></p>
+            <div class="flex items-center gap-2">
+              <h1
+                class="text-2xl font-heading font-bold text-on-surface"
+                id="date-full"
+              ></h1>
+            </div>
           </div>
-        </div>
-        <div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/50">
-          <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Ubicación</label>
-          <div class="relative" id="ubicacion-wrapper">
-            <div class="flex items-center justify-between pointer-events-none">
-              <span class="font-body-md text-body-md text-primary" id="ubicacion-text">Seleccionar ubicación</span>
-              <div class="flex items-center gap-1 pointer-events-none">
-                <span class="material-symbols-outlined text-outline">public</span>
-                <span class="material-symbols-outlined text-outline">expand_more</span>
+          <div class="flex gap-2">
+            <div
+              class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 text-center shadow-sm"
+            >
+              <p
+                class="text-lg font-heading font-bold text-on-surface"
+                id="counter-todos"
+              >
+                0/0
+              </p>
+              <p
+                class="text-[11px] text-outline font-medium uppercase tracking-wide"
+              >
+                Tareas
+              </p>
+            </div>
+            <div
+              class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 text-center shadow-sm"
+            >
+              <p
+                class="text-lg font-heading font-bold text-on-surface"
+                id="counter-checklist"
+              >
+                0/0
+              </p>
+              <p
+                class="text-[11px] text-outline font-medium uppercase tracking-wide"
+              >
+                Check
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Asistencia -->
+        <section
+          class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md premium-card"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-headline-sm text-headline-sm text-primary">
+                Asistencia
+              </h3>
+              <p class="font-label-sm text-outline">
+                Reunión Diaria · <span id="meeting-time">09:00 AM</span>
+              </p>
+            </div>
+            <div class="flex gap-2">
+              <button
+                class="px-4 py-2 rounded-lg border border-outline-variant text-outline font-label-md hover:border-on-surface hover:text-on-surface transition-all attendance-btn"
+                data-value="true"
+              >
+                Asistí
+              </button>
+              <button
+                class="px-4 py-2 rounded-lg border border-outline-variant text-outline font-label-md hover:border-on-surface hover:text-on-surface transition-all attendance-btn"
+                data-value="false"
+              >
+                No asistí
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-stack-sm">
+          <div class="flex justify-between items-baseline">
+            <h2 class="font-headline-sm text-on-surface">Checklist de Temas</h2>
+            <span
+              class="font-label-sm text-outline uppercase tracking-wider checklist-counter"
+              id="checklist-counter"
+              >3 pendientes</span
+            >
+          </div>
+          <div
+            class="grid grid-cols-1 md:grid-cols-3 gap-unit"
+            id="checklist-container"
+          >
+            <label
+              class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group"
+              data-checklist-id="0"
+            >
+              <input
+                class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb"
+                data-checklist-id="0"
+                type="checkbox"
+              />
+              <div class="flex flex-col checklist-text">
+                <span class="font-body-md font-semibold text-on-surface"
+                  >Feedback Semanal</span
+                >
+                <span class="font-label-sm text-outline"
+                  >Revisión de métricas equipo A</span
+                >
+              </div>
+            </label>
+            <label
+              class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group"
+              data-checklist-id="1"
+            >
+              <input
+                class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb"
+                data-checklist-id="1"
+                type="checkbox"
+              />
+              <div class="flex flex-col checklist-text">
+                <span class="font-body-md font-semibold text-on-surface"
+                  >Objetivos Q4</span
+                >
+                <span class="font-label-sm text-outline"
+                  >Alineación con roadmap técnico</span
+                >
+              </div>
+            </label>
+            <label
+              class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group"
+              data-checklist-id="2"
+            >
+              <input
+                class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb"
+                data-checklist-id="2"
+                type="checkbox"
+              />
+              <div class="flex flex-col checklist-text">
+                <span class="font-body-md font-semibold text-on-surface"
+                  >Bloqueos Críticos</span
+                >
+                <span class="font-label-sm text-outline"
+                  >Infraestructura y despliegue</span
+                >
+              </div>
+            </label>
+          </div>
+        </section>
+        <section class="space-y-stack-sm">
+          <div class="flex justify-between items-baseline">
+            <h2 class="font-headline-sm text-on-surface">To-do del Día</h2>
+            <span
+              class="font-label-sm text-outline uppercase tracking-wider"
+              id="todo-counter"
+              >0 pendientes</span
+            >
+          </div>
+          <div class="flex gap-unit items-center">
+            <input
+              id="todo-input"
+              class="flex-1 h-10 px-3 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-on-surface"
+              placeholder="Escribe una tarea..."
+            />
+            <input
+              id="todo-date"
+              class="h-10 px-3 rounded-lg border border-outline-variant text-sm focus:outline-none focus:border-on-surface"
+              type="date"
+            />
+            <button
+              id="todo-add-btn"
+              class="h-10 w-10 rounded-lg bg-primary text-on-primary text-xl font-bold flex items-center justify-center hover:opacity-90 transition-all"
+            >
+              +
+            </button>
+          </div>
+          <div
+            class="premium-card rounded-xl overflow-hidden divide-y divide-outline-variant/30"
+            id="todo-container"
+          ></div>
+        </section>
+      </main>
+    </div>
+
+    <!-- PAGE: CALENDARIO -->
+    <div id="page-calendario" class="page">
+      <main
+        class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-10 space-y-stack-md"
+      >
+        <section
+          class="mt-stack-md mb-stack-md flex flex-col md:flex-row md:items-end md:justify-between gap-4"
+        >
+          <div>
+            <h1 class="font-headline-md text-headline-md text-primary">
+              Calendario
+            </h1>
+            <p class="text-on-surface-variant font-body-md mt-2">
+              Presiona la fecha para ver la lista de tareas de ese día.
+            </p>
+          </div>
+          <button
+            class="px-4 py-2 rounded-lg font-label-md transition-transform active:scale-95 flex items-center gap-2 shadow-sm text-on-surface font-body-md"
+            onclick="abrirModalHorario()"
+          >
+            <span class="material-symbols-outlined text-[18px]">add</span
+            >Configurar horario (reuniones diarias)
+          </button>
+        </section>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+          <section
+            class="lg:col-span-5 bg-surface-container-lowest rounded-xl border border-outline-variant p-stack-md shadow-sm"
+          >
+            <div class="flex items-center justify-between mb-stack-md">
+              <h3
+                class="font-headline-sm text-headline-sm text-primary"
+                id="cal-month-year"
+              ></h3>
+              <div class="flex gap-1">
+                <button
+                  class="p-2 hover:bg-surface-container-low rounded-full transition-colors"
+                  onclick="shiftMonth(-1)"
+                >
+                  <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button
+                  class="p-2 hover:bg-surface-container-low rounded-full transition-colors"
+                  onclick="shiftMonth(1)"
+                >
+                  <span class="material-symbols-outlined">chevron_right</span>
+                </button>
               </div>
             </div>
-            <select id="ubicacion-select" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="cambiarUbicacion(this.value)">
-              <option value="">Seleccionar ubicación</option>
-              <optgroup label="Sucursal El Fuerte">
-                <option value="El Fuerte, San Miguelito">San Miguelito</option>
-                <option value="El Fuerte, Westland">Westland</option>
-                <option value="El Fuerte, Villa Zaita">Villa Zaita</option>
-                <option value="El Fuerte, 24 de Diciembre">24 de Diciembre</option>
-                <option value="El Fuerte, Federal Mall">Federal Mall</option>
-                <option value="El Fuerte, Burunga">Burunga</option>
-              </optgroup>
-              <optgroup label="Sucursal La Onda">
-                <option value="La Onda, Los Pueblos">Los Pueblos</option>
-                <option value="La Onda, Villa Lucre">Villa Lucre</option>
-                <option value="La Onda, El Dorado">El Dorado</option>
-                <option value="La Onda, Gran Estación">Gran Estación</option>
-                <option value="La Onda, Calidonia">Calidonia</option>
-                <option value="La Onda, Los Andes">Los Andes</option>
-              </optgroup>
-              <option value="Torre BICSA">Torre BICSA</option>
-              <option value="Century, Tumba Muerto">Century, Tumba Muerto</option>
-            </select>
+            <div
+              class="grid grid-cols-7 gap-y-4 text-center"
+              id="cal-grid"
+            ></div>
+            <div
+              class="mt-stack-md pt-stack-md border-t border-outline-variant flex gap-4 items-center"
+            >
+              <div
+                class="flex items-center gap-2"
+                id="cal-meeting-indicator"
+              ></div>
+            </div>
+          </section>
+          <section class="lg:col-span-7 space-y-4">
+            <h2 class="font-headline-sm text-on-surface">
+              Tareas del <span id="cal-selected-date">23 Oct 2023</span>
+            </h2>
+            <div
+              class="premium-card rounded-xl overflow-hidden divide-y divide-outline-variant/30"
+              id="cal-todo-container"
+            ></div>
+            <h2 class="font-headline-sm text-on-surface pt-2">Checklist</h2>
+            <div
+              class="premium-card rounded-xl overflow-hidden divide-y divide-outline-variant/30"
+              id="cal-checklist-container"
+            ></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- PAGE: METRICAS -->
+    <div id="page-metricas" class="page">
+      <main
+        class="pt-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-1 space-y-6"
+      >
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+          <div
+            class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm"
+          >
+            <div class="flex justify-between items-start mb-2">
+              <span
+                class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider"
+                >Reuniones</span
+              >
+              <span class="material-symbols-outlined text-secondary text-xl"
+                >groups</span
+              >
+            </div>
+            <span
+              class="text-headline-md font-headline-md text-primary"
+              id="kpi-asistencia"
+              >0%</span
+            >
+            <span
+              class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2"
+              id="kpi-asistencia-det"
+              >0 / 0 reuniones realizadas</span
+            >
+          </div>
+          <div
+            class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm"
+          >
+            <div class="flex justify-between items-start mb-2">
+              <span
+                class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider"
+                >Tareas</span
+              >
+              <span class="material-symbols-outlined text-secondary text-xl"
+                >task_alt</span
+              >
+            </div>
+            <span
+              class="text-headline-md font-headline-md text-primary"
+              id="kpi-tareas"
+              >0%</span
+            >
+            <span
+              class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2"
+              id="kpi-tareas-det"
+              >0 / 0 completadas</span
+            >
+          </div>
+          <div
+            class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm"
+          >
+            <div class="flex justify-between items-start mb-2">
+              <span
+                class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider"
+                >Checklist</span
+              >
+              <span class="material-symbols-outlined text-secondary text-xl"
+                >checklist</span
+              >
+            </div>
+            <span
+              class="text-headline-md font-headline-md text-primary"
+              id="kpi-checklist"
+              >0%</span
+            >
+            <span
+              class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2"
+              id="kpi-checklist-det"
+              >0 / 0 completadas</span
+            >
+          </div>
+          <div
+            class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl shadow-sm"
+          >
+            <div class="flex justify-between items-start mb-2">
+              <span
+                class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider"
+                >Racha</span
+              >
+              <span
+                class="material-symbols-outlined text-secondary text-xl"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >local_fire_department</span
+              >
+            </div>
+            <span
+              class="text-headline-md font-headline-md text-primary"
+              id="kpi-racha"
+              >0</span
+            >
+            <span
+              class="block text-label-sm font-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full w-fit mt-2"
+              >Reuniones consecutivos</span
+            >
+          </div>
+        </section>
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+          <div
+            class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm"
+          >
+            <h3 class="text-body-lg font-headline-sm text-primary mb-6">
+              Tareas y Checklist
+            </h3>
+            <div class="space-y-8">
+              <div>
+                <div
+                  class="flex justify-between text-label-md text-on-surface-variant mb-1"
+                >
+                  <span>Tareas</span>
+                  <span class="font-semibold" id="kpi-tareas-chart">0%</span>
+                </div>
+                <div
+                  class="h-3 bg-surface-container rounded-full overflow-hidden"
+                >
+                  <div
+                    id="kpi-tareas-bar"
+                    class="h-full bg-[#000000] rounded-full"
+                    style="width: 0%"
+                  ></div>
+                </div>
+                <span
+                  class="text-label-sm text-outline mt-1 block"
+                  id="kpi-tareas-det-chart"
+                  >0 / 0 completadas</span
+                >
+              </div>
+              <div>
+                <div
+                  class="flex justify-between text-label-md text-on-surface-variant mb-1"
+                >
+                  <span>Checklist</span>
+                  <span class="font-semibold" id="kpi-checklist-chart">0%</span>
+                </div>
+                <div
+                  class="h-3 bg-surface-container rounded-full overflow-hidden"
+                >
+                  <div
+                    id="kpi-checklist-bar"
+                    class="h-full bg-[#000000] rounded-full"
+                    style="width: 0%"
+                  ></div>
+                </div>
+                <span
+                  class="text-label-sm text-outline mt-1 block"
+                  id="kpi-checklist-det-chart"
+                  >0 / 0 completadas</span
+                >
+              </div>
+            </div>
+          </div>
+          <div
+            class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm flex flex-col items-center justify-center py-4"
+          >
+            <h3 class="text-body-lg font-headline-sm text-primary mb-6">
+              Asistencia a Reuniones
+            </h3>
+            <div class="relative inline-flex items-center justify-center">
+              <svg
+                width="160"
+                height="160"
+                viewBox="0 0 42 42"
+                class="-rotate-90"
+              >
+                <circle
+                  cx="21"
+                  cy="21"
+                  r="15.9155"
+                  fill="none"
+                  stroke="#d4d4d4"
+                  stroke-width="3.5"
+                />
+                <circle
+                  id="kpi-asistencia-ring"
+                  cx="21"
+                  cy="21"
+                  r="15.9155"
+                  fill="none"
+                  stroke="#000000"
+                  stroke-width="3.5"
+                  stroke-dasharray="0 100"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <span
+                class="absolute text-3xl font-bold text-primary"
+                id="kpi-asistencia-chart"
+                >0%</span
+              >
+            </div>
+            <span
+              class="text-label-sm text-on-surface-variant mt-4"
+              id="kpi-asistencia-det-chart"
+              >0 / 0 reuniones realizadas</span
+            >
+          </div>
+        </section>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mt-8 mb-2">
+          <div class="lg:col-span-6 lg:col-start-4">
+            <button
+              class="w-full bg-black text-gray-300 px-gutter py-3 rounded-full font-label-md text-label-md hover:brightness-150 transition-all cursor-pointer"
+              onclick="descargarPDF()"
+            >
+              DESCARGAR REPORTE PDF
+            </button>
           </div>
         </div>
-        <div class="flex gap-2">
-          <div class="flex-1 p-2 bg-surface rounded-lg border border-outline-variant text-center cursor-pointer hover:border-secondary transition-colors" onclick="presetTime(8,0,'AM')">
-            <span class="block font-label-sm text-label-sm text-outline">Temprano</span>
-            <span class="font-label-md text-label-md text-primary">08:00 AM</span>
+      </main>
+    </div>
+
+    <!-- PAGE: AJUSTES (empty - config moved to modal) -->
+    <div id="page-ajustes" class="page"></div>
+
+    <!-- MODAL: Configurar horario -->
+    <div
+      class="modal-overlay"
+      id="modal-horario"
+      onclick="if (event.target === this) cerrarModalHorario();"
+    >
+      <div class="modal-content p-stack-md">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-headline-md text-headline-md text-primary">
+            Configura tu reunión
+          </h2>
+          <button
+            class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center"
+            onclick="cerrarModalHorario()"
+          >
+            <span class="material-symbols-outlined text-outline">close</span>
+          </button>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-4">
+          Elige tu hora diaria para recibir el recordatorio
+        </p>
+        <div
+          class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md flex flex-col md:flex-row items-center gap-6 relative overflow-hidden"
+        >
+          <div
+            class="absolute -right-20 -top-20 w-64 h-64 opacity-5 pointer-events-none"
+          >
+            <span class="material-symbols-outlined text-[200px]">schedule</span>
           </div>
-          <div class="flex-1 p-2 bg-surface rounded-lg border border-outline-variant text-center cursor-pointer hover:border-secondary transition-colors" onclick="presetTime(10,30,'AM')">
-            <span class="block font-label-sm text-label-sm text-outline">Media Mañana</span>
-            <span class="font-label-md text-label-md text-primary">10:30 AM</span>
+          <div class="flex-1 w-full flex flex-col items-center justify-center">
+            <div
+              class="flex items-center gap-xs"
+              style="
+                font-size: 48px;
+                line-height: 56px;
+                letter-spacing: -0.02em;
+                font-weight: 700;
+                color: #000;
+              "
+            >
+              <div class="flex flex-col items-center">
+                <button
+                  class="p-1 hover:bg-surface-container-low rounded-lg transition-colors group"
+                  onclick="adjHour(1)"
+                >
+                  <span
+                    class="material-symbols-outlined text-outline group-hover:text-primary"
+                    >expand_less</span
+                  >
+                </button>
+                <span class="w-20 text-center" id="hour-val">09</span>
+                <button
+                  class="p-1 hover:bg-surface-container-low rounded-lg transition-colors group"
+                  onclick="adjHour(-1)"
+                >
+                  <span
+                    class="material-symbols-outlined text-outline group-hover:text-primary"
+                    >expand_more</span
+                  >
+                </button>
+              </div>
+              <span>:</span>
+              <div class="flex flex-col items-center">
+                <button
+                  class="p-1 hover:bg-surface-container-low rounded-lg transition-colors group"
+                  onclick="adjMin(1)"
+                >
+                  <span
+                    class="material-symbols-outlined text-outline group-hover:text-primary"
+                    >expand_less</span
+                  >
+                </button>
+                <span class="w-20 text-center" id="min-val">30</span>
+                <button
+                  class="p-1 hover:bg-surface-container-low rounded-lg transition-colors group"
+                  onclick="adjMin(-1)"
+                >
+                  <span
+                    class="material-symbols-outlined text-outline group-hover:text-primary"
+                    >expand_more</span
+                  >
+                </button>
+              </div>
+              <div class="flex flex-col gap-0.5 ml-2">
+                <button
+                  class="px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all bg-surface-container-high text-on-surface"
+                  id="am-btn"
+                  onclick="setAmPm('AM')"
+                >
+                  AM
+                </button>
+                <button
+                  class="px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all text-on-surface-variant"
+                  id="pm-btn"
+                  onclick="setAmPm('PM')"
+                >
+                  PM
+                </button>
+              </div>
+            </div>
+            <p
+              class="font-label-sm text-label-sm text-primary mt-4"
+              id="time-preview"
+            >
+              Recordatorio configurado: 09:30 AM
+            </p>
+          </div>
+          <div class="hidden md:block w-px h-40 bg-outline-variant"></div>
+          <div class="flex-1 w-full space-y-4">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-outline"
+                  >notifications_active</span
+                >
+              </div>
+              <div>
+                <h3 class="font-label-md text-label-md text-primary">
+                  Recordatorios Inteligentes
+                </h3>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">
+                  Se enviará una alerta 5 min antes.
+                </p>
+              </div>
+            </div>
+            <div
+              class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/50"
+            >
+              <label
+                class="block font-label-sm text-label-sm text-on-surface-variant mb-1"
+                >Ubicación</label
+              >
+              <div class="relative" id="ubicacion-wrapper">
+                <div
+                  class="flex items-center justify-between pointer-events-none"
+                >
+                  <span
+                    class="font-body-md text-body-md text-primary"
+                    id="ubicacion-text"
+                    >Seleccionar ubicación</span
+                  >
+                  <div class="flex items-center gap-1 pointer-events-none">
+                    <span class="material-symbols-outlined text-outline"
+                      >public</span
+                    >
+                    <span class="material-symbols-outlined text-outline"
+                      >expand_more</span
+                    >
+                  </div>
+                </div>
+                <select
+                  id="ubicacion-select"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  onchange="cambiarUbicacion(this.value)"
+                >
+                  <option value="">Seleccionar ubicación</option>
+                  <optgroup label="Sucursal El Fuerte">
+                    <option value="El Fuerte, San Miguelito">
+                      San Miguelito
+                    </option>
+                    <option value="El Fuerte, Westland">Westland</option>
+                    <option value="El Fuerte, Villa Zaita">Villa Zaita</option>
+                    <option value="El Fuerte, 24 de Diciembre">
+                      24 de Diciembre
+                    </option>
+                    <option value="El Fuerte, Federal Mall">
+                      Federal Mall
+                    </option>
+                    <option value="El Fuerte, Burunga">Burunga</option>
+                  </optgroup>
+                  <optgroup label="Sucursal La Onda">
+                    <option value="La Onda, Los Pueblos">Los Pueblos</option>
+                    <option value="La Onda, Villa Lucre">Villa Lucre</option>
+                    <option value="La Onda, El Dorado">El Dorado</option>
+                    <option value="La Onda, Gran Estación">
+                      Gran Estación
+                    </option>
+                    <option value="La Onda, Calidonia">Calidonia</option>
+                    <option value="La Onda, Los Andes">Los Andes</option>
+                  </optgroup>
+                  <option value="Torre BICSA">Torre BICSA</option>
+                  <option value="Century, Tumba Muerto">
+                    Century, Tumba Muerto
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <div
+                class="flex-1 p-2 bg-surface rounded-lg border border-outline-variant text-center cursor-pointer hover:border-secondary transition-colors"
+                onclick="presetTime(8, 0, 'AM')"
+              >
+                <span class="block font-label-sm text-label-sm text-outline"
+                  >Temprano</span
+                >
+                <span class="font-label-md text-label-md text-primary"
+                  >08:00 AM</span
+                >
+              </div>
+              <div
+                class="flex-1 p-2 bg-surface rounded-lg border border-outline-variant text-center cursor-pointer hover:border-secondary transition-colors"
+                onclick="presetTime(10, 30, 'AM')"
+              >
+                <span class="block font-label-sm text-label-sm text-outline"
+                  >Media Mañana</span
+                >
+                <span class="font-label-md text-label-md text-primary"
+                  >10:30 AM</span
+                >
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="mt-6 w-full flex flex-col items-center gap-3">
-      <button class="w-full md:w-64 h-12 bg-primary text-on-secondary rounded-full font-headline-md flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-secondary/10" id="save-btn-modal" onclick="guardarHorario()">
-        <span>Guardar</span><span class="material-symbols-outlined">done_all</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: Transcripcion -->
-<div class="modal-overlay" id="modal-transcripcion" onclick="if(event.target===this)cerrarModalTranscripcion()">
-  <div class="modal-content p-stack-md">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-unit">
-        <span class="material-symbols-outlined text-secondary">description</span>
-        Transcripción
-      </h2>
-      <div class="flex items-center gap-2">
-        <div class="voice-wave">
-          <div class="wave-bar" style="animation-delay:0.1s;height:17px;"></div>
-          <div class="wave-bar" style="animation-delay:0.3s;height:11px;"></div>
-          <div class="wave-bar" style="animation-delay:0.2s;height:16px;"></div>
-          <div class="wave-bar" style="animation-delay:0.4s;height:16px;"></div>
-          <div class="wave-bar" style="animation-delay:0.1s;height:9px;"></div>
-        </div>
-        <button class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center" onclick="cerrarModalTranscripcion()">
-          <span class="material-symbols-outlined text-outline">close</span>
-        </button>
-      </div>
-    </div>
-    <div class="max-w-none mb-4">
-      <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-        "Hola equipo, para la sesión de hoy necesito que nos enfoquemos en el cierre del trimestre. Es fundamental <span class="bg-secondary-container/20 border-b border-secondary/30 px-1 rounded-sm">enviar el reporte de desempeño a Juan</span> antes del viernes para que pueda revisarlo con la junta. Además, estuve viendo los números y es necesario <span class="bg-secondary-container/20 border-b border-secondary/30 px-1 rounded-sm">revisar las métricas de Q3</span> para identificar por qué bajó la retención en el sector de servicios. Por último, agendemos una breve reunión con diseño para validar los nuevos assets de la campaña."
-      </p>
-    </div>
-    <div class="flex gap-unit mb-stack-md">
-      <button class="flex items-center gap-1 px-stack-md py-unit bg-surface-container-low border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-high transition-all">
-        <span class="material-symbols-outlined text-[18px]">content_copy</span> Copiar
-      </button>
-      <button class="flex items-center gap-1 px-stack-md py-unit bg-surface-container-low border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-high transition-all">
-        <span class="material-symbols-outlined text-[18px]">translate</span> Traducir
-      </button>
-    </div>
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md">
-      <div class="flex justify-between items-start mb-4">
-        <div>
-          <h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-unit">
-            <span class="material-symbols-outlined text-secondary">checklist</span>
-            Tareas Asignadas
-          </h3>
-          <p class="text-label-sm text-outline mt-1 uppercase tracking-wider">Flujo de trabajo</p>
-        </div>
-        <span class="bg-secondary-container/50 text-on-secondary-container font-label-md px-stack-md py-unit rounded-full border border-secondary/20 checklist-counter">3 Pendientes</span>
-      </div>
-      <div class="space-y-unit">
-        <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
-          <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="0" type="checkbox"></div>
-          <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
-            Enviar reporte de desempeño a Juan
-            <span class="block font-label-sm text-label-sm text-outline mt-1">Prioridad Alta • Viernes</span>
-          </label>
-        </div>
-        <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
-          <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="1" type="checkbox"></div>
-          <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
-            Revisar métricas de Q3 (Retención)
-            <span class="block font-label-sm text-label-sm text-outline mt-1">Análisis de Datos • Hoy</span>
-          </label>
-        </div>
-        <div class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all">
-          <div class="mt-1"><input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb" data-checklist-id="2" type="checkbox"></div>
-          <label class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text">
-            Validar assets de campaña con Diseño
-            <span class="block font-label-sm text-label-sm text-outline mt-1">Reunión 15 min • Mañana</span>
-          </label>
+        <div class="mt-6 w-full flex flex-col items-center gap-3">
+          <button
+            class="w-full md:w-64 h-12 bg-primary text-on-secondary rounded-full font-headline-md flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-secondary/10"
+            id="save-btn-modal"
+            onclick="guardarHorario()"
+          >
+            <span>Guardar</span
+            ><span class="material-symbols-outlined">done_all</span>
+          </button>
         </div>
       </div>
-      <button class="mt-4 w-full py-stack-md bg-primary text-on-primary rounded-lg font-label-md font-bold flex items-center justify-center gap-unit hover:opacity-90 active:scale-[0.98] transition-all shadow-sm">
-        <span class="material-symbols-outlined">sync</span>
-        Sincronizar con Calendario
+    </div>
+
+    <!-- MODAL: Transcripcion -->
+    <div
+      class="modal-overlay"
+      id="modal-transcripcion"
+      onclick="if (event.target === this) cerrarModalTranscripcion();"
+    >
+      <div class="modal-content p-stack-md">
+        <div class="flex items-center justify-between mb-4">
+          <h2
+            class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-unit"
+          >
+            <span class="material-symbols-outlined text-secondary"
+              >description</span
+            >
+            Transcripción
+          </h2>
+          <div class="flex items-center gap-2">
+            <div class="voice-wave">
+              <div
+                class="wave-bar"
+                style="animation-delay: 0.1s; height: 17px"
+              ></div>
+              <div
+                class="wave-bar"
+                style="animation-delay: 0.3s; height: 11px"
+              ></div>
+              <div
+                class="wave-bar"
+                style="animation-delay: 0.2s; height: 16px"
+              ></div>
+              <div
+                class="wave-bar"
+                style="animation-delay: 0.4s; height: 16px"
+              ></div>
+              <div
+                class="wave-bar"
+                style="animation-delay: 0.1s; height: 9px"
+              ></div>
+            </div>
+            <button
+              class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center"
+              onclick="cerrarModalTranscripcion()"
+            >
+              <span class="material-symbols-outlined text-outline">close</span>
+            </button>
+          </div>
+        </div>
+        <div class="max-w-none mb-4">
+          <p
+            class="font-body-md text-body-md text-on-surface-variant leading-relaxed"
+          >
+            "Hola equipo, para la sesión de hoy necesito que nos enfoquemos en
+            el cierre del trimestre. Es fundamental
+            <span
+              class="bg-secondary-container/20 border-b border-secondary/30 px-1 rounded-sm"
+              >enviar el reporte de desempeño a Juan</span
+            >
+            antes del viernes para que pueda revisarlo con la junta. Además,
+            estuve viendo los números y es necesario
+            <span
+              class="bg-secondary-container/20 border-b border-secondary/30 px-1 rounded-sm"
+              >revisar las métricas de Q3</span
+            >
+            para identificar por qué bajó la retención en el sector de
+            servicios. Por último, agendemos una breve reunión con diseño para
+            validar los nuevos assets de la campaña."
+          </p>
+        </div>
+        <div class="flex gap-unit mb-stack-md">
+          <button
+            class="flex items-center gap-1 px-stack-md py-unit bg-surface-container-low border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-high transition-all"
+          >
+            <span class="material-symbols-outlined text-[18px]"
+              >content_copy</span
+            >
+            Copiar
+          </button>
+          <button
+            class="flex items-center gap-1 px-stack-md py-unit bg-surface-container-low border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-high transition-all"
+          >
+            <span class="material-symbols-outlined text-[18px]">translate</span>
+            Traducir
+          </button>
+        </div>
+        <div
+          class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md"
+        >
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3
+                class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-unit"
+              >
+                <span class="material-symbols-outlined text-secondary"
+                  >checklist</span
+                >
+                Tareas Asignadas
+              </h3>
+              <p
+                class="text-label-sm text-outline mt-1 uppercase tracking-wider"
+              >
+                Flujo de trabajo
+              </p>
+            </div>
+            <span
+              class="bg-secondary-container/50 text-on-secondary-container font-label-md px-stack-md py-unit rounded-full border border-secondary/20 checklist-counter"
+              >3 Pendientes</span
+            >
+          </div>
+          <div class="space-y-unit">
+            <div
+              class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all"
+            >
+              <div class="mt-1">
+                <input
+                  class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb"
+                  data-checklist-id="0"
+                  type="checkbox"
+                />
+              </div>
+              <label
+                class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text"
+              >
+                Enviar reporte de desempeño a Juan
+                <span
+                  class="block font-label-sm text-label-sm text-outline mt-1"
+                  >Prioridad Alta • Viernes</span
+                >
+              </label>
+            </div>
+            <div
+              class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all"
+            >
+              <div class="mt-1">
+                <input
+                  class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb"
+                  data-checklist-id="1"
+                  type="checkbox"
+                />
+              </div>
+              <label
+                class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text"
+              >
+                Revisar métricas de Q3 (Retención)
+                <span
+                  class="block font-label-sm text-label-sm text-outline mt-1"
+                  >Análisis de Datos • Hoy</span
+                >
+              </label>
+            </div>
+            <div
+              class="group flex items-start gap-stack-md p-stack-md rounded-xl border border-transparent hover:border-outline-variant hover:bg-surface-container-low transition-all"
+            >
+              <div class="mt-1">
+                <input
+                  class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary cursor-pointer checklist-cb"
+                  data-checklist-id="2"
+                  type="checkbox"
+                />
+              </div>
+              <label
+                class="flex-grow font-body-md text-body-md text-on-surface cursor-pointer select-none checklist-text"
+              >
+                Validar assets de campaña con Diseño
+                <span
+                  class="block font-label-sm text-label-sm text-outline mt-1"
+                  >Reunión 15 min • Mañana</span
+                >
+              </label>
+            </div>
+          </div>
+          <button
+            class="mt-4 w-full py-stack-md bg-primary text-on-primary rounded-lg font-label-md font-bold flex items-center justify-center gap-unit hover:opacity-90 active:scale-[0.98] transition-all shadow-sm"
+          >
+            <span class="material-symbols-outlined">sync</span>
+            Sincronizar con Calendario
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: TRANSCRIPCION (via FAB) -->
+    <!-- PAGE: TRANSCRIPCION (moved to modal) -->
+    <div id="page-transcripcion" class="page"></div>
+
+    <!-- FAB -->
+    <div class="fab" id="fab-mic" onclick="toggleTranscripcion()">
+      <span
+        class="material-symbols-outlined text-2xl"
+        style="font-variation-settings: &quot;FILL&quot; 1"
+        id="fab-icon"
+        >mic</span
+      >
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav
+      class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface/95 backdrop-blur-md border-t border-outline-variant px-margin-mobile py-2 flex justify-around items-center rounded-t-xl shadow-2xl"
+    >
+      <button
+        class="flex flex-col items-center justify-center text-outline hover:text-primary transition-colors px-stack-md py-unit nav-btn active"
+        data-page="hoy"
+        onclick="navigateTo('hoy')"
+      >
+        <span class="material-symbols-outlined">home</span>
+        <span class="font-label-sm text-[10px] mt-1">Hoy</span>
       </button>
-    </div>
-  </div>
-</div>
+      <button
+        class="flex flex-col items-center justify-center text-outline hover:text-primary transition-colors px-stack-md py-unit nav-btn"
+        data-page="calendario"
+        onclick="navigateTo('calendario')"
+      >
+        <span class="material-symbols-outlined">calendar_today</span>
+        <span class="font-label-sm text-[10px] mt-1">Calendario</span>
+      </button>
+      <button
+        class="flex flex-col items-center justify-center text-outline hover:text-primary transition-colors px-stack-md py-unit nav-btn"
+        data-page="metricas"
+        onclick="navigateTo('metricas')"
+      >
+        <span class="material-symbols-outlined">insights</span>
+        <span class="font-label-sm text-[10px] mt-1">Métricas</span>
+      </button>
+      <div
+        class="flex flex-col items-center justify-center text-outline px-stack-md py-unit opacity-50"
+      >
+        <span class="material-symbols-outlined">settings</span>
+        <span class="font-label-sm text-[10px] mt-1">Ajustes</span>
+      </div>
+    </nav>
 
-<!-- PAGE: TRANSCRIPCION (via FAB) -->
-<!-- PAGE: TRANSCRIPCION (moved to modal) -->
-<div id="page-transcripcion" class="page"></div>
+    <!-- DESKTOP SIDEBAR -->
+    <aside
+      class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-20 bg-surface border-r border-outline-variant flex-col items-center py-stack-lg gap-stack-lg"
+    >
+      <button
+        class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-surface-container-low text-outline hover:text-primary transition-all nav-btn active"
+        data-page="hoy"
+        onclick="navigateTo('hoy')"
+        title="Hoy"
+      >
+        <span class="material-symbols-outlined">home</span>
+      </button>
+      <button
+        class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-surface-container-low text-outline hover:text-primary transition-all nav-btn"
+        data-page="calendario"
+        onclick="navigateTo('calendario')"
+        title="Calendario"
+      >
+        <span class="material-symbols-outlined">calendar_today</span>
+      </button>
+      <button
+        class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-surface-container-low text-outline hover:text-primary transition-all nav-btn"
+        data-page="metricas"
+        onclick="navigateTo('metricas')"
+        title="Métricas"
+      >
+        <span class="material-symbols-outlined">insights</span>
+      </button>
+      <div class="mt-auto mb-stack-md">
+        <div
+          class="w-12 h-12 flex items-center justify-center text-outline opacity-50 cursor-default"
+        >
+          <span class="material-symbols-outlined">settings</span>
+        </div>
+      </div>
+    </aside>
 
-<!-- FAB -->
-<div class="fab" id="fab-mic" onclick="toggleTranscripcion()">
-  <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL'1;" id="fab-icon">mic</span>
-</div>
+    <script>
+      // ====== STATE (persistente en localStorage) ======
+      const STORE_KEY = "syncmanager_state";
+      let state = cargarEstado();
 
-<!-- BOTTOM NAV -->
-<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface/95 backdrop-blur-md border-t border-outline-variant px-margin-mobile py-2 flex justify-around items-center rounded-t-xl shadow-2xl">
-  <button class="flex flex-col items-center justify-center text-outline hover:text-primary transition-colors px-stack-md py-unit nav-btn active" data-page="hoy" onclick="navigateTo('hoy')">
-    <span class="material-symbols-outlined">home</span>
-    <span class="font-label-sm text-[10px] mt-1">Hoy</span>
-  </button>
-  <button class="flex flex-col items-center justify-center text-outline hover:text-primary transition-colors px-stack-md py-unit nav-btn" data-page="calendario" onclick="navigateTo('calendario')">
-    <span class="material-symbols-outlined">calendar_today</span>
-    <span class="font-label-sm text-[10px] mt-1">Calendario</span>
-  </button>
-  <button class="flex flex-col items-center justify-center text-outline hover:text-primary transition-colors px-stack-md py-unit nav-btn" data-page="metricas" onclick="navigateTo('metricas')">
-    <span class="material-symbols-outlined">insights</span>
-    <span class="font-label-sm text-[10px] mt-1">Métricas</span>
-  </button>
-  <div class="flex flex-col items-center justify-center text-outline px-stack-md py-unit opacity-50">
-    <span class="material-symbols-outlined">settings</span>
-    <span class="font-label-sm text-[10px] mt-1">Ajustes</span>
-  </div>
-</nav>
+      function estadoBase() {
+        const today = new Date();
+        const todayStr = today.toISOString().slice(0, 10);
+        return {
+          checklist: [false, false, false],
+          todos: [],
+          todoIdCounter: 0,
+          dailyHistory: {},
+          hoyDate: todayStr,
+          asistio: null,
+          grabando: false,
+          hora: 9,
+          minuto: 30,
+          periodo: "AM",
+          ubicacion: "",
+          mesCal: today.getMonth(),
+          anioCal: today.getFullYear(),
+          diaSel: today.getDate(),
+        };
+      }
 
-<!-- DESKTOP SIDEBAR -->
-<aside class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-20 bg-surface border-r border-outline-variant flex-col items-center py-stack-lg gap-stack-lg">
-  <button class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-surface-container-low text-outline hover:text-primary transition-all nav-btn active" data-page="hoy" onclick="navigateTo('hoy')" title="Hoy">
-    <span class="material-symbols-outlined">home</span>
-  </button>
-  <button class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-surface-container-low text-outline hover:text-primary transition-all nav-btn" data-page="calendario" onclick="navigateTo('calendario')" title="Calendario">
-    <span class="material-symbols-outlined">calendar_today</span>
-  </button>
-  <button class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-surface-container-low text-outline hover:text-primary transition-all nav-btn" data-page="metricas" onclick="navigateTo('metricas')" title="Métricas">
-    <span class="material-symbols-outlined">insights</span>
-  </button>
-  <div class="mt-auto mb-stack-md">
-    <div class="w-12 h-12 flex items-center justify-center text-outline opacity-50 cursor-default">
-      <span class="material-symbols-outlined">settings</span>
-    </div>
-  </div>
-</aside>
+      function cargarEstado() {
+        try {
+          const raw = localStorage.getItem(STORE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            const base = estadoBase();
+            for (let k in base) {
+              if (parsed[k] === undefined) parsed[k] = base[k];
+            }
+            // Migrate old todos format (boolean array) to new format
+            if (
+              Array.isArray(parsed.todos) &&
+              parsed.todos.length > 0 &&
+              typeof parsed.todos[0] === "boolean"
+            ) {
+              const oldTexts = [
+                "Preparar reporte de incidencias",
+                "Enviar invitación Sync trimestral",
+                "Actualizar documentación de procesos",
+              ];
+              const todayStr = new Date().toISOString().slice(0, 10);
+              parsed.todos = parsed.todos.map((done, i) => ({
+                id: i,
+                text: oldTexts[i] || "Tarea " + (i + 1),
+                date: todayStr,
+                completed: done,
+              }));
+              parsed.todoIdCounter = parsed.todos.length;
+            }
+            return parsed;
+          }
+        } catch (e) {}
+        return estadoBase();
+      }
 
-<script>
-// ====== STATE (persistente en localStorage) ======
-const STORE_KEY = 'syncmanager_state';
-let state = cargarEstado();
-
-function estadoBase() {
-  const today = new Date();
-  const todayStr = today.toISOString().slice(0, 10);
-  return {
-    checklist: [false, false, false],
-    todos: [],
-    todoIdCounter: 0,
-    dailyHistory: {},
-    hoyDate: todayStr,
-    asistio: null,
-    grabando: false,
-    hora: 9,
-    minuto: 30,
-    periodo: 'AM',
-    ubicacion: '',
-    mesCal: today.getMonth(),
-    anioCal: today.getFullYear(),
-    diaSel: today.getDate()
-  };
-}
-
-function cargarEstado() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      const base = estadoBase();
-      for (let k in base) { if (parsed[k] === undefined) parsed[k] = base[k]; }
-      // Migrate old todos format (boolean array) to new format
-      if (Array.isArray(parsed.todos) && parsed.todos.length > 0 && typeof parsed.todos[0] === 'boolean') {
-        const oldTexts = ["Preparar reporte de incidencias", "Enviar invitación Sync trimestral", "Actualizar documentación de procesos"];
+      function guardarEstado() {
         const todayStr = new Date().toISOString().slice(0, 10);
-        parsed.todos = parsed.todos.map((done, i) => ({
-          id: i,
-          text: oldTexts[i] || "Tarea " + (i + 1),
-          date: todayStr,
-          completed: done,
-        }));
-        parsed.todoIdCounter = parsed.todos.length;
+        state.dailyHistory[todayStr] = {
+          checklist: [...state.checklist],
+          asistio: state.asistio,
+        };
+        localStorage.setItem(STORE_KEY, JSON.stringify(state));
       }
-      return parsed;
-    }
-  } catch(e) {}
-  return estadoBase();
-}
 
-function guardarEstado() {
-  const todayStr = new Date().toISOString().slice(0, 10);
-  state.dailyHistory[todayStr] = {
-    checklist: [...state.checklist],
-    asistio: state.asistio,
-  };
-  localStorage.setItem(STORE_KEY, JSON.stringify(state));
-}
-
-// ====== CHECKLIST COMPARTIDO ======
-function getChecklistForDate(dateStr) {
-  const todayStr = new Date().toISOString().slice(0, 10);
-  if (dateStr === todayStr) {
-    return state.checklist;
-  }
-  if (!state.dailyHistory[dateStr]) {
-    state.dailyHistory[dateStr] = { checklist: [false, false, false], asistio: null };
-  }
-  if (!state.dailyHistory[dateStr].checklist) {
-    state.dailyHistory[dateStr].checklist = [false, false, false];
-  }
-  return state.dailyHistory[dateStr].checklist;
-}
-
-function actualizarChecklistUI() {
-  const cl = getChecklistForDate(state.hoyDate);
-  document.querySelectorAll('.checklist-cb').forEach(cb => {
-    const id = parseInt(cb.dataset.checklistId);
-    cb.checked = cl[id] || false;
-    const textEl = cb.closest('.group')?.querySelector('.checklist-text');
-    if (textEl) {
-      if (cb.checked) { textEl.classList.add('checklist-done'); } else { textEl.classList.remove('checklist-done'); }
-    }
-  });
-  const pendientes = cl.filter(v => !v).length;
-  const counters = document.querySelectorAll('.checklist-counter, #checklist-counter');
-  counters.forEach(el => { if (el) el.textContent = pendientes === 1 ? '1 pendiente' : pendientes + ' pendientes'; });
-  actualizarContadores();
-  actualizarMetricas();
-}
-
-document.addEventListener('change', function(e) {
-  if (e.target.classList.contains('checklist-cb')) {
-    const id = parseInt(e.target.dataset.checklistId);
-    const todayStr = new Date().toISOString().slice(0, 10);
-    if (state.hoyDate === todayStr) {
-      if (!isNaN(id) && id >= 0 && id < state.checklist.length) {
-        state.checklist[id] = e.target.checked;
+      // ====== CHECKLIST COMPARTIDO ======
+      function getChecklistForDate(dateStr) {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        if (dateStr === todayStr) {
+          return state.checklist;
+        }
+        if (!state.dailyHistory[dateStr]) {
+          state.dailyHistory[dateStr] = {
+            checklist: [false, false, false],
+            asistio: null,
+          };
+        }
+        if (!state.dailyHistory[dateStr].checklist) {
+          state.dailyHistory[dateStr].checklist = [false, false, false];
+        }
+        return state.dailyHistory[dateStr].checklist;
       }
-    } else {
-      const cl = getChecklistForDate(state.hoyDate);
-      if (!isNaN(id) && id >= 0 && id < cl.length) {
-        cl[id] = e.target.checked;
-        state.dailyHistory[state.hoyDate].checklist = cl;
+
+      function actualizarChecklistUI() {
+        const cl = getChecklistForDate(state.hoyDate);
+        document.querySelectorAll(".checklist-cb").forEach((cb) => {
+          const id = parseInt(cb.dataset.checklistId);
+          cb.checked = cl[id] || false;
+          const textEl = cb.closest(".group")?.querySelector(".checklist-text");
+          if (textEl) {
+            if (cb.checked) {
+              textEl.classList.add("checklist-done");
+            } else {
+              textEl.classList.remove("checklist-done");
+            }
+          }
+        });
+        const pendientes = cl.filter((v) => !v).length;
+        const counters = document.querySelectorAll(
+          ".checklist-counter, #checklist-counter",
+        );
+        counters.forEach((el) => {
+          if (el)
+            el.textContent =
+              pendientes === 1 ? "1 pendiente" : pendientes + " pendientes";
+        });
+        actualizarContadores();
+        actualizarMetricas();
       }
-    }
-    guardarEstado();
-    actualizarChecklistUI();
-  }
-});
 
-// ====== TODO ======
-function renderTodos() {
-  const dayTodos = state.todos.filter(t => t.date === state.hoyDate);
-  const container = document.getElementById('todo-container');
-  if (!container) return;
-  if (dayTodos.length === 0) {
-    container.innerHTML = '<div class="p-stack-md text-center text-outline text-sm">No hay tareas para esta fecha</div>';
-  } else {
-    container.innerHTML = dayTodos.map(t => {
-      const checked = t.completed ? 'check_circle text-secondary' : 'radio_button_unchecked text-outline';
-      const doneClass = t.completed ? 'todo-done' : '';
-      return '<div class="p-stack-md flex items-center gap-stack-md hover:bg-surface-container-low transition-colors group ' + doneClass + '" data-todo-id="' + t.id + '">' +
-        '<span class="material-symbols-outlined group-hover:text-primary todo-toggle ' + checked + '">' + (t.completed ? 'check_circle' : 'radio_button_unchecked') + '</span>' +
-        '<span class="font-body-md text-on-surface flex-1 todo-text">' + escapeHtml(t.text) + '</span>' +
-        '<span class="material-symbols-outlined text-outline hover:text-error cursor-pointer todo-delete text-[20px]">close</span>' +
-        '</div>';
-    }).join('');
-  }
-  const pendientes = state.todos.filter(t => t.date === state.hoyDate && !t.completed).length;
-  const counterEl = document.getElementById('todo-counter');
-  if (counterEl) counterEl.textContent = pendientes === 1 ? '1 pendiente' : pendientes + ' pendientes';
-  // Update KPI (metricas page)
-  actualizarContadores();
-  actualizarMetricas();
-}
+      document.addEventListener("change", function (e) {
+        if (e.target.classList.contains("checklist-cb")) {
+          const id = parseInt(e.target.dataset.checklistId);
+          const todayStr = new Date().toISOString().slice(0, 10);
+          if (state.hoyDate === todayStr) {
+            if (!isNaN(id) && id >= 0 && id < state.checklist.length) {
+              state.checklist[id] = e.target.checked;
+            }
+          } else {
+            const cl = getChecklistForDate(state.hoyDate);
+            if (!isNaN(id) && id >= 0 && id < cl.length) {
+              cl[id] = e.target.checked;
+              state.dailyHistory[state.hoyDate].checklist = cl;
+            }
+          }
+          guardarEstado();
+          actualizarChecklistUI();
+        }
+      });
 
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
+      // ====== TODO ======
+      function renderTodos() {
+        const dayTodos = state.todos.filter((t) => t.date === state.hoyDate);
+        const container = document.getElementById("todo-container");
+        if (!container) return;
+        if (dayTodos.length === 0) {
+          container.innerHTML =
+            '<div class="p-stack-md text-center text-outline text-sm">No hay tareas para esta fecha</div>';
+        } else {
+          container.innerHTML = dayTodos
+            .map((t) => {
+              const checked = t.completed
+                ? "check_circle text-secondary"
+                : "radio_button_unchecked text-outline";
+              const doneClass = t.completed ? "todo-done" : "";
+              return (
+                '<div class="p-stack-md flex items-center gap-stack-md hover:bg-surface-container-low transition-colors group ' +
+                doneClass +
+                '" data-todo-id="' +
+                t.id +
+                '">' +
+                '<span class="material-symbols-outlined group-hover:text-primary todo-toggle ' +
+                checked +
+                '">' +
+                (t.completed ? "check_circle" : "radio_button_unchecked") +
+                "</span>" +
+                '<span class="font-body-md text-on-surface flex-1 todo-text">' +
+                escapeHtml(t.text) +
+                "</span>" +
+                '<span class="material-symbols-outlined text-outline hover:text-error cursor-pointer todo-delete text-[20px]">close</span>' +
+                "</div>"
+              );
+            })
+            .join("");
+        }
+        const pendientes = state.todos.filter(
+          (t) => t.date === state.hoyDate && !t.completed,
+        ).length;
+        const counterEl = document.getElementById("todo-counter");
+        if (counterEl)
+          counterEl.textContent =
+            pendientes === 1 ? "1 pendiente" : pendientes + " pendientes";
+        // Update KPI (metricas page)
+        actualizarContadores();
+        actualizarMetricas();
+      }
 
-document.addEventListener('click', function(e) {
-  // Todo toggle
-  if (e.target.classList.contains('todo-toggle')) {
-    const item = e.target.closest('[data-todo-id]');
-    if (item) {
-      const id = parseInt(item.dataset.todoId);
-      const todo = state.todos.find(t => t.id === id);
-      if (todo) {
-        todo.completed = !todo.completed;
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      document.addEventListener("click", function (e) {
+        // Todo toggle
+        if (e.target.classList.contains("todo-toggle")) {
+          const item = e.target.closest("[data-todo-id]");
+          if (item) {
+            const id = parseInt(item.dataset.todoId);
+            const todo = state.todos.find((t) => t.id === id);
+            if (todo) {
+              todo.completed = !todo.completed;
+              guardarEstado();
+              renderTodos();
+              actualizarCalTodos();
+              renderCalendar();
+            }
+          }
+        }
+        // Todo delete
+        if (e.target.classList.contains("todo-delete")) {
+          const item = e.target.closest("[data-todo-id]");
+          if (item) {
+            const id = parseInt(item.dataset.todoId);
+            state.todos = state.todos.filter((t) => t.id !== id);
+            guardarEstado();
+            renderTodos();
+            actualizarCalTodos();
+            renderCalendar();
+          }
+        }
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (
+          e.key === "Enter" &&
+          document.activeElement === document.getElementById("todo-input")
+        ) {
+          document.getElementById("todo-add-btn").click();
+        }
+      });
+
+      document.addEventListener("click", function (e) {
+        if (e.target.id === "todo-add-btn") {
+          const input = document.getElementById("todo-input");
+          const dateInput = document.getElementById("todo-date");
+          const text = input.value.trim();
+          if (!text) return;
+          const date = dateInput.value || new Date().toISOString().slice(0, 10);
+          state.todos.push({
+            id: state.todoIdCounter++,
+            text,
+            date,
+            completed: false,
+          });
+          input.value = "";
+          guardarEstado();
+          renderTodos();
+          actualizarCalTodos();
+          renderCalendar();
+        }
+      });
+
+      // Click en bloque de tarea → toggle
+      document.addEventListener("click", function (e) {
+        const item = e.target.closest("[data-todo-id]");
+        if (
+          item &&
+          !e.target.closest(
+            ".todo-toggle, .cal-todo-toggle, .todo-delete, button, input",
+          )
+        ) {
+          const toggle = item.querySelector(".todo-toggle, .cal-todo-toggle");
+          if (toggle) toggle.click();
+        }
+      });
+
+      // Click en bloque de checklist → toggle checkbox (solo donde label no envuelve el input)
+      document.addEventListener("click", function (e) {
+        const group = e.target.closest(".group");
+        if (
+          group &&
+          !e.target.closest(
+            "input, button, .todo-toggle, .cal-todo-toggle, .todo-delete",
+          )
+        ) {
+          const parentLabel = group.closest("label");
+          const cb = group.querySelector(".checklist-cb, .cal-checklist-cb");
+          if (cb && (!parentLabel || !parentLabel.contains(cb))) {
+            cb.click();
+          }
+        }
+      });
+
+      // ====== CONTADORES HEADER ======
+      function actualizarContadores() {
+        const dayTodos = state.todos.filter((t) => t.date === state.hoyDate);
+        const todoDone = dayTodos.filter((t) => t.completed).length;
+        const todoTotal = dayTodos.length;
+        const cl = getChecklistForDate(state.hoyDate);
+        const checkDone = cl.filter(Boolean).length;
+        const checkTotal = cl.length;
+        const tEl = document.getElementById("counter-todos");
+        const cEl = document.getElementById("counter-checklist");
+        if (tEl) tEl.textContent = todoDone + "/" + todoTotal;
+        if (cEl) cEl.textContent = checkDone + "/" + checkTotal;
+      }
+
+      // ====== ANILLOS DE PROGRESO ======
+      // ====== ASISTENCIA ======
+      function actualizarAsistenciaUI() {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const asistioVal =
+          state.hoyDate === todayStr
+            ? state.asistio
+            : (state.dailyHistory[state.hoyDate]?.asistio ?? null);
+        document.querySelectorAll(".attendance-btn").forEach((btn) => {
+          const val = btn.dataset.value === "true";
+          if (asistioVal === val) {
+            btn.className =
+              "px-4 py-2 rounded-lg border border-on-surface text-on-surface bg-surface-container-low font-label-md transition-all attendance-btn";
+          } else {
+            btn.className =
+              "px-4 py-2 rounded-lg border border-outline-variant text-outline font-label-md hover:border-on-surface hover:text-on-surface transition-all attendance-btn";
+          }
+        });
+      }
+
+      document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("attendance-btn")) {
+          const val = e.target.dataset.value === "true";
+          const todayStr = new Date().toISOString().slice(0, 10);
+          if (state.hoyDate === todayStr) {
+            state.asistio = state.asistio === val ? null : val;
+          } else {
+            if (!state.dailyHistory[state.hoyDate]) {
+              state.dailyHistory[state.hoyDate] = {
+                checklist: [false, false, false],
+                asistio: null,
+              };
+            }
+            const current = state.dailyHistory[state.hoyDate].asistio;
+            state.dailyHistory[state.hoyDate].asistio =
+              current === val ? null : val;
+          }
+          guardarEstado();
+          actualizarAsistenciaUI();
+          actualizarMetricas();
+          renderCalendar();
+          actualizarCalTodos();
+        }
+      });
+
+      // ====== MÉTRICAS ======
+      function actualizarMetricas() {
+        const today = new Date();
+        const month = today.getMonth();
+        const year = today.getFullYear();
+
+        // --- Reuniones (asistencia mensual) ---
+        let meetingDays = 0;
+        let meetingAttended = 0;
+        for (const [dateStr, entry] of Object.entries(state.dailyHistory)) {
+          const d = new Date(dateStr);
+          if (
+            d.getMonth() === month &&
+            d.getFullYear() === year &&
+            entry.asistio !== null &&
+            entry.asistio !== undefined
+          ) {
+            meetingDays++;
+            if (entry.asistio) meetingAttended++;
+          }
+        }
+        const pctAsistencia =
+          meetingDays > 0
+            ? Math.round((meetingAttended / meetingDays) * 100)
+            : 0;
+        const asistEl = document.getElementById("kpi-asistencia");
+        const asistDet = document.getElementById("kpi-asistencia-det");
+        const asistRing = document.getElementById("kpi-asistencia-ring");
+        const asistChart = document.getElementById("kpi-asistencia-chart");
+        const asistDetChart = document.getElementById(
+          "kpi-asistencia-det-chart",
+        );
+        if (asistEl) asistEl.textContent = pctAsistencia + "%";
+        if (asistDet)
+          asistDet.textContent =
+            meetingAttended + " / " + meetingDays + " reuniones realizadas";
+        if (asistRing)
+          asistRing.setAttribute(
+            "stroke-dasharray",
+            pctAsistencia + " " + (100 - pctAsistencia),
+          );
+        if (asistChart) asistChart.textContent = pctAsistencia + "%";
+        if (asistDetChart)
+          asistDetChart.textContent =
+            meetingAttended + " / " + meetingDays + " reuniones realizadas";
+
+        // --- Tareas (mensual) ---
+        const monthStr = year + "-" + (month + 1).toString().padStart(2, "0");
+        const monthTodos = state.todos.filter(
+          (t) => t.date && t.date.startsWith(monthStr),
+        );
+        const todoCompleted = monthTodos.filter((t) => t.completed).length;
+        const todoTotal = monthTodos.length;
+        const pctTareas =
+          todoTotal > 0 ? Math.round((todoCompleted / todoTotal) * 100) : 0;
+        const tareasEl = document.getElementById("kpi-tareas");
+        const tareasDet = document.getElementById("kpi-tareas-det");
+        const tareasBar = document.getElementById("kpi-tareas-bar");
+        const tareasChart = document.getElementById("kpi-tareas-chart");
+        const tareasDetChart = document.getElementById("kpi-tareas-det-chart");
+        if (tareasEl) tareasEl.textContent = pctTareas + "%";
+        if (tareasDet)
+          tareasDet.textContent =
+            todoCompleted + " / " + todoTotal + " completadas";
+        if (tareasBar) tareasBar.style.width = pctTareas + "%";
+        if (tareasChart) tareasChart.textContent = pctTareas + "%";
+        if (tareasDetChart)
+          tareasDetChart.textContent =
+            todoCompleted + " / " + todoTotal + " completadas";
+
+        // --- Checklist (mensual: total = itemsPerDay * díaActual) ---
+        const itemsPerDay = CHECKLIST_LABELS.length;
+        const currentDay = today.getDate();
+        let checkDone = 0;
+        const checkTotal = itemsPerDay * currentDay;
+        for (const [dateStr, entry] of Object.entries(state.dailyHistory)) {
+          const d = new Date(dateStr);
+          if (
+            d.getMonth() === month &&
+            d.getFullYear() === year &&
+            entry.checklist
+          ) {
+            entry.checklist.forEach((v) => {
+              if (v) checkDone++;
+            });
+          }
+        }
+        const pctChecklist =
+          checkTotal > 0 ? Math.round((checkDone / checkTotal) * 100) : 0;
+        const checkEl = document.getElementById("kpi-checklist");
+        const checkDet = document.getElementById("kpi-checklist-det");
+        const checkBar = document.getElementById("kpi-checklist-bar");
+        const checkChart = document.getElementById("kpi-checklist-chart");
+        const checkDetChart = document.getElementById(
+          "kpi-checklist-det-chart",
+        );
+        if (checkEl) checkEl.textContent = pctChecklist + "%";
+        if (checkDet)
+          checkDet.textContent =
+            checkDone + " / " + checkTotal + " completadas";
+        if (checkBar) checkBar.style.width = pctChecklist + "%";
+        if (checkChart) checkChart.textContent = pctChecklist + "%";
+        if (checkDetChart)
+          checkDetChart.textContent =
+            checkDone + " / " + checkTotal + " completadas";
+
+        // --- Racha (días consecutivos con asistencia) ---
+        let streak = 0;
+        let cursor = new Date(today);
+        while (true) {
+          const key = cursor.toISOString().slice(0, 10);
+          const entry = state.dailyHistory[key];
+          if (entry && entry.asistio === true) {
+            streak++;
+            cursor.setDate(cursor.getDate() - 1);
+          } else {
+            break;
+          }
+        }
+        const rachaEl = document.getElementById("kpi-racha");
+        if (rachaEl) rachaEl.textContent = streak;
+      }
+
+      // ====== RECORDING ======
+      const recBtn = document.getElementById("recording-main");
+      if (recBtn) {
+        recBtn.addEventListener("click", function () {
+          state.grabando = !state.grabando;
+          guardarEstado();
+          actualizarRecUI();
+        });
+      }
+
+      function actualizarRecUI() {
+        const btn = document.getElementById("recording-main");
+        const label = document.getElementById("recording-label");
+        const waves = document.querySelectorAll(".wave-bar");
+        if (!btn) return;
+        if (state.grabando) {
+          btn.classList.add("recording-active");
+          btn.querySelector("span").textContent = "stop";
+          if (label) label.textContent = "Grabando...";
+          waves.forEach((w) => (w.style.backgroundColor = "#ba1a1a"));
+        } else {
+          btn.classList.remove("recording-active");
+          btn.querySelector("span").textContent = "mic";
+          if (label) label.textContent = "Toca para grabar nota";
+          waves.forEach((w) => (w.style.backgroundColor = "#006c49"));
+        }
+      }
+      actualizarRecUI();
+
+      // ====== WAVE ANIMATION ======
+      setInterval(() => {
+        if (!state.grabando) {
+          document.querySelectorAll(".wave-bar").forEach((bar) => {
+            bar.style.height = Math.floor(Math.random() * 14) + 4 + "px";
+          });
+        }
+      }, 180);
+
+      // ====== NAVIGATION ======
+      let curPage = "hoy";
+      let transOpen = false;
+
+      function navigateTo(page) {
+        if (page === "ajustes") {
+          abrirModalHorario();
+          return;
+        }
+        transOpen = false;
+        document.getElementById("fab-icon").textContent = "mic";
+        document.getElementById("fab-mic").className = "fab";
+        document.getElementById("fab-mic").style.background = "";
+        document.getElementById("fab-mic").style.display =
+          page === "hoy" ? "flex" : "none";
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("page-" + page).classList.add("active");
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((b) =>
+            b.classList.toggle("active", b.dataset.page === page),
+          );
+        const titles = {
+          hoy: "Seleccionar fecha",
+          calendario: "Calendario",
+          metricas: "Metricas",
+        };
+        const el = document.getElementById("page-title");
+        if (page === "hoy") {
+          el.innerHTML =
+            'Seleccionar fecha <span class="material-symbols-outlined text-[16px]">expand_more</span>';
+          el.style.cursor = "pointer";
+        } else {
+          el.textContent = titles[page] || "Hoy";
+          el.style.cursor = "default";
+        }
+        curPage = page;
+      }
+
+      function toggleTranscripcion() {
+        if (curPage !== "hoy") {
+          navigateTo("hoy");
+          return;
+        }
+        const modal = document.getElementById("modal-transcripcion");
+        if (modal.classList.contains("active")) {
+          cerrarModalTranscripcion();
+        } else {
+          modal.classList.add("active");
+          document.getElementById("fab-icon").textContent = "close";
+          document.getElementById("fab-mic").style.background = "#ba1a1a";
+        }
+      }
+
+      function cerrarModalTranscripcion() {
+        document
+          .getElementById("modal-transcripcion")
+          .classList.remove("active");
+        document.getElementById("fab-icon").textContent = "mic";
+        document.getElementById("fab-mic").style.background = "";
+      }
+
+      // ====== DATE ======
+      const DAYS = [
+        "domingo",
+        "lunes",
+        "martes",
+        "miércoles",
+        "jueves",
+        "viernes",
+        "sábado",
+      ];
+      const MONTHS = [
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
+      ];
+
+      function actualizarFechaHoyUI() {
+        const d = new Date(state.hoyDate + "T12:00:00");
+        const daynameEl = document.getElementById("date-dayname");
+        const fullEl = document.getElementById("date-full");
+        if (daynameEl) daynameEl.textContent = DAYS[d.getDay()];
+        if (fullEl)
+          fullEl.textContent =
+            d.getDate() +
+            " de " +
+            MONTHS[d.getMonth()] +
+            ", " +
+            d.getFullYear();
+        document.getElementById("date-display").textContent =
+          DAYS[d.getDay()] + ", " + d.getDate() + " de " + MONTHS[d.getMonth()];
+        const dateInput = document.getElementById("todo-date");
+        if (dateInput) dateInput.value = state.hoyDate;
+      }
+
+      function cambiarFechaHoy(dateStr) {
+        if (!dateStr) return;
+        state.hoyDate = dateStr;
         guardarEstado();
+        actualizarFechaHoyUI();
+        actualizarChecklistUI();
+        actualizarAsistenciaUI();
         renderTodos();
-        actualizarCalTodos();
-        renderCalendar();
+        actualizarContadores();
       }
-    }
-  }
-  // Todo delete
-  if (e.target.classList.contains('todo-delete')) {
-    const item = e.target.closest('[data-todo-id]');
-    if (item) {
-      const id = parseInt(item.dataset.todoId);
-      state.todos = state.todos.filter(t => t.id !== id);
-      guardarEstado();
-      renderTodos();
-      actualizarCalTodos();
+
+      actualizarFechaHoyUI();
+
+      // ====== TIME PICKER ======
+      function actualizarHoraReunion() {
+        const el = document.getElementById("meeting-time");
+        if (el)
+          el.textContent =
+            state.hora.toString().padStart(2, "0") +
+            ":" +
+            state.minuto.toString().padStart(2, "0") +
+            " " +
+            state.periodo;
+      }
+
+      function refreshClockUI() {
+        const h = document.getElementById("hour-val");
+        const m = document.getElementById("min-val");
+        if (h) h.textContent = state.hora.toString().padStart(2, "0");
+        if (m) m.textContent = state.minuto.toString().padStart(2, "0");
+        const am = document.getElementById("am-btn");
+        const pm = document.getElementById("pm-btn");
+        if (am && pm) {
+          if (state.periodo === "AM") {
+            am.className =
+              "px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all bg-surface-container-high text-on-surface";
+            pm.className =
+              "px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all text-on-surface-variant";
+          } else {
+            pm.className =
+              "px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all bg-surface-container-high text-on-surface";
+            am.className =
+              "px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all text-on-surface-variant";
+          }
+        }
+        const preview = document.getElementById("time-preview");
+        if (preview)
+          preview.textContent =
+            "Recordatorio configurado: " +
+            state.hora.toString().padStart(2, "0") +
+            ":" +
+            state.minuto.toString().padStart(2, "0") +
+            " " +
+            state.periodo;
+        actualizarHoraReunion();
+      }
+
+      function adjHour(d) {
+        state.hora += d;
+        if (state.hora > 12) state.hora = 1;
+        if (state.hora < 1) state.hora = 12;
+        guardarEstado();
+        refreshClockUI();
+      }
+
+      function adjMin(d) {
+        state.minuto += d * 5;
+        if (state.minuto >= 60) {
+          state.minuto = 0;
+          adjHour(1);
+        }
+        if (state.minuto < 0) {
+          state.minuto = 55;
+          adjHour(-1);
+        }
+        guardarEstado();
+        refreshClockUI();
+      }
+
+      function setAmPm(p) {
+        state.periodo = p;
+        guardarEstado();
+        refreshClockUI();
+      }
+
+      function presetTime(h, m, p) {
+        state.hora = h;
+        state.minuto = m;
+        state.periodo = p;
+        guardarEstado();
+        refreshClockUI();
+      }
+
+      function cambiarUbicacion(val) {
+        state.ubicacion = val;
+        guardarEstado();
+        const textEl = document.getElementById("ubicacion-text");
+        if (textEl) textEl.textContent = val || "Seleccionar ubicación";
+      }
+
+      function abrirModalHorario() {
+        document.getElementById("modal-horario").classList.add("active");
+      }
+
+      function cerrarModalHorario() {
+        document.getElementById("modal-horario").classList.remove("active");
+        const btn = document.getElementById("save-btn-modal");
+        if (btn) {
+          btn.innerHTML =
+            '<span>Guardar</span><span class="material-symbols-outlined">done_all</span>';
+          btn.classList.remove("opacity-80");
+        }
+      }
+
+      function guardarHorario() {
+        const btn = document.getElementById("save-btn-modal");
+        if (!btn) return;
+        btn.innerHTML =
+          '<span>Guardado</span><span class="material-symbols-outlined">done_all</span>';
+        btn.classList.add("opacity-80");
+        guardarEstado();
+        setTimeout(() => {
+          cerrarModalHorario();
+          navigateTo("calendario");
+        }, 400);
+      }
+
+      refreshClockUI();
+
+      // ====== CALENDAR ======
+      const monthNames = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre",
+      ];
+      const dayNames = ["DO", "LU", "MA", "MI", "JU", "VI", "SA"];
+
+      function renderCalendar() {
+        const grid = document.getElementById("cal-grid");
+        const title = document.getElementById("cal-month-year");
+        if (!grid) return;
+        title.textContent = monthNames[state.mesCal] + " " + state.anioCal;
+        const firstDay = new Date(state.anioCal, state.mesCal, 1).getDay();
+        const daysInMonth = new Date(
+          state.anioCal,
+          state.mesCal + 1,
+          0,
+        ).getDate();
+        const today = new Date();
+        let html = dayNames
+          .map(
+            (d) =>
+              '<div class="font-label-md text-on-surface-variant">' +
+              d +
+              "</div>",
+          )
+          .join("");
+        for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
+          html += "<div></div>";
+        }
+        for (let d = 1; d <= daysInMonth; d++) {
+          const isToday =
+            d === today.getDate() &&
+            state.mesCal === today.getMonth() &&
+            state.anioCal === today.getFullYear();
+          const isSel = d === state.diaSel;
+          const dateKey =
+            state.anioCal +
+            "-" +
+            (state.mesCal + 1).toString().padStart(2, "0") +
+            "-" +
+            d.toString().padStart(2, "0");
+          const hasReunion = state.dailyHistory[dateKey]?.asistio === true;
+          const noReunion = state.dailyHistory[dateKey]?.asistio === false;
+          const hasPendingTodos = state.todos.some(
+            (t) => t.date === dateKey && !t.completed,
+          );
+          let cls =
+            "py-2 font-body-md relative cursor-pointer rounded-lg transition-colors";
+          if (isSel) {
+            cls += " bg-primary font-bold shadow-sm";
+            cls += hasPendingTodos ? " text-[#e57373]" : " text-on-primary";
+          } else {
+            cls += " hover:bg-surface-container-low";
+            if (hasPendingTodos) cls += " text-error font-bold";
+            else cls += " text-on-surface";
+            if (isToday) cls += " font-bold";
+          }
+          html +=
+            '<div class="' +
+            cls +
+            '" data-day="' +
+            d +
+            '" onclick="selectDay(' +
+            d +
+            ')">' +
+            d;
+          if (hasReunion)
+            html +=
+              '<span class="active-dot" style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#006c49;"></span>';
+          else if (noReunion)
+            html +=
+              '<span class="active-dot" style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#ba1a1a;"></span>';
+          html += "</div>";
+        }
+        grid.innerHTML = html;
+      }
+
+      function selectDay(d) {
+        state.diaSel = d;
+        guardarEstado();
+        renderCalendar();
+        const sel = document.getElementById("cal-selected-date");
+        if (sel)
+          sel.textContent =
+            d + " " + monthNames[state.mesCal] + " " + state.anioCal;
+        actualizarCalTodos();
+      }
+
+      function shiftMonth(dir) {
+        state.mesCal += dir;
+        if (state.mesCal < 0) {
+          state.mesCal = 11;
+          state.anioCal--;
+        }
+        if (state.mesCal > 11) {
+          state.mesCal = 0;
+          state.anioCal++;
+        }
+        guardarEstado();
+        renderCalendar();
+        const sel = document.getElementById("cal-selected-date");
+        if (sel)
+          sel.textContent =
+            state.diaSel + " " + monthNames[state.mesCal] + " " + state.anioCal;
+        actualizarCalTodos();
+      }
+
       renderCalendar();
-    }
-  }
-});
+      const selEl = document.getElementById("cal-selected-date");
+      if (selEl)
+        selEl.textContent =
+          state.diaSel + " " + monthNames[state.mesCal] + " " + state.anioCal;
 
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.activeElement === document.getElementById('todo-input')) {
-    document.getElementById('todo-add-btn').click();
-  }
-});
+      // ====== CALENDAR TODOS & CHECKLIST ======
+      const CHECKLIST_LABELS = [
+        { title: "Feedback Semanal", desc: "Revisión de métricas equipo A" },
+        { title: "Objetivos Q4", desc: "Alineación con roadmap técnico" },
+        { title: "Bloqueos Críticos", desc: "Infraestructura y despliegue" },
+      ];
 
-document.addEventListener('click', function(e) {
-  if (e.target.id === 'todo-add-btn') {
-    const input = document.getElementById('todo-input');
-    const dateInput = document.getElementById('todo-date');
-    const text = input.value.trim();
-    if (!text) return;
-    const date = dateInput.value || new Date().toISOString().slice(0, 10);
-    state.todos.push({ id: state.todoIdCounter++, text, date, completed: false });
-    input.value = '';
-    guardarEstado();
-    renderTodos();
-    actualizarCalTodos();
-    renderCalendar();
-  }
-});
+      function actualizarCalTodos() {
+        const month = (state.mesCal + 1).toString().padStart(2, "0");
+        const day = state.diaSel.toString().padStart(2, "0");
+        const dateStr = state.anioCal + "-" + month + "-" + day;
+        const dayHistory = state.dailyHistory[dateStr];
 
-// Click en bloque de tarea → toggle
-document.addEventListener('click', function(e) {
-  const item = e.target.closest('[data-todo-id]');
-  if (item && !e.target.closest('.todo-toggle, .cal-todo-toggle, .todo-delete, button, input')) {
-    const toggle = item.querySelector('.todo-toggle, .cal-todo-toggle');
-    if (toggle) toggle.click();
-  }
-});
+        // --- Indicador de reunión ---
+        const meetingEl = document.getElementById("cal-meeting-indicator");
+        if (meetingEl) {
+          if (dayHistory?.asistio === true) {
+            meetingEl.innerHTML =
+              '<span class="w-2 h-2 bg-[#006c49] rounded-full"></span><span class="font-label-sm text-on-surface-variant uppercase">Reunión realizada</span>';
+          } else if (dayHistory?.asistio === false) {
+            meetingEl.innerHTML =
+              '<span class="w-2 h-2 bg-error rounded-full"></span><span class="font-label-sm text-on-surface-variant uppercase">Reunión no realizada</span>';
+          } else {
+            meetingEl.innerHTML = "";
+          }
+        }
 
-// Click en bloque de checklist → toggle checkbox (solo donde label no envuelve el input)
-document.addEventListener('click', function(e) {
-  const group = e.target.closest('.group');
-  if (group && !e.target.closest('input, button, .todo-toggle, .cal-todo-toggle, .todo-delete')) {
-    const parentLabel = group.closest('label');
-    const cb = group.querySelector('.checklist-cb, .cal-checklist-cb');
-    if (cb && (!parentLabel || !parentLabel.contains(cb))) {
-      cb.click();
-    }
-  }
-});
+        // --- Tareas ---
+        const dayTodos = state.todos.filter((t) => t.date === dateStr);
+        const tContainer = document.getElementById("cal-todo-container");
+        if (tContainer) {
+          if (dayTodos.length === 0) {
+            tContainer.innerHTML =
+              '<div class="p-stack-md text-center text-outline text-sm">No hay tareas para esta fecha</div>';
+          } else {
+            tContainer.innerHTML = dayTodos
+              .map((t) => {
+                const doneClass = t.completed ? "todo-done" : "";
+                const icon = t.completed
+                  ? "check_circle"
+                  : "radio_button_unchecked";
+                return (
+                  '<div class="p-stack-md flex items-center gap-stack-md hover:bg-surface-container-low transition-colors group ' +
+                  doneClass +
+                  '" data-todo-id="' +
+                  t.id +
+                  '">' +
+                  '<span class="material-symbols-outlined text-outline group-hover:text-primary cal-todo-toggle">' +
+                  icon +
+                  "</span>" +
+                  '<span class="font-body-md text-on-surface flex-1 todo-text">' +
+                  escapeHtml(t.text) +
+                  "</span>" +
+                  '<span class="material-symbols-outlined text-outline hover:text-error cursor-pointer todo-delete text-[20px]">close</span>' +
+                  "</div>"
+                );
+              })
+              .join("");
+          }
+        }
 
-// ====== CONTADORES HEADER ======
-function actualizarContadores() {
-  const dayTodos = state.todos.filter(t => t.date === state.hoyDate);
-  const todoDone = dayTodos.filter(t => t.completed).length;
-  const todoTotal = dayTodos.length;
-  const cl = getChecklistForDate(state.hoyDate);
-  const checkDone = cl.filter(Boolean).length;
-  const checkTotal = cl.length;
-  const tEl = document.getElementById('counter-todos');
-  const cEl = document.getElementById('counter-checklist');
-  if (tEl) tEl.textContent = todoDone + '/' + todoTotal;
-  if (cEl) cEl.textContent = checkDone + '/' + checkTotal;
-}
-
-// ====== ANILLOS DE PROGRESO ======
-// ====== ASISTENCIA ======
-function actualizarAsistenciaUI() {
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const asistioVal = state.hoyDate === todayStr ? state.asistio : (state.dailyHistory[state.hoyDate]?.asistio ?? null);
-  document.querySelectorAll('.attendance-btn').forEach(btn => {
-    const val = btn.dataset.value === 'true';
-    if (asistioVal === val) {
-      btn.className = 'px-4 py-2 rounded-lg border border-on-surface text-on-surface bg-surface-container-low font-label-md transition-all attendance-btn';
-    } else {
-      btn.className = 'px-4 py-2 rounded-lg border border-outline-variant text-outline font-label-md hover:border-on-surface hover:text-on-surface transition-all attendance-btn';
-    }
-  });
-}
-
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('attendance-btn')) {
-    const val = e.target.dataset.value === 'true';
-    const todayStr = new Date().toISOString().slice(0, 10);
-    if (state.hoyDate === todayStr) {
-      state.asistio = state.asistio === val ? null : val;
-    } else {
-      if (!state.dailyHistory[state.hoyDate]) {
-        state.dailyHistory[state.hoyDate] = { checklist: [false, false, false], asistio: null };
+        // --- Checklist ---
+        const cContainer = document.getElementById("cal-checklist-container");
+        if (cContainer) {
+          const calChecklist = dayHistory?.checklist || [false, false, false];
+          cContainer.innerHTML = CHECKLIST_LABELS.map((item, i) => {
+            const checked = calChecklist[i] ? "checked" : "";
+            const doneClass = calChecklist[i] ? "checklist-done" : "";
+            return (
+              '<div class="p-stack-md flex items-center gap-stack-md hover:bg-surface-container-low transition-colors group">' +
+              '<input type="checkbox" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors cal-checklist-cb" data-cal-date="' +
+              dateStr +
+              '" data-cal-idx="' +
+              i +
+              '" ' +
+              checked +
+              ">" +
+              '<div class="flex flex-col checklist-text ' +
+              doneClass +
+              '">' +
+              '<span class="font-body-md font-semibold text-on-surface">' +
+              item.title +
+              "</span>" +
+              '<span class="font-label-sm text-outline">' +
+              item.desc +
+              "</span>" +
+              "</div>" +
+              "</div>"
+            );
+          }).join("");
+        }
       }
-      const current = state.dailyHistory[state.hoyDate].asistio;
-      state.dailyHistory[state.hoyDate].asistio = current === val ? null : val;
-    }
-    guardarEstado();
-    actualizarAsistenciaUI();
-    actualizarMetricas();
-    renderCalendar();
-    actualizarCalTodos();
-  }
-});
 
-// ====== MÉTRICAS ======
-function actualizarMetricas() {
-  const today = new Date();
-  const month = today.getMonth();
-  const year = today.getFullYear();
+      // Handle calendar checklist changes
+      document.addEventListener("change", function (e) {
+        if (e.target.classList.contains("cal-checklist-cb")) {
+          const date = e.target.dataset.calDate;
+          const idx = parseInt(e.target.dataset.calIdx);
+          if (!state.dailyHistory[date])
+            state.dailyHistory[date] = {
+              checklist: [false, false, false],
+              asistio: null,
+            };
+          if (!state.dailyHistory[date].checklist)
+            state.dailyHistory[date].checklist = [false, false, false];
+          state.dailyHistory[date].checklist[idx] = e.target.checked;
+          guardarEstado();
+          actualizarCalTodos();
+          renderCalendar();
+        }
+      });
 
-  // --- Reuniones (asistencia mensual) ---
-  let meetingDays = 0;
-  let meetingAttended = 0;
-  for (const [dateStr, entry] of Object.entries(state.dailyHistory)) {
-    const d = new Date(dateStr);
-    if (d.getMonth() === month && d.getFullYear() === year && entry.asistio !== null && entry.asistio !== undefined) {
-      meetingDays++;
-      if (entry.asistio) meetingAttended++;
-    }
-  }
-  const pctAsistencia = meetingDays > 0 ? Math.round(meetingAttended / meetingDays * 100) : 0;
-  const asistEl = document.getElementById('kpi-asistencia');
-  const asistDet = document.getElementById('kpi-asistencia-det');
-  const asistRing = document.getElementById('kpi-asistencia-ring');
-  const asistChart = document.getElementById('kpi-asistencia-chart');
-  const asistDetChart = document.getElementById('kpi-asistencia-det-chart');
-  if (asistEl) asistEl.textContent = pctAsistencia + '%';
-  if (asistDet) asistDet.textContent = meetingAttended + ' / ' + meetingDays + ' reuniones realizadas';
-  if (asistRing) asistRing.setAttribute('stroke-dasharray', pctAsistencia + ' ' + (100 - pctAsistencia));
-  if (asistChart) asistChart.textContent = pctAsistencia + '%';
-  if (asistDetChart) asistDetChart.textContent = meetingAttended + ' / ' + meetingDays + ' reuniones realizadas';
+      // Handle calendar tarea toggle
+      document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("cal-todo-toggle")) {
+          const item = e.target.closest("[data-todo-id]");
+          if (item) {
+            const id = parseInt(item.dataset.todoId);
+            const todo = state.todos.find((t) => t.id === id);
+            if (todo) {
+              todo.completed = !todo.completed;
+              guardarEstado();
+              renderTodos();
+              actualizarCalTodos();
+              renderCalendar();
+            }
+          }
+        }
+      });
 
-  // --- Tareas (mensual) ---
-  const monthStr = year + '-' + (month + 1).toString().padStart(2, '0');
-  const monthTodos = state.todos.filter(t => t.date && t.date.startsWith(monthStr));
-  const todoCompleted = monthTodos.filter(t => t.completed).length;
-  const todoTotal = monthTodos.length;
-  const pctTareas = todoTotal > 0 ? Math.round(todoCompleted / todoTotal * 100) : 0;
-  const tareasEl = document.getElementById('kpi-tareas');
-  const tareasDet = document.getElementById('kpi-tareas-det');
-  const tareasBar = document.getElementById('kpi-tareas-bar');
-  const tareasChart = document.getElementById('kpi-tareas-chart');
-  const tareasDetChart = document.getElementById('kpi-tareas-det-chart');
-  if (tareasEl) tareasEl.textContent = pctTareas + '%';
-  if (tareasDet) tareasDet.textContent = todoCompleted + ' / ' + todoTotal + ' completadas';
-  if (tareasBar) tareasBar.style.width = pctTareas + '%';
-  if (tareasChart) tareasChart.textContent = pctTareas + '%';
-  if (tareasDetChart) tareasDetChart.textContent = todoCompleted + ' / ' + todoTotal + ' completadas';
-
-  // --- Checklist (mensual: total = itemsPerDay * díaActual) ---
-  const itemsPerDay = CHECKLIST_LABELS.length;
-  const currentDay = today.getDate();
-  let checkDone = 0;
-  const checkTotal = itemsPerDay * currentDay;
-  for (const [dateStr, entry] of Object.entries(state.dailyHistory)) {
-    const d = new Date(dateStr);
-    if (d.getMonth() === month && d.getFullYear() === year && entry.checklist) {
-      entry.checklist.forEach(v => { if (v) checkDone++; });
-    }
-  }
-  const pctChecklist = checkTotal > 0 ? Math.round(checkDone / checkTotal * 100) : 0;
-  const checkEl = document.getElementById('kpi-checklist');
-  const checkDet = document.getElementById('kpi-checklist-det');
-  const checkBar = document.getElementById('kpi-checklist-bar');
-  const checkChart = document.getElementById('kpi-checklist-chart');
-  const checkDetChart = document.getElementById('kpi-checklist-det-chart');
-  if (checkEl) checkEl.textContent = pctChecklist + '%';
-  if (checkDet) checkDet.textContent = checkDone + ' / ' + checkTotal + ' completadas';
-  if (checkBar) checkBar.style.width = pctChecklist + '%';
-  if (checkChart) checkChart.textContent = pctChecklist + '%';
-  if (checkDetChart) checkDetChart.textContent = checkDone + ' / ' + checkTotal + ' completadas';
-
-  // --- Racha (días consecutivos con asistencia) ---
-  let streak = 0;
-  let cursor = new Date(today);
-  while (true) {
-    const key = cursor.toISOString().slice(0, 10);
-    const entry = state.dailyHistory[key];
-    if (entry && entry.asistio === true) {
-      streak++;
-      cursor.setDate(cursor.getDate() - 1);
-    } else {
-      break;
-    }
-  }
-  const rachaEl = document.getElementById('kpi-racha');
-  if (rachaEl) rachaEl.textContent = streak;
-}
-
-// ====== RECORDING ======
-const recBtn = document.getElementById('recording-main');
-if (recBtn) {
-  recBtn.addEventListener('click', function() {
-    state.grabando = !state.grabando;
-    guardarEstado();
-    actualizarRecUI();
-  });
-}
-
-function actualizarRecUI() {
-  const btn = document.getElementById('recording-main');
-  const label = document.getElementById('recording-label');
-  const waves = document.querySelectorAll('.wave-bar');
-  if (!btn) return;
-  if (state.grabando) {
-    btn.classList.add('recording-active');
-    btn.querySelector('span').textContent = 'stop';
-    if (label) label.textContent = 'Grabando...';
-    waves.forEach(w => w.style.backgroundColor = '#ba1a1a');
-  } else {
-    btn.classList.remove('recording-active');
-    btn.querySelector('span').textContent = 'mic';
-    if (label) label.textContent = 'Toca para grabar nota';
-    waves.forEach(w => w.style.backgroundColor = '#006c49');
-  }
-}
-actualizarRecUI();
-
-// ====== WAVE ANIMATION ======
-setInterval(() => {
-  if (!state.grabando) {
-    document.querySelectorAll('.wave-bar').forEach(bar => {
-      bar.style.height = (Math.floor(Math.random() * 14) + 4) + 'px';
-    });
-  }
-}, 180);
-
-// ====== NAVIGATION ======
-let curPage = 'hoy';
-let transOpen = false;
-
-function navigateTo(page) {
-  if (page === 'ajustes') { abrirModalHorario(); return; }
-  transOpen = false;
-  document.getElementById('fab-icon').textContent = 'mic';
-  document.getElementById('fab-mic').className = 'fab';
-  document.getElementById('fab-mic').style.background = '';
-  document.getElementById('fab-mic').style.display = page === 'hoy' ? 'flex' : 'none';
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
-  const titles = { hoy:'Seleccionar fecha', calendario:'Calendario', metricas:'Metricas' };
-  const el = document.getElementById('page-title');
-  if (page === 'hoy') {
-    el.innerHTML = 'Seleccionar fecha <span class="material-symbols-outlined text-[16px]">expand_more</span>';
-    el.style.cursor = 'pointer';
-  } else {
-    el.textContent = titles[page] || 'Hoy';
-    el.style.cursor = 'default';
-  }
-  curPage = page;
-}
-
-function toggleTranscripcion() {
-  if (curPage !== 'hoy') { navigateTo('hoy'); return; }
-  const modal = document.getElementById('modal-transcripcion');
-  if (modal.classList.contains('active')) {
-    cerrarModalTranscripcion();
-  } else {
-    modal.classList.add('active');
-    document.getElementById('fab-icon').textContent = 'close';
-    document.getElementById('fab-mic').style.background = '#ba1a1a';
-  }
-}
-
-function cerrarModalTranscripcion() {
-  document.getElementById('modal-transcripcion').classList.remove('active');
-  document.getElementById('fab-icon').textContent = 'mic';
-  document.getElementById('fab-mic').style.background = '';
-}
-
-// ====== DATE ======
-const DAYS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-
-function actualizarFechaHoyUI() {
-  const d = new Date(state.hoyDate + 'T12:00:00');
-  const daynameEl = document.getElementById('date-dayname');
-  const fullEl = document.getElementById('date-full');
-  if (daynameEl) daynameEl.textContent = DAYS[d.getDay()];
-  if (fullEl) fullEl.textContent = d.getDate() + ' de ' + MONTHS[d.getMonth()] + ', ' + d.getFullYear();
-  document.getElementById('date-display').textContent = DAYS[d.getDay()] + ', ' + d.getDate() + ' de ' + MONTHS[d.getMonth()];
-  const dateInput = document.getElementById('todo-date');
-  if (dateInput) dateInput.value = state.hoyDate;
-}
-
-function cambiarFechaHoy(dateStr) {
-  if (!dateStr) return;
-  state.hoyDate = dateStr;
-  guardarEstado();
-  actualizarFechaHoyUI();
-  actualizarChecklistUI();
-  actualizarAsistenciaUI();
-  renderTodos();
-  actualizarContadores();
-}
-
-actualizarFechaHoyUI();
-
-// ====== TIME PICKER ======
-function actualizarHoraReunion() {
-  const el = document.getElementById('meeting-time');
-  if (el) el.textContent = state.hora.toString().padStart(2,'0') + ':' + state.minuto.toString().padStart(2,'0') + ' ' + state.periodo;
-}
-
-function refreshClockUI() {
-  const h = document.getElementById('hour-val');
-  const m = document.getElementById('min-val');
-  if (h) h.textContent = state.hora.toString().padStart(2,'0');
-  if (m) m.textContent = state.minuto.toString().padStart(2,'0');
-  const am = document.getElementById('am-btn');
-  const pm = document.getElementById('pm-btn');
-  if (am && pm) {
-    if (state.periodo === 'AM') {
-      am.className = 'px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all bg-surface-container-high text-on-surface';
-      pm.className = 'px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all text-on-surface-variant';
-    } else {
-      pm.className = 'px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all bg-surface-container-high text-on-surface';
-      am.className = 'px-2 py-0.5 rounded-full border border-outline-variant text-xs font-semibold transition-all text-on-surface-variant';
-    }
-  }
-  const preview = document.getElementById('time-preview');
-  if (preview) preview.textContent = 'Recordatorio configurado: ' + state.hora.toString().padStart(2,'0') + ':' + state.minuto.toString().padStart(2,'0') + ' ' + state.periodo;
-  actualizarHoraReunion();
-}
-
-function adjHour(d) {
-  state.hora += d;
-  if (state.hora > 12) state.hora = 1;
-  if (state.hora < 1) state.hora = 12;
-  guardarEstado(); refreshClockUI();
-}
-
-function adjMin(d) {
-  state.minuto += d * 5;
-  if (state.minuto >= 60) { state.minuto = 0; adjHour(1); }
-  if (state.minuto < 0) { state.minuto = 55; adjHour(-1); }
-  guardarEstado(); refreshClockUI();
-}
-
-function setAmPm(p) {
-  state.periodo = p;
-  guardarEstado(); refreshClockUI();
-}
-
-function presetTime(h,m,p) {
-  state.hora = h; state.minuto = m; state.periodo = p;
-  guardarEstado(); refreshClockUI();
-}
-
-function cambiarUbicacion(val) {
-  state.ubicacion = val;
-  guardarEstado();
-  const textEl = document.getElementById('ubicacion-text');
-  if (textEl) textEl.textContent = val || 'Seleccionar ubicación';
-}
-
-
-function abrirModalHorario() {
-  document.getElementById('modal-horario').classList.add('active');
-}
-
-function cerrarModalHorario() {
-  document.getElementById('modal-horario').classList.remove('active');
-  const btn = document.getElementById('save-btn-modal');
-  if (btn) { btn.innerHTML = '<span>Guardar</span><span class="material-symbols-outlined">done_all</span>'; btn.classList.remove('opacity-80'); }
-}
-
-function guardarHorario() {
-  const btn = document.getElementById('save-btn-modal');
-  if (!btn) return;
-  btn.innerHTML = '<span>Guardado</span><span class="material-symbols-outlined">done_all</span>';
-  btn.classList.add('opacity-80');
-  guardarEstado();
-  setTimeout(() => {
-    cerrarModalHorario();
-    navigateTo('calendario');
-  }, 400);
-}
-
-refreshClockUI();
-
-// ====== CALENDAR ======
-const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const dayNames = ['DO','LU','MA','MI','JU','VI','SA'];
-
-function renderCalendar() {
-  const grid = document.getElementById('cal-grid');
-  const title = document.getElementById('cal-month-year');
-  if (!grid) return;
-  title.textContent = monthNames[state.mesCal] + ' ' + state.anioCal;
-  const firstDay = new Date(state.anioCal, state.mesCal, 1).getDay();
-  const daysInMonth = new Date(state.anioCal, state.mesCal + 1, 0).getDate();
-  const today = new Date();
-  let html = dayNames.map(d => '<div class="font-label-md text-on-surface-variant">'+d+'</div>').join('');
-  for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
-    html += '<div></div>';
-  }
-  for (let d = 1; d <= daysInMonth; d++) {
-    const isToday = d === today.getDate() && state.mesCal === today.getMonth() && state.anioCal === today.getFullYear();
-    const isSel = d === state.diaSel;
-    const dateKey = state.anioCal + '-' + (state.mesCal + 1).toString().padStart(2, '0') + '-' + d.toString().padStart(2, '0');
-    const hasReunion = state.dailyHistory[dateKey]?.asistio === true;
-    const noReunion = state.dailyHistory[dateKey]?.asistio === false;
-    const hasPendingTodos = state.todos.some(t => t.date === dateKey && !t.completed);
-    let cls = 'py-2 font-body-md relative cursor-pointer rounded-lg transition-colors';
-    if (isSel) {
-      cls += ' bg-primary font-bold shadow-sm';
-      cls += hasPendingTodos ? ' text-[#e57373]' : ' text-on-primary';
-    } else {
-      cls += ' hover:bg-surface-container-low';
-      if (hasPendingTodos) cls += ' text-error font-bold';
-      else cls += ' text-on-surface';
-      if (isToday) cls += ' font-bold';
-    }
-    html += '<div class="'+cls+'" data-day="'+d+'" onclick="selectDay('+d+')">'+d;
-    if (hasReunion) html += '<span class="active-dot" style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#006c49;"></span>';
-    else if (noReunion) html += '<span class="active-dot" style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#ba1a1a;"></span>';
-    html += '</div>';
-  }
-  grid.innerHTML = html;
-}
-
-function selectDay(d) {
-  state.diaSel = d;
-  guardarEstado();
-  renderCalendar();
-  const sel = document.getElementById('cal-selected-date');
-  if (sel) sel.textContent = d + ' ' + monthNames[state.mesCal] + ' ' + state.anioCal;
-  actualizarCalTodos();
-}
-
-function shiftMonth(dir) {
-  state.mesCal += dir;
-  if (state.mesCal < 0) { state.mesCal = 11; state.anioCal--; }
-  if (state.mesCal > 11) { state.mesCal = 0; state.anioCal++; }
-  guardarEstado();
-  renderCalendar();
-  const sel = document.getElementById('cal-selected-date');
-  if (sel) sel.textContent = state.diaSel + ' ' + monthNames[state.mesCal] + ' ' + state.anioCal;
-  actualizarCalTodos();
-}
-
-renderCalendar();
-const selEl = document.getElementById('cal-selected-date');
-if (selEl) selEl.textContent = state.diaSel + ' ' + monthNames[state.mesCal] + ' ' + state.anioCal;
-
-// ====== CALENDAR TODOS & CHECKLIST ======
-const CHECKLIST_LABELS = [
-  { title: 'Feedback Semanal', desc: 'Revisión de métricas equipo A' },
-  { title: 'Objetivos Q4', desc: 'Alineación con roadmap técnico' },
-  { title: 'Bloqueos Críticos', desc: 'Infraestructura y despliegue' },
-];
-
-function actualizarCalTodos() {
-  const month = (state.mesCal + 1).toString().padStart(2, '0');
-  const day = state.diaSel.toString().padStart(2, '0');
-  const dateStr = state.anioCal + '-' + month + '-' + day;
-  const dayHistory = state.dailyHistory[dateStr];
-
-  // --- Indicador de reunión ---
-  const meetingEl = document.getElementById('cal-meeting-indicator');
-  if (meetingEl) {
-    if (dayHistory?.asistio === true) {
-      meetingEl.innerHTML = '<span class="w-2 h-2 bg-[#006c49] rounded-full"></span><span class="font-label-sm text-on-surface-variant uppercase">Reunión realizada</span>';
-    } else if (dayHistory?.asistio === false) {
-      meetingEl.innerHTML = '<span class="w-2 h-2 bg-error rounded-full"></span><span class="font-label-sm text-on-surface-variant uppercase">Reunión no realizada</span>';
-    } else {
-      meetingEl.innerHTML = '';
-    }
-  }
-
-  // --- Tareas ---
-  const dayTodos = state.todos.filter(t => t.date === dateStr);
-  const tContainer = document.getElementById('cal-todo-container');
-  if (tContainer) {
-    if (dayTodos.length === 0) {
-      tContainer.innerHTML = '<div class="p-stack-md text-center text-outline text-sm">No hay tareas para esta fecha</div>';
-    } else {
-      tContainer.innerHTML = dayTodos.map(t => {
-        const doneClass = t.completed ? 'todo-done' : '';
-        const icon = t.completed ? 'check_circle' : 'radio_button_unchecked';
-        return '<div class="p-stack-md flex items-center gap-stack-md hover:bg-surface-container-low transition-colors group ' + doneClass + '" data-todo-id="' + t.id + '">' +
-          '<span class="material-symbols-outlined text-outline group-hover:text-primary cal-todo-toggle">' + icon + '</span>' +
-          '<span class="font-body-md text-on-surface flex-1 todo-text">' + escapeHtml(t.text) + '</span>' +
-          '<span class="material-symbols-outlined text-outline hover:text-error cursor-pointer todo-delete text-[20px]">close</span>' +
-          '</div>';
-      }).join('');
-    }
-  }
-
-  // --- Checklist ---
-  const cContainer = document.getElementById('cal-checklist-container');
-  if (cContainer) {
-    const calChecklist = dayHistory?.checklist || [false, false, false];
-    cContainer.innerHTML = CHECKLIST_LABELS.map((item, i) => {
-      const checked = calChecklist[i] ? 'checked' : '';
-      const doneClass = calChecklist[i] ? 'checklist-done' : '';
-      return '<div class="p-stack-md flex items-center gap-stack-md hover:bg-surface-container-low transition-colors group">' +
-        '<input type="checkbox" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors cal-checklist-cb" data-cal-date="' + dateStr + '" data-cal-idx="' + i + '" ' + checked + '>' +
-        '<div class="flex flex-col checklist-text ' + doneClass + '">' +
-        '<span class="font-body-md font-semibold text-on-surface">' + item.title + '</span>' +
-        '<span class="font-label-sm text-outline">' + item.desc + '</span>' +
-        '</div>' +
-        '</div>';
-    }).join('');
-  }
-}
-
-// Handle calendar checklist changes
-document.addEventListener('change', function(e) {
-  if (e.target.classList.contains('cal-checklist-cb')) {
-    const date = e.target.dataset.calDate;
-    const idx = parseInt(e.target.dataset.calIdx);
-    if (!state.dailyHistory[date]) state.dailyHistory[date] = { checklist: [false, false, false], asistio: null };
-    if (!state.dailyHistory[date].checklist) state.dailyHistory[date].checklist = [false, false, false];
-    state.dailyHistory[date].checklist[idx] = e.target.checked;
-    guardarEstado();
-    actualizarCalTodos();
-    renderCalendar();
-  }
-});
-
-// Handle calendar tarea toggle
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('cal-todo-toggle')) {
-    const item = e.target.closest('[data-todo-id]');
-    if (item) {
-      const id = parseInt(item.dataset.todoId);
-      const todo = state.todos.find(t => t.id === id);
-      if (todo) {
-        todo.completed = !todo.completed;
-        guardarEstado();
-        renderTodos();
-        actualizarCalTodos();
-        renderCalendar();
+      // ====== PDF ======
+      function descargarPDF() {
+        const pend = state.checklist.filter((v) => !v).length;
+        const comp = state.todos.filter((t) => t.completed).length;
+        const tot = state.todos.length;
+        const pct = tot > 0 ? Math.round((comp / tot) * 100) : 0;
+        alert(
+          "Generando reporte PDF...\n\nResumen de Eficiencia\n- Productividad: " +
+            pct +
+            "%\n- Asistencia: 94.2%\n- Tareas Completadas: " +
+            comp +
+            "/" +
+            tot +
+            "\n- Checklist Pendientes: " +
+            pend +
+            "\n- Racha: 12 dias\n\nEl reporte se descargara automaticamente.",
+        );
       }
-    }
-  }
-});
 
-// ====== PDF ======
-function descargarPDF() {
-  const pend = state.checklist.filter(v => !v).length;
-  const comp = state.todos.filter(t => t.completed).length;
-  const tot = state.todos.length;
-  const pct = tot > 0 ? Math.round(comp/tot*100) : 0;
-  alert('Generando reporte PDF...\n\nResumen de Eficiencia\n- Productividad: ' + pct + '%\n- Asistencia: 94.2%\n- Tareas Completadas: ' + comp + '/' + tot + '\n- Checklist Pendientes: ' + pend + '\n- Racha: 12 dias\n\nEl reporte se descargara automaticamente.');
-}
-
-// ====== INIT UI ======
-actualizarChecklistUI();
-renderTodos();
-actualizarContadores();
-actualizarAsistenciaUI();
-actualizarCalTodos();
-actualizarMetricas();
-actualizarHoraReunion();
-document.getElementById('ubicacion-select').value = state.ubicacion || '';
-const textEl = document.getElementById('ubicacion-text');
-if (textEl) textEl.textContent = state.ubicacion || 'Seleccionar ubicación';
-</script>
-
-</body>
+      // ====== INIT UI ======
+      actualizarChecklistUI();
+      renderTodos();
+      actualizarContadores();
+      actualizarAsistenciaUI();
+      actualizarCalTodos();
+      actualizarMetricas();
+      actualizarHoraReunion();
+      document.getElementById("ubicacion-select").value = state.ubicacion || "";
+      const textEl = document.getElementById("ubicacion-text");
+      if (textEl)
+        textEl.textContent = state.ubicacion || "Seleccionar ubicación";
+    </script>
+  </body>
 </html>
