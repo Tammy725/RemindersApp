@@ -1117,7 +1117,7 @@ function actualizarCalTodos() {
   const meetingEl = document.getElementById('cal-meeting-indicator');
   if (meetingEl) {
     if (dayHistory?.asistio === true) {
-      meetingEl.innerHTML = '<span class="w-2 h-2 bg-secondary rounded-full"></span><span class="font-label-sm text-on-surface-variant uppercase">Reunión realizada</span>';
+      meetingEl.innerHTML = '<span class="w-2 h-2 bg-[#006c49] rounded-full"></span><span class="font-label-sm text-on-surface-variant uppercase">Reunión realizada</span>';
     } else if (dayHistory?.asistio === false) {
       meetingEl.innerHTML = '<span class="w-2 h-2 bg-error rounded-full"></span><span class="font-label-sm text-on-surface-variant uppercase">Reunión no realizada</span>';
     } else {
