@@ -137,7 +137,7 @@ tailwind.config = {
       <div class="flex items-center justify-between">
         <div>
           <h3 class="font-headline-sm text-headline-sm text-primary">Asistencia</h3>
-          <p class="font-label-sm text-outline">Reunión Diaria · 09:00 AM</p>
+          <p class="font-label-sm text-outline">Reunión Diaria · <span id="meeting-time">09:00 AM</span></p>
         </div>
         <div class="flex gap-2">
           <button class="px-4 py-2 rounded-lg border border-outline-variant text-outline font-label-md hover:border-on-surface hover:text-on-surface transition-all attendance-btn" data-value="true">Asistí</button>
@@ -973,6 +973,11 @@ function cambiarFechaHoy(dateStr) {
 actualizarFechaHoyUI();
 
 // ====== TIME PICKER ======
+function actualizarHoraReunion() {
+  const el = document.getElementById('meeting-time');
+  if (el) el.textContent = state.hora.toString().padStart(2,'0') + ':' + state.minuto.toString().padStart(2,'0') + ' ' + state.periodo;
+}
+
 function refreshClockUI() {
   const h = document.getElementById('hour-val');
   const m = document.getElementById('min-val');
@@ -991,6 +996,7 @@ function refreshClockUI() {
   }
   const preview = document.getElementById('time-preview');
   if (preview) preview.textContent = 'Recordatorio configurado: ' + state.hora.toString().padStart(2,'0') + ':' + state.minuto.toString().padStart(2,'0') + ' ' + state.periodo;
+  actualizarHoraReunion();
 }
 
 function adjHour(d) {
@@ -1021,8 +1027,9 @@ function guardarHorario() {
   const btn = document.getElementById('save-btn');
   btn.innerHTML = '<span>Guardado</span><span class="material-symbols-outlined">done_all</span>';
   btn.classList.add('opacity-80');
+  guardarEstado();
   setTimeout(() => {
-    alert('Horario configurado: ' + state.hora.toString().padStart(2,'0') + ':' + state.minuto.toString().padStart(2,'0') + ' ' + state.periodo);
+    navigateTo('calendario');
   }, 300);
 }
 
@@ -1203,6 +1210,7 @@ actualizarContadores();
 actualizarAsistenciaUI();
 actualizarCalTodos();
 actualizarMetricas();
+actualizarHoraReunion();
 </script>
 
 </body>
