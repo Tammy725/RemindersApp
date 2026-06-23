@@ -475,62 +475,7 @@
           <div
             class="grid grid-cols-1 md:grid-cols-3 gap-unit"
             id="checklist-container"
-          >
-            <label
-              class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group"
-              data-checklist-id="0"
-            >
-              <input
-                class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb"
-                data-checklist-id="0"
-                type="checkbox"
-              />
-              <div class="flex flex-col checklist-text">
-                <span class="font-body-md font-semibold text-on-surface"
-                  >Feedback Semanal</span
-                >
-                <span class="font-label-sm text-outline"
-                  >Revisión de métricas equipo A</span
-                >
-              </div>
-            </label>
-            <label
-              class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group"
-              data-checklist-id="1"
-            >
-              <input
-                class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb"
-                data-checklist-id="1"
-                type="checkbox"
-              />
-              <div class="flex flex-col checklist-text">
-                <span class="font-body-md font-semibold text-on-surface"
-                  >Objetivos Q4</span
-                >
-                <span class="font-label-sm text-outline"
-                  >Alineación con roadmap técnico</span
-                >
-              </div>
-            </label>
-            <label
-              class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group"
-              data-checklist-id="2"
-            >
-              <input
-                class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb"
-                data-checklist-id="2"
-                type="checkbox"
-              />
-              <div class="flex flex-col checklist-text">
-                <span class="font-body-md font-semibold text-on-surface"
-                  >Bloqueos Críticos</span
-                >
-                <span class="font-label-sm text-outline"
-                  >Infraestructura y despliegue</span
-                >
-              </div>
-            </label>
-          </div>
+          ></div>
         </section>
         <section class="space-y-stack-sm">
           <div class="flex justify-between items-baseline">
@@ -866,11 +811,15 @@
         <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md">
           <div class="flex items-center gap-stack-md">
             <div class="w-16 h-16 rounded-[50%] bg-surface-container-highest flex items-center justify-center border border-outline-variant text-2xl font-bold text-outline shrink-0">T</div>
-            <div class="flex-1">
+            <div class="min-w-0">
               <h2 class="font-headline-sm text-headline-sm text-on-surface">Tammyshabetay</h2>
               <p class="font-body-md text-body-md text-outline">tammy@shabetay.com</p>
-              <span class="inline-block mt-1 px-3 py-0.5 rounded-full bg-[#006c49]/10 text-[#006c49] font-label-md text-label-sm font-semibold">Admin</span>
+              <span class="inline-block mt-1 px-3 py-0.5 rounded-full bg-[#006c49]/10 text-[#006c49] font-label-md text-label-sm font-semibold" id="user-role-badge">Admin</span>
             </div>
+            <button id="btn-editar-checklist" class="ml-auto flex flex-col items-center px-2 py-1.5 rounded-xl hover:bg-surface-container-low transition-all text-outline hover:text-on-surface" onclick="abrirModalChecklist()">
+              <span class="material-symbols-outlined text-[18px]">edit</span>
+              <span class="text-[10px] leading-tight mt-0.5 font-medium">Editar<br>Checklist</span>
+            </button>
           </div>
         </section>
 
@@ -878,8 +827,9 @@
         <section class="space-y-stack-md">
           <div class="flex items-center justify-between">
             <h3 class="font-headline-sm text-headline-sm text-on-surface">Equipos / Departamentos</h3>
-            <button class="px-4 py-2 rounded-lg font-label-md transition-transform active:scale-95 flex items-center gap-2 shadow-sm text-on-surface font-body-md border border-outline-variant hover:bg-surface-container-low" onclick="abrirModalEquipo()">
-              <span class="material-symbols-outlined text-[18px]">add</span>Agregar equipo
+            <button id="btn-agregar-equipo" class="flex items-center gap-1 px-3 py-1.5 rounded-xl hover:bg-surface-container-low transition-all text-outline hover:text-on-surface text-xs font-medium" onclick="abrirModalEquipo()">
+              Agregar equipo
+              <span class="material-symbols-outlined text-[16px]">add</span>
             </button>
           </div>
           <div id="equipos-container" class="space-y-stack-md"></div>
@@ -889,7 +839,7 @@
 
     <!-- MODAL: Agregar equipo -->
     <div class="modal-overlay" id="modal-equipo" onclick="if(event.target===this)cerrarModalEquipo()">
-      <div class="modal-content p-stack-md">
+      <div class="modal-content p-stack-md rounded-lg">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Nuevo equipo</h3>
           <button class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center" onclick="cerrarModalEquipo()">
@@ -906,7 +856,7 @@
 
     <!-- MODAL: Invitar usuario -->
     <div class="modal-overlay" id="modal-invitar" onclick="if(event.target===this)cerrarModalInvitar()">
-      <div class="modal-content p-stack-md">
+      <div class="modal-content p-stack-md rounded-lg">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Invitar miembro</h3>
           <button class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center" onclick="cerrarModalInvitar()">
@@ -1148,6 +1098,40 @@
             <span>Guardar</span
             ><span class="material-symbols-outlined">done_all</span>
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Editar Checklist -->
+    <div class="modal-overlay" id="modal-checklist" onclick="if(event.target===this)cerrarModalChecklist()">
+      <div class="modal-content p-5 rounded-lg">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-green-50 border border-green-200 rounded-md flex items-center justify-center">
+              <span class="material-symbols-outlined text-green-600 text-[18px]">checklist</span>
+            </div>
+            <h3 class="font-headline-sm text-headline-sm text-on-surface">Editar Checklist</h3>
+          </div>
+          <button class="w-9 h-9 rounded-full hover:bg-surface-container-low flex items-center justify-center" onclick="cerrarModalChecklist()">
+            <span class="material-symbols-outlined text-outline">close</span>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block font-label-sm text-label-sm text-outline mb-1">Departamento</label>
+            <select id="checklist-dept-select" class="w-full px-3 py-2 rounded-lg border border-outline-variant bg-surface font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/30" onchange="renderChecklistItems()">
+              <option value="todos">Todos</option>
+            </select>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="input-checklist-title" placeholder="Nuevo ítem..." class="flex-1 px-3 py-2 rounded-lg border border-outline-variant bg-surface font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/30">
+            <button onclick="agregarItemChecklist()" class="w-9 h-9 bg-primary hover:bg-primary/90 text-white rounded-md flex items-center justify-center transition-colors flex-shrink-0">
+              <span class="material-symbols-outlined text-[18px]">add</span>
+            </button>
+          </div>
+          <div class="space-y-1.5 max-h-64 overflow-y-auto" id="checklist-items-list">
+            <p class="text-center text-outline text-sm py-8">Selecciona un departamento</p>
+          </div>
         </div>
       </div>
     </div>
@@ -1433,7 +1417,7 @@
         const today = new Date();
         const todayStr = today.toISOString().slice(0, 10);
         return {
-          checklist: [false, false, false],
+          checklist: { "0": false, "1": false, "2": false },
           todos: [],
           todoIdCounter: 0,
           dailyHistory: {},
@@ -1449,6 +1433,15 @@
           diaSel: today.getDate(),
           equipos: [],
           equipoIdCounter: 0,
+          currentUserRole: "Admin",
+          currentUserDepartment: "todos",
+          checklistTemplates: [
+            { id: 0, title: "Feedback Semanal", department: "todos" },
+            { id: 1, title: "Objetivos Q4", department: "todos" },
+            { id: 2, title: "Bloqueos Críticos", department: "todos" },
+          ],
+          templateIdCounter: 3,
+          _editingItemId: null,
         };
       }
 
@@ -1481,6 +1474,22 @@
               }));
               parsed.todoIdCounter = parsed.todos.length;
             }
+            // Migrate old checklist array (boolean[]) to object {id: bool}
+            if (Array.isArray(parsed.checklist)) {
+              const obj = {};
+              parsed.checklist.forEach((val, idx) => { obj[idx] = val; });
+              parsed.checklist = obj;
+            }
+            if (parsed.dailyHistory) {
+              for (const dateStr of Object.keys(parsed.dailyHistory)) {
+                const entry = parsed.dailyHistory[dateStr];
+                if (entry.checklist && Array.isArray(entry.checklist)) {
+                  const obj = {};
+                  entry.checklist.forEach((val, idx) => { obj[idx] = val; });
+                  entry.checklist = obj;
+                }
+              }
+            }
             return parsed;
           }
         } catch (e) {}
@@ -1490,7 +1499,7 @@
       function guardarEstado() {
         const todayStr = new Date().toISOString().slice(0, 10);
         state.dailyHistory[todayStr] = {
-          checklist: [...state.checklist],
+          checklist: { ...state.checklist },
           asistio: state.asistio,
         };
         localStorage.setItem(STORE_KEY, JSON.stringify(state));
@@ -1503,32 +1512,37 @@
           return state.checklist;
         }
         if (!state.dailyHistory[dateStr]) {
-          state.dailyHistory[dateStr] = {
-            checklist: [false, false, false],
-            asistio: null,
-          };
+          state.dailyHistory[dateStr] = { checklist: {}, asistio: null };
         }
         if (!state.dailyHistory[dateStr].checklist) {
-          state.dailyHistory[dateStr].checklist = [false, false, false];
+          state.dailyHistory[dateStr].checklist = {};
         }
         return state.dailyHistory[dateStr].checklist;
       }
 
       function actualizarChecklistUI() {
         const cl = getChecklistForDate(state.hoyDate);
-        document.querySelectorAll(".checklist-cb").forEach((cb) => {
-          const id = parseInt(cb.dataset.checklistId);
-          cb.checked = cl[id] || false;
-          const textEl = cb.closest(".group")?.querySelector(".checklist-text");
-          if (textEl) {
-            if (cb.checked) {
-              textEl.classList.add("checklist-done");
-            } else {
-              textEl.classList.remove("checklist-done");
-            }
-          }
-        });
-        const pendientes = cl.filter((v) => !v).length;
+        const container = document.getElementById("checklist-container");
+        let visibleTemplates = state.checklistTemplates;
+        if (state.currentUserRole !== "Admin" && state.currentUserDepartment) {
+          visibleTemplates = visibleTemplates.filter(
+            t => t.department === "todos" || t.department === state.currentUserDepartment
+          );
+        }
+        if (container) {
+          container.innerHTML = visibleTemplates.map(t => {
+            const checked = cl[t.id] || false;
+            return `
+              <label class="premium-card flex items-center p-stack-md rounded-xl cursor-pointer group" data-checklist-id="${t.id}">
+                <input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors mr-stack-md checklist-cb" data-checklist-id="${t.id}" type="checkbox" ${checked ? 'checked' : ''}>
+                <div class="flex flex-col checklist-text ${checked ? 'checklist-done' : ''}">
+                  <span class="font-body-md font-semibold text-on-surface">${escapeHtml(t.title)}</span>
+                </div>
+              </label>
+            `;
+          }).join("");
+        }
+        const pendientes = visibleTemplates.filter(t => !(cl[t.id])).length;
         const counters = document.querySelectorAll(
           ".checklist-counter, #checklist-counter",
         );
@@ -1543,15 +1557,13 @@
 
       document.addEventListener("change", function (e) {
         if (e.target.classList.contains("checklist-cb")) {
-          const id = parseInt(e.target.dataset.checklistId);
+          const id = e.target.dataset.checklistId;
           const todayStr = new Date().toISOString().slice(0, 10);
           if (state.hoyDate === todayStr) {
-            if (!isNaN(id) && id >= 0 && id < state.checklist.length) {
-              state.checklist[id] = e.target.checked;
-            }
+            if (id !== undefined) state.checklist[id] = e.target.checked;
           } else {
             const cl = getChecklistForDate(state.hoyDate);
-            if (!isNaN(id) && id >= 0 && id < cl.length) {
+            if (id !== undefined) {
               cl[id] = e.target.checked;
               state.dailyHistory[state.hoyDate].checklist = cl;
             }
@@ -1711,8 +1723,8 @@
         const todoDone = dayTodos.filter((t) => t.completed).length;
         const todoTotal = dayTodos.length;
         const cl = getChecklistForDate(state.hoyDate);
-        const checkDone = cl.filter(Boolean).length;
-        const checkTotal = cl.length;
+        const checkDone = state.checklistTemplates.filter(t => cl[t.id]).length;
+        const checkTotal = state.checklistTemplates.length;
         const tEl = document.getElementById("counter-todos");
         const cEl = document.getElementById("counter-checklist");
         if (tEl) tEl.textContent = todoDone + "/" + todoTotal;
@@ -1748,7 +1760,7 @@
           } else {
             if (!state.dailyHistory[state.hoyDate]) {
               state.dailyHistory[state.hoyDate] = {
-                checklist: [false, false, false],
+                checklist: {},
                 asistio: null,
               };
             }
@@ -1834,22 +1846,23 @@
           tareasDetChart.textContent =
             todoCompleted + " / " + todoTotal + " completadas";
 
-        // --- Checklist (mensual: total = itemsPerDay * díaActual) ---
-        const itemsPerDay = CHECKLIST_LABELS.length;
+        // --- Checklist (mensual) ---
         const currentDay = today.getDate();
         let checkDone = 0;
-        const checkTotal = itemsPerDay * currentDay;
+        let checkTotal = 0;
+        const templateIds = state.checklistTemplates.map(t => t.id);
         for (const [dateStr, entry] of Object.entries(state.dailyHistory)) {
           const d = new Date(dateStr);
-          if (
-            d.getMonth() === month &&
-            d.getFullYear() === year &&
-            entry.checklist
-          ) {
-            entry.checklist.forEach((v) => {
-              if (v) checkDone++;
+          if (d.getMonth() === month && d.getFullYear() === year && entry.checklist) {
+            checkTotal += templateIds.length;
+            templateIds.forEach(tid => {
+              if (entry.checklist[tid]) checkDone++;
             });
           }
+        }
+        if (checkTotal === 0) {
+          checkTotal = templateIds.length * currentDay;
+          checkDone = 0;
         }
         const pctChecklist =
           checkTotal > 0 ? Math.round((checkDone / checkTotal) * 100) : 0;
@@ -1932,6 +1945,7 @@
       function navigateTo(page) {
         if (page === "ajustes") {
           renderTeams();
+          actualizarPerfilUI();
         }
         transOpen = false;
         document.getElementById("fab-icon").textContent = "mic";
@@ -2159,13 +2173,170 @@
         }, 400);
       }
 
+      // ====== PERFIL UI ======
+      function actualizarPerfilUI() {
+        const badge = document.getElementById("user-role-badge");
+        const btn = document.getElementById("btn-editar-checklist");
+        const btnEquipo = document.getElementById("btn-agregar-equipo");
+        if (badge) badge.textContent = state.currentUserRole;
+        if (btn) {
+          btn.style.display = state.currentUserRole === "Admin" ? "flex" : "none";
+        }
+        if (btnEquipo) {
+          btnEquipo.style.display = state.currentUserRole === "Admin" ? "flex" : "none";
+        }
+      }
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && document.activeElement === document.getElementById("input-checklist-title")) {
+          agregarItemChecklist();
+        }
+      });
+
+      // ====== EDITAR CHECKLIST (MODAL) ======
+      function abrirModalChecklist() {
+        const select = document.getElementById("checklist-dept-select");
+        if (select) {
+          const currentOpts = select.querySelectorAll("option:not([value='todos'])");
+          currentOpts.forEach(o => o.remove());
+          state.equipos.forEach(eq => {
+            const opt = document.createElement("option");
+            opt.value = eq.name;
+            opt.textContent = eq.name;
+            select.appendChild(opt);
+          });
+          select.value = "todos";
+        }
+        renderChecklistItems();
+        document.getElementById("modal-checklist").classList.add("active");
+        const scrollY = window.scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = "100%";
+      }
+
+      function cerrarModalChecklist() {
+        const scrollY = parseInt(document.body.style.top || "0") * -1;
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        window.scrollTo(0, scrollY || 0);
+        document.getElementById("modal-checklist").classList.remove("active");
+        document.getElementById("input-checklist-title").value = "";
+      }
+
+      function renderChecklistItems() {
+        const dept = document.getElementById("checklist-dept-select").value;
+        const container = document.getElementById("checklist-items-list");
+        const items = state.checklistTemplates.filter(t => t.department === dept || dept === "todos");
+        if (items.length === 0) {
+          container.innerHTML = '<p class="text-center text-outline text-sm py-8">No hay ítems para este departamento</p>';
+          return;
+        }
+        container.innerHTML = items.map(item => {
+          const isEditing = state._editingItemId === item.id;
+          if (isEditing) {
+            return `
+              <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant">
+                <input type="text" id="edit-checklist-input" value="${escapeHtml(item.title)}" class="flex-1 px-2 py-1.5 rounded-md border border-outline-variant bg-white font-body-md text-sm focus:outline-none focus:ring-2 focus:ring-secondary/30">
+                <button onclick="guardarItemChecklist(${item.id})" class="text-secondary hover:text-on-secondary-container w-7 h-7 flex items-center justify-center rounded-full hover:bg-secondary/10 transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">check</span>
+                </button>
+                <button onclick="cancelarEdicionItem()" class="text-outline hover:text-on-surface w-7 h-7 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+              </div>
+            `;
+          }
+          return `
+            <div class="flex items-center gap-3 px-3 py-2.5 bg-surface-container-low rounded-lg border border-transparent hover:border-outline-variant transition-all">
+              <span class="flex-1 text-sm font-medium text-on-surface">${escapeHtml(item.title)}</span>
+              <button onclick="editarItemChecklist(${item.id})" class="text-outline hover:text-primary transition-colors w-7 h-7 flex items-center justify-center rounded-full hover:bg-surface-container-high">
+                <span class="material-symbols-outlined text-[16px]">edit</span>
+              </button>
+              <button onclick="eliminarItemChecklist(${item.id})" class="text-outline hover:text-error transition-colors w-7 h-7 flex items-center justify-center rounded-full hover:bg-error/10">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+              </button>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function agregarItemChecklist() {
+        const input = document.getElementById("input-checklist-title");
+        const title = input.value.trim();
+        if (!title) return;
+        const dept = document.getElementById("checklist-dept-select").value;
+        const newItem = {
+          id: state.templateIdCounter++,
+          title: title,
+          department: dept,
+        };
+        state.checklistTemplates.push(newItem);
+        input.value = "";
+        guardarEstado();
+        renderChecklistItems();
+        actualizarChecklistUI();
+        actualizarCalTodos();
+        renderCalendar();
+      }
+
+      function editarItemChecklist(id) {
+        state._editingItemId = id;
+        renderChecklistItems();
+        const input = document.getElementById("edit-checklist-input");
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }
+
+      function guardarItemChecklist(id) {
+        const input = document.getElementById("edit-checklist-input");
+        if (!input) return;
+        const title = input.value.trim();
+        if (!title) return;
+        const item = state.checklistTemplates.find(t => t.id === id);
+        if (item) item.title = title;
+        state._editingItemId = null;
+        guardarEstado();
+        renderChecklistItems();
+        actualizarChecklistUI();
+        actualizarCalTodos();
+        renderCalendar();
+      }
+
+      function cancelarEdicionItem() {
+        state._editingItemId = null;
+        renderChecklistItems();
+      }
+
+      function eliminarItemChecklist(id) {
+        state.checklistTemplates = state.checklistTemplates.filter(t => t.id !== id);
+        state._editingItemId = null;
+        guardarEstado();
+        renderChecklistItems();
+        actualizarChecklistUI();
+        actualizarCalTodos();
+        renderCalendar();
+      }
+
       // ====== TEAMS ======
       function abrirModalEquipo() {
         document.getElementById("modal-equipo").classList.add("active");
         document.getElementById("input-equipo-nombre").value = "";
+        const scrollY = window.scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = "100%";
       }
 
       function cerrarModalEquipo() {
+        const scrollY = parseInt(document.body.style.top || "0") * -1;
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        window.scrollTo(0, scrollY || 0);
         document.getElementById("modal-equipo").classList.remove("active");
       }
 
@@ -2195,9 +2366,18 @@
         document.getElementById("modal-invitar").classList.add("active");
         document.getElementById("input-invitar-email").value = "";
         document.getElementById("select-invitar-rol").value = "Miembro";
+        const scrollY = window.scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = "100%";
       }
 
       function cerrarModalInvitar() {
+        const scrollY = parseInt(document.body.style.top || "0") * -1;
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        window.scrollTo(0, scrollY || 0);
         document.getElementById("modal-invitar").classList.remove("active");
         state._invitarEquipoId = null;
       }
@@ -2233,6 +2413,7 @@
       function renderTeams() {
         const container = document.getElementById("equipos-container");
         if (!container) return;
+        const isAdmin = state.currentUserRole === "Admin";
         if (state.equipos.length === 0) {
           container.innerHTML =
             '<p class="font-body-md text-body-md text-outline text-center py-8">No hay equipos aún. Crea tu primer equipo.</p>';
@@ -2244,6 +2425,7 @@
           <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md">
             <div class="flex items-center justify-between mb-3">
               <h4 class="font-headline-sm text-headline-sm text-on-surface">${eq.name}</h4>
+              ${isAdmin ? `
               <div class="flex items-center gap-2">
                 <button class="px-3 py-1.5 rounded-lg font-label-md flex items-center gap-1 border border-outline-variant hover:bg-surface-container-low transition-all text-sm" onclick="abrirModalInvitar(${eq.id})">
                   <span class="material-symbols-outlined text-[16px]">person_add</span>Invitar
@@ -2251,7 +2433,7 @@
                 <button class="w-8 h-8 rounded-full hover:bg-surface-container-low flex items-center justify-center text-outline" onclick="eliminarEquipo(${eq.id})" title="Eliminar equipo">
                   <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
-              </div>
+              </div>` : ''}
             </div>
             ${
               eq.miembros.length === 0
@@ -2268,9 +2450,10 @@
                         <p class="font-label-sm text-label-sm text-outline">${m.rol} • ${m.fecha}</p>
                       </div>
                     </div>
+                    ${isAdmin ? `
                     <button class="w-7 h-7 rounded-full hover:bg-surface-container-high flex items-center justify-center text-outline" onclick="eliminarMiembro(${eq.id},${idx})" title="Eliminar miembro">
                       <span class="material-symbols-outlined text-[16px]">close</span>
-                    </button>
+                    </button>` : ''}
                   </div>
                 `,
                   )
@@ -2410,11 +2593,6 @@
           state.diaSel + " " + monthNames[state.mesCal] + " " + state.anioCal;
 
       // ====== CALENDAR TODOS & CHECKLIST ======
-      const CHECKLIST_LABELS = [
-        { title: "Feedback Semanal", desc: "Revisión de métricas equipo A" },
-        { title: "Objetivos Q4", desc: "Alineación con roadmap técnico" },
-        { title: "Bloqueos Críticos", desc: "Infraestructura y despliegue" },
-      ];
 
       function actualizarCalTodos() {
         const month = (state.mesCal + 1).toString().padStart(2, "0");
@@ -2473,16 +2651,16 @@
         // --- Checklist ---
         const cContainer = document.getElementById("cal-checklist-container");
         if (cContainer) {
-          const calChecklist = dayHistory?.checklist || [false, false, false];
-          cContainer.innerHTML = CHECKLIST_LABELS.map((item, i) => {
-            const checked = calChecklist[i] ? "checked" : "";
-            const doneClass = calChecklist[i] ? "checklist-done" : "";
+          const calChecklist = dayHistory?.checklist || {};
+          cContainer.innerHTML = state.checklistTemplates.map(item => {
+            const checked = calChecklist[item.id] ? "checked" : "";
+            const doneClass = calChecklist[item.id] ? "checklist-done" : "";
             return (
               '<div class="p-stack-md flex items-center gap-stack-md hover:bg-surface-container-low transition-colors group">' +
               '<input type="checkbox" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-colors cal-checklist-cb" data-cal-date="' +
               dateStr +
               '" data-cal-idx="' +
-              i +
+              item.id +
               '" ' +
               checked +
               ">" +
@@ -2490,10 +2668,7 @@
               doneClass +
               '">' +
               '<span class="font-body-md font-semibold text-on-surface">' +
-              item.title +
-              "</span>" +
-              '<span class="font-label-sm text-outline">' +
-              item.desc +
+              escapeHtml(item.title) +
               "</span>" +
               "</div>" +
               "</div>"
@@ -2506,14 +2681,11 @@
       document.addEventListener("change", function (e) {
         if (e.target.classList.contains("cal-checklist-cb")) {
           const date = e.target.dataset.calDate;
-          const idx = parseInt(e.target.dataset.calIdx);
+          const idx = e.target.dataset.calIdx;
           if (!state.dailyHistory[date])
-            state.dailyHistory[date] = {
-              checklist: [false, false, false],
-              asistio: null,
-            };
+            state.dailyHistory[date] = { checklist: {}, asistio: null };
           if (!state.dailyHistory[date].checklist)
-            state.dailyHistory[date].checklist = [false, false, false];
+            state.dailyHistory[date].checklist = {};
           state.dailyHistory[date].checklist[idx] = e.target.checked;
           guardarEstado();
           actualizarCalTodos();
@@ -2541,7 +2713,7 @@
 
       // ====== PDF ======
       function descargarPDF() {
-        const pend = state.checklist.filter((v) => !v).length;
+        const pend = state.checklistTemplates.filter(t => !state.checklist[t.id]).length;
         const comp = state.todos.filter((t) => t.completed).length;
         const tot = state.todos.length;
         const pct = tot > 0 ? Math.round((comp / tot) * 100) : 0;
@@ -2559,6 +2731,7 @@
       }
 
       // ====== INIT UI ======
+      actualizarPerfilUI();
       actualizarChecklistUI();
       renderTodos();
       actualizarContadores();
