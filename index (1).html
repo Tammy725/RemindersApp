@@ -365,14 +365,34 @@ tailwind.config = {
         <div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/50">
           <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Ubicación</label>
           <div class="relative" id="ubicacion-wrapper">
-            <div class="flex items-center justify-between cursor-pointer" onclick="toggleUbicacionDropdown()">
+            <div class="flex items-center justify-between pointer-events-none">
               <span class="font-body-md text-body-md text-primary" id="ubicacion-text">Seleccionar ubicación</span>
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-1 pointer-events-none">
                 <span class="material-symbols-outlined text-outline">public</span>
                 <span class="material-symbols-outlined text-outline">expand_more</span>
               </div>
             </div>
-            <div id="ubicacion-dropdown" class="absolute left-0 right-0 top-full mt-1 bg-surface rounded-xl border border-outline-variant shadow-lg z-50 hidden max-h-60 overflow-y-auto" style="min-width:240px"></div>
+            <select id="ubicacion-select" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="cambiarUbicacion(this.value)">
+              <option value="">Seleccionar ubicación</option>
+              <optgroup label="Sucursal El Fuerte">
+                <option value="El Fuerte, San Miguelito">San Miguelito</option>
+                <option value="El Fuerte, Westland">Westland</option>
+                <option value="El Fuerte, Villa Zaita">Villa Zaita</option>
+                <option value="El Fuerte, 24 de Diciembre">24 de Diciembre</option>
+                <option value="El Fuerte, Federal Mall">Federal Mall</option>
+                <option value="El Fuerte, Burunga">Burunga</option>
+              </optgroup>
+              <optgroup label="Sucursal La Onda">
+                <option value="La Onda, Los Pueblos">Los Pueblos</option>
+                <option value="La Onda, Villa Lucre">Villa Lucre</option>
+                <option value="La Onda, El Dorado">El Dorado</option>
+                <option value="La Onda, Gran Estación">Gran Estación</option>
+                <option value="La Onda, Calidonia">Calidonia</option>
+                <option value="La Onda, Los Andes">Los Andes</option>
+              </optgroup>
+              <option value="Torre BICSA">Torre BICSA</option>
+              <option value="Century, Tumba Muerto">Century, Tumba Muerto</option>
+            </select>
           </div>
         </div>
         <div class="flex gap-2">
@@ -1033,6 +1053,8 @@ function presetTime(h,m,p) {
 function cambiarUbicacion(val) {
   state.ubicacion = val;
   guardarEstado();
+  const textEl = document.getElementById('ubicacion-text');
+  if (textEl) textEl.textContent = val || 'Seleccionar ubicación';
 }
 
 function guardarHorario() {
@@ -1046,55 +1068,6 @@ function guardarHorario() {
 }
 
 refreshClockUI();
-
-const UBICACIONES = [
-  { label: 'Sucursal El Fuerte', options: [
-    'San Miguelito', 'Westland', 'Villa Zaita', '24 de Diciembre', 'Federal Mall', 'Burunga'
-  ]},
-  { label: 'Sucursal La Onda', options: [
-    'Los Pueblos', 'Villa Lucre', 'El Dorado', 'Gran Estación', 'Calidonia', 'Los Andes'
-  ]},
-  { label: '', options: ['Torre BICSA', 'Century, Tumba Muerto'] }
-];
-
-function toggleUbicacionDropdown() {
-  const dd = document.getElementById('ubicacion-dropdown');
-  if (!dd) return;
-  dd.classList.toggle('hidden');
-}
-
-function initUbicacionDropdown() {
-  const dd = document.getElementById('ubicacion-dropdown');
-  if (!dd) return;
-  let html = '';
-  UBICACIONES.forEach(group => {
-    if (group.label) html += '<div class="px-3 pt-2 pb-1 font-label-sm text-label-sm text-outline uppercase tracking-wider">' + group.label + '</div>';
-    group.options.forEach(opt => {
-      const fullVal = group.label ? group.label.replace('Sucursal ', '') + ', ' + opt : opt;
-      html += '<div class="px-3 py-2 font-body-md text-body-md text-on-surface hover:bg-surface-container-high cursor-pointer transition-colors" data-ubicacion="' + fullVal + '" onclick="seleccionarUbicacion(\'' + fullVal.replace(/'/g, "\\'") + '\')">' + opt + '</div>';
-    });
-  });
-  dd.innerHTML = html;
-  const textEl = document.getElementById('ubicacion-text');
-  if (textEl) textEl.textContent = state.ubicacion || 'Seleccionar ubicación';
-}
-
-function seleccionarUbicacion(val) {
-  state.ubicacion = val;
-  guardarEstado();
-  const textEl = document.getElementById('ubicacion-text');
-  if (textEl) textEl.textContent = val;
-  const dd = document.getElementById('ubicacion-dropdown');
-  if (dd) dd.classList.add('hidden');
-}
-
-document.addEventListener('click', function(e) {
-  const wrapper = document.getElementById('ubicacion-wrapper');
-  if (wrapper && !wrapper.contains(e.target)) {
-    const dd = document.getElementById('ubicacion-dropdown');
-    if (dd) dd.classList.add('hidden');
-  }
-});
 
 // ====== CALENDAR ======
 const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -1272,7 +1245,9 @@ actualizarAsistenciaUI();
 actualizarCalTodos();
 actualizarMetricas();
 actualizarHoraReunion();
-initUbicacionDropdown();
+document.getElementById('ubicacion-select').value = state.ubicacion || '';
+const textEl = document.getElementById('ubicacion-text');
+if (textEl) textEl.textContent = state.ubicacion || 'Seleccionar ubicación';
 </script>
 
 </body>
