@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, Keyboard, Dimensions,
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, Keyboard,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -15,12 +15,9 @@ const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 
 
 export default function HoyScreen() {
   const { state, dispatch } = useApp();
-  const scrollRef = useRef(null);
-  const inputRowRef = useRef(null);
-  const inputRowY = useRef(0);
-  const isTodoInputFocused = useRef(false);
   const [showHorarioModal, setShowHorarioModal] = useState(false);
   const [newTodoText, setNewTodoText] = useState('');
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const toDisplay = (ymd) => {
     if (!ymd) return '';
     const [y, m, d] = ymd.split('-');
@@ -42,24 +39,24 @@ export default function HoyScreen() {
     return `${d}/${m}/${y}`;
   };
 
-  const scrollToInput = useCallback((keyboardHeight) => {
-    if (!isTodoInputFocused.current || !scrollRef.current) return;
-    const screenHeight = Dimensions.get('window').height;
-    const topBarHeight = 150;
-    const visibleHeight = screenHeight - keyboardHeight - topBarHeight;
-    const targetY = Math.max(0, inputRowY.current - visibleHeight * 0.5);
-    scrollRef.current.scrollTo({ y: targetY, animated: true });
-  }, []);
-
   useEffect(() => {
     const willShow = Keyboard.addListener('keyboardWillShow', (e) => {
-      scrollToInput(e.endCoordinates.height);
+      setKeyboardHeight(e.endCoordinates.height);
     });
     const didShow = Keyboard.addListener('keyboardDidShow', (e) => {
-      scrollToInput(e.endCoordinates.height);
+      setKeyboardHeight(e.endCoordinates.height);
     });
-    return () => { willShow.remove(); didShow.remove(); };
-  }, [scrollToInput]);
+    const willHide = Keyboard.addListener('keyboardWillHide', () => {
+      setKeyboardHeight(0);
+    });
+    const didHide = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+    return () => {
+      willShow.remove(); didShow.remove();
+      willHide.remove(); didHide.remove();
+    };
+  }, []);
 
   const d = new Date(state.hoyDate + 'T12:00:00');
   const dayName = DAYS[d.getDay()];
@@ -117,7 +114,6 @@ export default function HoyScreen() {
       />
 
       <ScrollView
-          ref={scrollRef}
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="always"
@@ -208,48 +204,6 @@ export default function HoyScreen() {
             <Text style={styles.sectionTitle}>Tareas del Día</Text>
         </View>
 
-        <View
-          ref={inputRowRef}
-          style={styles.todoInputRow}
-          onLayout={(e) => { inputRowY.current = e.nativeEvent.layout.y; }}
-        >
-          <TextInput
-            style={styles.todoInput}
-            placeholder="Escribe una tarea..."
-            placeholderTextColor={colors.outline}
-            value={newTodoText}
-            onChangeText={setNewTodoText}
-            onSubmitEditing={addTodo}
-            onFocus={() => { isTodoInputFocused.current = true; }}
-            onBlur={() => { isTodoInputFocused.current = false; }}
-          />
-          <TouchableOpacity
-            style={styles.dateInputWrapper}
-            onPress={() => setShowDatePicker(true)}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.todoDateInputText}>{newTodoDate}</Text>
-            <MaterialIcons name="calendar-today" size={14} color={colors.black} style={styles.calIcon} />
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={(() => {
-                const parts = newTodoDate.split('/');
-                return new Date(parts[2], parts[1] - 1, parts[0]);
-              })()}
-              mode="date"
-              display="default"
-              onChange={(event, date) => {
-                setShowDatePicker(Platform.OS === 'ios');
-                if (date) setNewTodoDate(formatDate(date));
-              }}
-            />
-          )}
-          <TouchableOpacity style={styles.todoAddBtn} onPress={addTodo}>
-            <Text style={styles.todoAddBtnText}>+</Text>
-          </TouchableOpacity>
-        </View>
-
         <View style={styles.todoList}>
           {dayTodos.length === 0 ? (
             <Text style={styles.emptyText}>No hay tareas para esta fecha</Text>
@@ -276,6 +230,43 @@ export default function HoyScreen() {
         </View>
       </ScrollView>
 
+      {/* Input bar fijo - estilo WhatsApp */}
+      <View style={[styles.inputBar, { bottom: 56 + keyboardHeight }]}>
+        <TextInput
+          style={styles.todoInput}
+          placeholder="Escribe una tarea..."
+          placeholderTextColor={colors.outline}
+          value={newTodoText}
+          onChangeText={setNewTodoText}
+          onSubmitEditing={addTodo}
+        />
+        <TouchableOpacity
+          style={styles.dateInputWrapper}
+          onPress={() => setShowDatePicker(true)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.todoDateInputText}>{newTodoDate}</Text>
+          <MaterialIcons name="calendar-today" size={14} color={colors.black} style={styles.calIcon} />
+        </TouchableOpacity>
+        {showDatePicker && (
+          <DateTimePicker
+            value={(() => {
+              const parts = newTodoDate.split('/');
+              return new Date(parts[2], parts[1] - 1, parts[0]);
+            })()}
+            mode="date"
+            display="default"
+            onChange={(event, date) => {
+              setShowDatePicker(Platform.OS === 'ios');
+              if (date) setNewTodoDate(formatDate(date));
+            }}
+          />
+        )}
+        <TouchableOpacity style={styles.todoAddBtn} onPress={addTodo}>
+          <Text style={styles.todoAddBtnText}>+</Text>
+        </TouchableOpacity>
+      </View>
+
       <ModalHorario visible={showHorarioModal} onClose={() => setShowHorarioModal(false)} />
     </View>
   );
@@ -292,7 +283,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingBottom: 120,
+    paddingBottom: 140,
   },
   dateSection: {
     flexDirection: 'row',
@@ -491,11 +482,19 @@ const styles = StyleSheet.create({
     opacity: 0.4,
     textDecorationLine: 'line-through',
   },
-  todoInputRow: {
+  inputBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    backgroundColor: colors.surface,
+    borderTopWidth: 1,
+    borderTopColor: colors['outline-variant'],
+    zIndex: 10,
   },
   todoInput: {
     flex: 1,
