@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, Keyboard,
 } from 'react-native';
@@ -15,6 +15,8 @@ const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 
 
 export default function HoyScreen() {
   const { state, dispatch } = useApp();
+  const scrollRef = useRef(null);
+  const scrollOffsetRef = useRef(0);
   const [showHorarioModal, setShowHorarioModal] = useState(false);
   const [newTodoText, setNewTodoText] = useState('');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -41,13 +43,20 @@ export default function HoyScreen() {
 
   useEffect(() => {
     const willShow = Keyboard.addListener('keyboardWillShow', (e) => {
-      setKeyboardHeight(e.endCoordinates.height);
+      const h = e.endCoordinates.height;
+      setKeyboardHeight(h);
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({ y: scrollOffsetRef.current + h, animated: true });
+      }
     });
     const didShow = Keyboard.addListener('keyboardDidShow', (e) => {
       setKeyboardHeight(e.endCoordinates.height);
     });
     const willHide = Keyboard.addListener('keyboardWillHide', () => {
       setKeyboardHeight(0);
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({ y: Math.max(0, scrollOffsetRef.current), animated: true });
+      }
     });
     const didHide = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardHeight(0);
@@ -114,11 +123,14 @@ export default function HoyScreen() {
       />
 
       <ScrollView
+          ref={scrollRef}
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="always"
           contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
+          onScroll={(e) => { scrollOffsetRef.current = e.nativeEvent.contentOffset.y; }}
+          scrollEventThrottle={16}
         >
         {/* Date Header + Counters */}
         <View style={styles.dateSection}>
