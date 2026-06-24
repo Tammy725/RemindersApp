@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-  calMonthYear: { fontSize: 24, fontWeight: '600', color: colors.primary },
+  calMonthYear: { fontSize: 24, fontWeight: '600', color: colors.black },
   calNav: { flexDirection: 'row', gap: 4 },
   calNavBtn: { padding: 8, borderRadius: 50 },
   calGrid: {
@@ -246,9 +246,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     position: 'relative',
   },
-  dayCellSelected: { backgroundColor: colors.primary },
+  dayCellSelected: { backgroundColor: colors.black, borderRadius: 8 },
   dayCellText: { fontSize: 16, color: colors['on-surface'] },
-  dayCellTextSelected: { color: colors['on-primary'], fontWeight: '700' },
+  dayCellTextSelected: { color: colors.white, fontWeight: '700' },
   dayCellPending: { color: colors.error, fontWeight: '700' },
   dayCellToday: { fontWeight: '700' },
   dotGreen: {
