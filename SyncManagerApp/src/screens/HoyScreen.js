@@ -93,7 +93,6 @@ export default function HoyScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 150 : 0}
       >
         <ScrollView
-          ref={scrollRef}
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
