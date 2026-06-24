@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   reportBtn: {
     backgroundColor: colors.black,
     paddingVertical: 12,
-    borderRadius: 50,
+    borderRadius: 20,
     alignItems: 'center',
     marginBottom: 8,
   },
