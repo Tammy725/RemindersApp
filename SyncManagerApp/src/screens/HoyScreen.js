@@ -3,6 +3,7 @@ import {
   View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, Keyboard, Dimensions,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
@@ -33,6 +34,13 @@ export default function HoyScreen() {
     return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
   };
   const [newTodoDate, setNewTodoDate] = useState(toDisplay(state.hoyDate));
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const formatDate = (date) => {
+    const d = date.getDate().toString().padStart(2, '0');
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const y = date.getFullYear();
+    return `${d}/${m}/${y}`;
+  };
 
   const scrollToInput = useCallback((keyboardHeight) => {
     if (!isTodoInputFocused.current || !scrollRef.current) return;
@@ -215,16 +223,28 @@ export default function HoyScreen() {
             onFocus={() => { isTodoInputFocused.current = true; }}
             onBlur={() => { isTodoInputFocused.current = false; }}
           />
-          <View style={styles.dateInputWrapper}>
-            <TextInput
-              style={styles.todoDateInput}
-              value={newTodoDate}
-              onChangeText={setNewTodoDate}
-              placeholder="DD/MM/YYYY"
-              placeholderTextColor={colors.outline}
-            />
+          <TouchableOpacity
+            style={styles.dateInputWrapper}
+            onPress={() => setShowDatePicker(true)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.todoDateInputText}>{newTodoDate}</Text>
             <MaterialIcons name="calendar-today" size={14} color={colors.black} style={styles.calIcon} />
-          </View>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={(() => {
+                const parts = newTodoDate.split('/');
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+              })()}
+              mode="date"
+              display="default"
+              onChange={(event, date) => {
+                setShowDatePicker(Platform.OS === 'ios');
+                if (date) setNewTodoDate(formatDate(date));
+              }}
+            />
+          )}
           <TouchableOpacity style={styles.todoAddBtn} onPress={addTodo}>
             <Text style={styles.todoAddBtnText}>+</Text>
           </TouchableOpacity>
@@ -488,7 +508,7 @@ const styles = StyleSheet.create({
     color: colors['on-surface'],
     backgroundColor: colors.white,
   },
-  todoDateInput: {
+  todoDateInputText: {
     height: 40,
     paddingHorizontal: 12,
     paddingRight: 16,
@@ -499,6 +519,7 @@ const styles = StyleSheet.create({
     color: colors['on-surface'],
     backgroundColor: colors.white,
     width: 140,
+    lineHeight: 40,
   },
   dateInputWrapper: {
     position: 'relative',
