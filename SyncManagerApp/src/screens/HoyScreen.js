@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, KeyboardAvoidingView,
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, KeyboardAvoidingView, Keyboard,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -14,9 +14,32 @@ const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 
 
 export default function HoyScreen() {
   const { state, dispatch } = useApp();
+  const scrollRef = useRef(null);
   const [showHorarioModal, setShowHorarioModal] = useState(false);
   const [newTodoText, setNewTodoText] = useState('');
-  const [newTodoDate, setNewTodoDate] = useState(state.hoyDate);
+  const toDisplay = (ymd) => {
+    if (!ymd) return '';
+    const [y, m, d] = ymd.split('-');
+    return `${d}/${m}/${y}`;
+  };
+  const toYmd = (display) => {
+    const parts = display.split('/');
+    if (parts.length !== 3) return display;
+    const [d, m, y] = parts;
+    if (d.length === 4) return display; // already YYYY-MM-DD
+    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  };
+  const [newTodoDate, setNewTodoDate] = useState(toDisplay(state.hoyDate));
+
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardWillShow', () => {
+      scrollRef.current?.scrollToEnd({ animated: false });
+    });
+    const show2 = Keyboard.addListener('keyboardDidShow', () => {
+      scrollRef.current?.scrollToEnd({ animated: false });
+    });
+    return () => { show.remove(); show2.remove(); };
+  }, []);
 
   const d = new Date(state.hoyDate + 'T12:00:00');
   const dayName = DAYS[d.getDay()];
@@ -61,7 +84,7 @@ export default function HoyScreen() {
     if (!newTodoText.trim()) return;
     dispatch({
       type: 'ADD_TODO',
-      payload: { text: newTodoText.trim(), date: newTodoDate || state.hoyDate },
+      payload: { text: newTodoText.trim(), date: toYmd(newTodoDate) || state.hoyDate },
     });
     setNewTodoText('');
   };
@@ -79,9 +102,11 @@ export default function HoyScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
         <ScrollView
+          ref={scrollRef}
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+        >
         {/* Date Header + Counters */}
         <View style={styles.dateSection}>
           <View>
@@ -175,13 +200,16 @@ export default function HoyScreen() {
             onChangeText={setNewTodoText}
             onSubmitEditing={addTodo}
           />
-          <TextInput
-            style={styles.todoDateInput}
-            value={newTodoDate}
-            onChangeText={setNewTodoDate}
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor={colors.outline}
-          />
+          <View style={styles.dateInputWrapper}>
+            <TextInput
+              style={styles.todoDateInput}
+              value={newTodoDate}
+              onChangeText={setNewTodoDate}
+              placeholder="DD/MM/YYYY"
+              placeholderTextColor={colors.outline}
+            />
+            <MaterialIcons name="calendar-today" size={14} color={colors.black} style={styles.calIcon} />
+          </View>
           <TouchableOpacity style={styles.todoAddBtn} onPress={addTodo}>
             <Text style={styles.todoAddBtnText}>+</Text>
           </TouchableOpacity>
@@ -444,18 +472,27 @@ const styles = StyleSheet.create({
     borderColor: colors['outline-variant'],
     fontSize: 14,
     color: colors['on-surface'],
-    backgroundColor: colors.surface,
+    backgroundColor: colors.white,
   },
   todoDateInput: {
     height: 40,
     paddingHorizontal: 12,
+    paddingRight: 16,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors['outline-variant'],
     fontSize: 14,
     color: colors['on-surface'],
-    backgroundColor: colors.surface,
-    width: 120,
+    backgroundColor: colors.white,
+    width: 140,
+  },
+  dateInputWrapper: {
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  calIcon: {
+    position: 'absolute',
+    right: 20,
   },
   todoAddBtn: {
     width: 40,
