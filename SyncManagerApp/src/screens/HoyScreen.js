@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, Platform,
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, KeyboardAvoidingView, Keyboard,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
@@ -15,6 +14,7 @@ const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 
 
 export default function HoyScreen() {
   const { state, dispatch } = useApp();
+  const scrollRef = useRef(null);
   const [showHorarioModal, setShowHorarioModal] = useState(false);
   const [newTodoText, setNewTodoText] = useState('');
   const toDisplay = (ymd) => {
@@ -31,7 +31,15 @@ export default function HoyScreen() {
   };
   const [newTodoDate, setNewTodoDate] = useState(toDisplay(state.hoyDate));
 
-
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardWillShow', () => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    });
+    const show2 = Keyboard.addListener('keyboardDidShow', () => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    });
+    return () => { show.remove(); show2.remove(); };
+  }, []);
 
   const d = new Date(state.hoyDate + 'T12:00:00');
   const dayName = DAYS[d.getDay()];
@@ -88,12 +96,19 @@ export default function HoyScreen() {
         onDateChange={handleDateChange}
       />
 
-      <KeyboardAwareScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        extraHeight={Platform.OS === 'ios' ? 20 : 0}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 150 : 0}
       >
+        <ScrollView
+          ref={scrollRef}
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="always"
+          contentInsetAdjustmentBehavior="automatic"
+          showsVerticalScrollIndicator={false}
+        >
         {/* Date Header + Counters */}
         <View style={styles.dateSection}>
           <View>
@@ -226,7 +241,8 @@ export default function HoyScreen() {
             ))
           )}
         </View>
-      </KeyboardAwareScrollView>
+      </ScrollView>
+      </KeyboardAvoidingView>
 
       <ModalHorario visible={showHorarioModal} onClose={() => setShowHorarioModal(false)} />
     </View>
