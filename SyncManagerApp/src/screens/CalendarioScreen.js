@@ -106,26 +106,10 @@ export default function CalendarioScreen() {
                     >
                       {d}
                     </Text>
-                    {hasReunion && <View style={styles.dotGreen} />}
-                    {noReunion && <View style={styles.dotRed} />}
+                    {hasReunion && <View style={styles.dotBlack} />}
                   </TouchableOpacity>
                 );
               })}
-            </View>
-
-            <View style={styles.meetingIndicator}>
-              {dayHistory?.asistio === true && (
-                <>
-                  <View style={styles.dotGreen} />
-                  <Text style={styles.indicatorText}>Reunión realizada</Text>
-                </>
-              )}
-              {dayHistory?.asistio === false && (
-                <>
-                  <View style={styles.dotRed} />
-                  <Text style={styles.indicatorText}>Reunión no realizada</Text>
-                </>
-              )}
             </View>
           </View>
 
@@ -251,32 +235,14 @@ const styles = StyleSheet.create({
   dayCellTextSelected: { color: colors.white, fontWeight: '700' },
   dayCellPending: { color: colors.error, fontWeight: '700' },
   dayCellToday: { fontWeight: '700' },
-  dotGreen: {
+  dotBlack: {
     position: 'absolute',
     bottom: 2,
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: colors.completed,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.black,
   },
-  dotRed: {
-    position: 'absolute',
-    bottom: 2,
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: colors.error,
-  },
-  meetingIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors['outline-variant'],
-  },
-  indicatorText: { fontSize: 12, color: colors['on-surface-variant'] },
   details: { gap: 16 },
   detailsTitle: { fontSize: 24, fontWeight: '600', color: colors['on-surface'] },
   cardChecklist: {
