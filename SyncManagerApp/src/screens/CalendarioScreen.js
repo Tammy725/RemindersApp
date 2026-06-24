@@ -106,7 +106,9 @@ export default function CalendarioScreen() {
                     >
                       {d}
                     </Text>
-                    {hasReunion && <View style={styles.dotBlack} />}
+                    {hasReunion && (
+                      <View style={[styles.dotBlack, isSel && styles.dotWhite]} />
+                    )}
                   </TouchableOpacity>
                 );
               })}
@@ -238,10 +240,13 @@ const styles = StyleSheet.create({
   dotBlack: {
     position: 'absolute',
     bottom: 2,
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
     backgroundColor: colors.black,
+  },
+  dotWhite: {
+    backgroundColor: colors.white,
   },
   details: { gap: 16 },
   detailsTitle: { fontSize: 24, fontWeight: '600', color: colors['on-surface'] },
