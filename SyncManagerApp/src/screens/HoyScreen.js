@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, KeyboardAvoidingView, Keyboard,
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, KeyboardAvoidingView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -14,7 +14,6 @@ const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 
 
 export default function HoyScreen() {
   const { state, dispatch } = useApp();
-  const scrollRef = useRef(null);
   const [showHorarioModal, setShowHorarioModal] = useState(false);
   const [newTodoText, setNewTodoText] = useState('');
   const toDisplay = (ymd) => {
@@ -30,16 +29,6 @@ export default function HoyScreen() {
     return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
   };
   const [newTodoDate, setNewTodoDate] = useState(toDisplay(state.hoyDate));
-
-  useEffect(() => {
-    const show = Keyboard.addListener('keyboardWillShow', () => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    });
-    const show2 = Keyboard.addListener('keyboardDidShow', () => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    });
-    return () => { show.remove(); show2.remove(); };
-  }, []);
 
   const d = new Date(state.hoyDate + 'T12:00:00');
   const dayName = DAYS[d.getDay()];
@@ -98,11 +87,10 @@ export default function HoyScreen() {
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'position' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 150 : 0}
       >
         <ScrollView
-          ref={scrollRef}
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="always"
