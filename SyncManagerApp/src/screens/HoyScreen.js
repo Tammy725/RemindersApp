@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, KeyboardAvoidingView,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Platform,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
@@ -87,16 +88,12 @@ export default function HoyScreen() {
         onDateChange={handleDateChange}
       />
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 150 : 0}
+      <KeyboardAwareScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        extraHeight={Platform.OS === 'ios' ? 20 : 0}
       >
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
         {/* Date Header + Counters */}
         <View style={styles.dateSection}>
           <View>
@@ -229,8 +226,7 @@ export default function HoyScreen() {
             ))
           )}
         </View>
-      </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
 
       <ModalHorario visible={showHorarioModal} onClose={() => setShowHorarioModal(false)} />
     </View>
