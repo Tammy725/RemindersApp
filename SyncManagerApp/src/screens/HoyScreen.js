@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, KeyboardAvoidingView, Keyboard, findNodeHandle,
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, Keyboard, Dimensions,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -17,6 +17,7 @@ export default function HoyScreen() {
   const scrollRef = useRef(null);
   const inputRowRef = useRef(null);
   const inputRowY = useRef(0);
+  const isTodoInputFocused = useRef(false);
   const [showHorarioModal, setShowHorarioModal] = useState(false);
   const [newTodoText, setNewTodoText] = useState('');
   const toDisplay = (ymd) => {
@@ -33,23 +34,23 @@ export default function HoyScreen() {
   };
   const [newTodoDate, setNewTodoDate] = useState(toDisplay(state.hoyDate));
 
-  const scrollToInput = useCallback(() => {
-    if (inputRowRef.current && scrollRef.current) {
-      inputRowRef.current.measureLayout(
-        findNodeHandle(scrollRef.current),
-        (x, y) => {
-          inputRowY.current = y;
-          scrollRef.current?.scrollTo({ y: Math.max(0, y - 100), animated: true });
-        },
-        () => {}
-      );
-    }
+  const scrollToInput = useCallback((keyboardHeight) => {
+    if (!isTodoInputFocused.current || !scrollRef.current) return;
+    const screenHeight = Dimensions.get('window').height;
+    const topBarHeight = 150;
+    const visibleHeight = screenHeight - keyboardHeight - topBarHeight;
+    const targetY = Math.max(0, inputRowY.current - visibleHeight * 0.5);
+    scrollRef.current.scrollTo({ y: targetY, animated: true });
   }, []);
 
   useEffect(() => {
-    const show = Keyboard.addListener('keyboardWillShow', scrollToInput);
-    const show2 = Keyboard.addListener('keyboardDidShow', scrollToInput);
-    return () => { show.remove(); show2.remove(); };
+    const willShow = Keyboard.addListener('keyboardWillShow', (e) => {
+      scrollToInput(e.endCoordinates.height);
+    });
+    const didShow = Keyboard.addListener('keyboardDidShow', (e) => {
+      scrollToInput(e.endCoordinates.height);
+    });
+    return () => { willShow.remove(); didShow.remove(); };
   }, [scrollToInput]);
 
   const d = new Date(state.hoyDate + 'T12:00:00');
@@ -107,12 +108,7 @@ export default function HoyScreen() {
         onDateChange={handleDateChange}
       />
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      >
-        <ScrollView
+      <ScrollView
           ref={scrollRef}
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
@@ -216,6 +212,8 @@ export default function HoyScreen() {
             value={newTodoText}
             onChangeText={setNewTodoText}
             onSubmitEditing={addTodo}
+            onFocus={() => { isTodoInputFocused.current = true; }}
+            onBlur={() => { isTodoInputFocused.current = false; }}
           />
           <View style={styles.dateInputWrapper}>
             <TextInput
@@ -257,7 +255,6 @@ export default function HoyScreen() {
           )}
         </View>
       </ScrollView>
-      </KeyboardAvoidingView>
 
       <ModalHorario visible={showHorarioModal} onClose={() => setShowHorarioModal(false)} />
     </View>
