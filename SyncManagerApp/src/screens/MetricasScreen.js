@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   reportBtnText: {
-    color: '#f3f4f6',
+    color: '#ffffff',
     fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1,
