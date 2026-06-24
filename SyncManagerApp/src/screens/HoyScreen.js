@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, KeyboardAvoidingView, Keyboard,
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform, KeyboardAvoidingView, Keyboard, findNodeHandle,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -15,6 +15,8 @@ const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 
 export default function HoyScreen() {
   const { state, dispatch } = useApp();
   const scrollRef = useRef(null);
+  const inputRowRef = useRef(null);
+  const inputRowY = useRef(0);
   const [showHorarioModal, setShowHorarioModal] = useState(false);
   const [newTodoText, setNewTodoText] = useState('');
   const toDisplay = (ymd) => {
@@ -31,15 +33,24 @@ export default function HoyScreen() {
   };
   const [newTodoDate, setNewTodoDate] = useState(toDisplay(state.hoyDate));
 
-  useEffect(() => {
-    const show = Keyboard.addListener('keyboardWillShow', () => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    });
-    const show2 = Keyboard.addListener('keyboardDidShow', () => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    });
-    return () => { show.remove(); show2.remove(); };
+  const scrollToInput = useCallback(() => {
+    if (inputRowRef.current && scrollRef.current) {
+      inputRowRef.current.measureLayout(
+        findNodeHandle(scrollRef.current),
+        (x, y) => {
+          inputRowY.current = y;
+          scrollRef.current?.scrollTo({ y: Math.max(0, y - 100), animated: true });
+        },
+        () => {}
+      );
+    }
   }, []);
+
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardWillShow', scrollToInput);
+    const show2 = Keyboard.addListener('keyboardDidShow', scrollToInput);
+    return () => { show.remove(); show2.remove(); };
+  }, [scrollToInput]);
 
   const d = new Date(state.hoyDate + 'T12:00:00');
   const dayName = DAYS[d.getDay()];
@@ -99,7 +110,7 @@ export default function HoyScreen() {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 150 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
         <ScrollView
           ref={scrollRef}
@@ -193,7 +204,11 @@ export default function HoyScreen() {
             <Text style={styles.sectionTitle}>Tareas del Día</Text>
         </View>
 
-        <View style={styles.todoInputRow}>
+        <View
+          ref={inputRowRef}
+          style={styles.todoInputRow}
+          onLayout={(e) => { inputRowY.current = e.nativeEvent.layout.y; }}
+        >
           <TextInput
             style={styles.todoInput}
             placeholder="Escribe una tarea..."
