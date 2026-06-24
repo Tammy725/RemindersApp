@@ -231,7 +231,7 @@ export default function HoyScreen() {
       </ScrollView>
 
       {/* Input bar fijo - estilo WhatsApp */}
-      <View style={[styles.inputBar, { bottom: 56 + keyboardHeight }]}>
+      <View style={[styles.inputBar, { bottom: keyboardHeight > 0 ? keyboardHeight : 56 }]}>
         <TextInput
           style={styles.todoInput}
           placeholder="Escribe una tarea..."
