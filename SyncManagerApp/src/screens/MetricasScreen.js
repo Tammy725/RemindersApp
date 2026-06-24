@@ -90,7 +90,7 @@ export default function MetricasScreen() {
           <View style={styles.kpiCard}>
             <View style={styles.kpiHeader}>
               <Text style={styles.kpiLabel}>Reuniones</Text>
-              <MaterialIcons name="groups" size={20} color={colors.primary} />
+              <MaterialIcons name="groups" size={20} color={colors.navy} />
             </View>
             <Text style={styles.kpiValue}>{pctAsistencia}%</Text>
             <View style={styles.kpiBadge}>
@@ -101,7 +101,7 @@ export default function MetricasScreen() {
           <View style={styles.kpiCard}>
             <View style={styles.kpiHeader}>
               <Text style={styles.kpiLabel}>Tareas</Text>
-              <MaterialIcons name="task-alt" size={20} color={colors.primary} />
+              <MaterialIcons name="task-alt" size={20} color={colors.navy} />
             </View>
             <Text style={styles.kpiValue}>{pctTareas}%</Text>
             <View style={styles.kpiBadge}>
@@ -112,7 +112,7 @@ export default function MetricasScreen() {
           <View style={styles.kpiCard}>
             <View style={styles.kpiHeader}>
               <Text style={styles.kpiLabel}>Checklist</Text>
-              <MaterialIcons name="checklist" size={20} color={colors.primary} />
+              <MaterialIcons name="checklist" size={20} color={colors.navy} />
             </View>
             <Text style={styles.kpiValue}>{pctChecklist}%</Text>
             <View style={styles.kpiBadge}>
@@ -123,7 +123,7 @@ export default function MetricasScreen() {
           <View style={styles.kpiCard}>
             <View style={styles.kpiHeader}>
               <Text style={styles.kpiLabel}>Racha</Text>
-              <MaterialIcons name="local-fire-department" size={20} color={colors.primary} />
+              <MaterialIcons name="local-fire-department" size={20} color={colors.navy} />
             </View>
             <Text style={styles.kpiValue}>{streak}</Text>
             <View style={styles.kpiBadge}>
@@ -168,7 +168,7 @@ export default function MetricasScreen() {
                   cy="21"
                   r="15.9155"
                   fill="none"
-                  stroke="#000000"
+                  stroke={colors.navy}
                   strokeWidth="3.5"
                   strokeDasharray={`${pctAsistencia} ${100 - pctAsistencia}`}
                   strokeLinecap="round"
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   kpiValue: {
     fontSize: 30,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.navy,
   },
   kpiBadge: {
     backgroundColor: colors['surface-container'],
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.navy,
     marginBottom: 24,
   },
   barSection: {
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   },
   barFill: {
     height: '100%',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.navy,
     borderRadius: 50,
   },
   barDetail: {
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     fontSize: 28,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.navy,
   },
   ringDetail: {
     textAlign: 'center',
