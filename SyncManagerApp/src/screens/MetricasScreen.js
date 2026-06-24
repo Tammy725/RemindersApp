@@ -85,55 +85,30 @@ export default function MetricasScreen() {
       <TopBar title="Metricas" />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        {/* KPI Cards */}
-        <View style={styles.kpiGrid}>
-          <View style={styles.kpiCard}>
-            <View style={styles.kpiHeader}>
-              <Text style={styles.kpiLabel}>Reuniones</Text>
-              <MaterialIcons name="groups" size={20} color={colors.navy} />
-            </View>
-            <Text style={styles.kpiValue}>{pctAsistencia}%</Text>
-            <View style={styles.kpiBadge}>
-              <Text style={styles.kpiBadgeText}>{meetingAttended} / {meetingDays} reuniones realizadas</Text>
-            </View>
-          </View>
-
-          <View style={styles.kpiCard}>
-            <View style={styles.kpiHeader}>
-              <Text style={styles.kpiLabel}>Tareas</Text>
-              <MaterialIcons name="task-alt" size={20} color={colors.navy} />
-            </View>
-            <Text style={styles.kpiValue}>{pctTareas}%</Text>
-            <View style={styles.kpiBadge}>
-              <Text style={styles.kpiBadgeText}>{todoCompleted} / {todoTotal} completadas</Text>
-            </View>
-          </View>
-
-          <View style={styles.kpiCard}>
-            <View style={styles.kpiHeader}>
-              <Text style={styles.kpiLabel}>Checklist</Text>
-              <MaterialIcons name="checklist" size={20} color={colors.navy} />
-            </View>
-            <Text style={styles.kpiValue}>{pctChecklist}%</Text>
-            <View style={styles.kpiBadge}>
-              <Text style={styles.kpiBadgeText}>{checkDone} / {checkTotal} completadas</Text>
-            </View>
-          </View>
-
-          <View style={styles.kpiCard}>
-            <View style={styles.kpiHeader}>
-              <Text style={styles.kpiLabel}>Racha</Text>
-              <MaterialIcons name="local-fire-department" size={20} color={colors.navy} />
-            </View>
-            <Text style={styles.kpiValue}>{streak}</Text>
-            <View style={styles.kpiBadge}>
-              <Text style={styles.kpiBadgeText}>Reuniones consecutivos</Text>
-            </View>
-          </View>
-        </View>
-
         {/* Charts */}
         <View style={styles.chartGrid}>
+          <View style={styles.chartCard}>
+            <Text style={styles.chartTitle}>Asistencia a Reuniones</Text>
+            <View style={styles.ringContainer}>
+              <Svg width={160} height={160} viewBox="0 0 42 42">
+                <Circle cx="21" cy="21" r="15.9155" fill="none" stroke="#d4d4d4" strokeWidth="3.5" />
+                <Circle
+                  cx="21"
+                  cy="21"
+                  r="15.9155"
+                  fill="none"
+                  stroke={colors.navy}
+                  strokeWidth="3.5"
+                  strokeDasharray={`${pctAsistencia} ${100 - pctAsistencia}`}
+                  strokeLinecap="round"
+                  transform="rotate(-90, 21, 21)"
+                />
+              </Svg>
+              <Text style={styles.ringText}>{pctAsistencia}%</Text>
+            </View>
+            <Text style={styles.ringDetail}>{meetingAttended} / {meetingDays} reuniones realizadas</Text>
+          </View>
+
           <View style={styles.chartCard}>
             <Text style={styles.chartTitle}>Tareas y Checklist</Text>
             <View style={styles.barSection}>
@@ -156,28 +131,6 @@ export default function MetricasScreen() {
               </View>
               <Text style={styles.barDetail}>{checkDone} / {checkTotal} completadas</Text>
             </View>
-          </View>
-
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>Asistencia a Reuniones</Text>
-            <View style={styles.ringContainer}>
-              <Svg width={160} height={160} viewBox="0 0 42 42">
-                <Circle cx="21" cy="21" r="15.9155" fill="none" stroke="#d4d4d4" strokeWidth="3.5" />
-                <Circle
-                  cx="21"
-                  cy="21"
-                  r="15.9155"
-                  fill="none"
-                  stroke={colors.navy}
-                  strokeWidth="3.5"
-                  strokeDasharray={`${pctAsistencia} ${100 - pctAsistencia}`}
-                  strokeLinecap="round"
-                  transform="rotate(-90, 21, 21)"
-                />
-              </Svg>
-              <Text style={styles.ringText}>{pctAsistencia}%</Text>
-            </View>
-            <Text style={styles.ringDetail}>{meetingAttended} / {meetingDays} reuniones realizadas</Text>
           </View>
         </View>
 
@@ -323,7 +276,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   reportBtnText: {
-    color: '#9ca3af',
+    color: '#d1d5db',
     fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1,
