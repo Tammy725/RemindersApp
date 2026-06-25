@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform,
+  View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform, TouchableWithoutFeedback, Keyboard,
 } from 'react-native';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 import colors from '../theme/colors';
@@ -46,7 +46,9 @@ export default function CalendarioScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View>
         <View style={styles.grid}>
           {/* Calendar */}
           <View style={styles.calCard}>
@@ -194,6 +196,8 @@ export default function CalendarioScreen() {
             </View>
           </View>
         </View>
+      </View>
+      </TouchableWithoutFeedback>
       </ScrollView>
 
       {detallesItem && (
