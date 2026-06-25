@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  cardItemText: { flex: 1, fontSize: 16, color: colors['on-surface'] },
+  cardItemText: { flex: 1, fontSize: 16, fontWeight: '600', color: colors['on-surface'] },
   cardItemTextDone: {
     textDecorationLine: 'line-through',
     opacity: 0.5,
