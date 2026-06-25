@@ -195,17 +195,42 @@ export default function ModalChecklist({ visible, onClose }) {
         </View>
       </View>
 
-      {showDatePicker && (
+      {showDatePicker && Platform.OS === 'android' && (
         <DateTimePicker
           value={new Date(newDate || new Date().toISOString().slice(0, 10))}
           mode="date"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          display="default"
           onChange={(event, date) => {
             if (date) setNewDate(date.toISOString().slice(0, 10));
             setShowDatePicker(false);
           }}
         />
       )}
+
+      <Modal
+        visible={showDatePicker && Platform.OS !== 'android'}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDatePicker(false)}
+      >
+        <TouchableOpacity
+          style={styles.datePickerOverlay}
+          activeOpacity={1}
+          onPress={(e) => e.target === e.currentTarget && setShowDatePicker(false)}
+        >
+          <View style={styles.datePickerModal}>
+            <DateTimePicker
+              value={new Date(newDate || new Date().toISOString().slice(0, 10))}
+              mode="date"
+              display="inline"
+              onChange={(event, date) => {
+                if (date) setNewDate(date.toISOString().slice(0, 10));
+                setShowDatePicker(false);
+              }}
+            />
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       {detallesItem && (
         <ModalDetalles
@@ -296,15 +321,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   deptChipActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: colors['surface-container-high'],
+    borderColor: colors['outline-variant'],
   },
   deptChipText: {
     fontSize: 14,
     color: colors['on-surface-variant'],
   },
   deptChipTextActive: {
-    color: colors['on-primary'],
+    color: colors['on-surface'],
     fontWeight: '600',
   },
   addRow: {
@@ -400,5 +425,19 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  datePickerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  datePickerModal: {
+    width: '100%',
+    maxWidth: 420,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    padding: 12,
   },
 });
