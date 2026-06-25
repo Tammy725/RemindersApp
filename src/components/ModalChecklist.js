@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Platform, ScrollView,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
@@ -12,6 +13,8 @@ export default function ModalChecklist({ visible, onClose }) {
   const [newTitle, setNewTitle] = useState('');
   const [newDetails, setNewDetails] = useState('');
   const [selectedDept, setSelectedDept] = useState('todos');
+  const [newDate, setNewDate] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [editText, setEditText] = useState('');
   const [detallesItem, setDetallesItem] = useState(null);
 
@@ -23,10 +26,11 @@ export default function ModalChecklist({ visible, onClose }) {
     if (!newTitle.trim()) return;
     dispatch({
       type: 'ADD_CHECKLIST_TEMPLATE',
-      payload: { title: newTitle.trim(), department: selectedDept, details: newDetails },
+      payload: { title: newTitle.trim(), department: selectedDept, details: newDetails, date: newDate },
     });
     setNewTitle('');
     setNewDetails('');
+    setNewDate('');
   };
 
   const startEdit = (item) => {
@@ -43,25 +47,27 @@ export default function ModalChecklist({ visible, onClose }) {
 
   const openDetalles = (item) => setDetallesItem(item);
   const closeDetalles = () => setDetallesItem(null);
+  const closeAndReset = () => { setNewDate(''); onClose(); };
 
   const saveDetalles = (detailsText) => {
     if (!detallesItem) return;
     if (detallesItem.id === null) {
       dispatch({
         type: 'ADD_CHECKLIST_TEMPLATE',
-        payload: { title: detallesItem.title.trim(), department: selectedDept, details: detailsText },
+        payload: { title: detallesItem.title.trim(), department: selectedDept, details: detailsText, date: newDate },
       });
       setNewTitle('');
       setNewDetails('');
+      setNewDate('');
     } else {
       dispatch({ type: 'SET_CHECKLIST_DETAILS', payload: { id: detallesItem.id, details: detailsText } });
     }
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={closeAndReset}>
       <View style={styles.overlay}>
-        <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={onClose} />
+        <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={closeAndReset} />
         <View style={styles.content}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -70,7 +76,7 @@ export default function ModalChecklist({ visible, onClose }) {
               </View>
               <Text style={styles.title}>Editar Checklist</Text>
             </View>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+            <TouchableOpacity onPress={closeAndReset} style={styles.closeBtn}>
               <MaterialIcons name="close" size={24} color={colors.outline} />
             </TouchableOpacity>
           </View>
@@ -93,6 +99,32 @@ export default function ModalChecklist({ visible, onClose }) {
                   <Text style={[styles.deptChipText, selectedDept === eq.name && styles.deptChipTextActive]}>{eq.name}</Text>
                 </TouchableOpacity>
               ))}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.label}>Fecha</Text>
+            <View style={styles.deptRow}>
+              <TouchableOpacity
+                style={[styles.deptChip, newDate === '' && styles.deptChipActive]}
+                onPress={() => { setNewDate(''); setShowDatePicker(false); }}
+              >
+                <Text style={[styles.deptChipText, newDate === '' && styles.deptChipTextActive]}>Todas</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.deptChip, newDate !== '' && styles.deptChipActive]}
+                onPress={() => {
+                  setShowDatePicker(true);
+                  if (newDate === '') {
+                    const today = new Date();
+                    setNewDate(today.toISOString().slice(0, 10));
+                  }
+                }}
+              >
+                <Text style={[styles.deptChipText, newDate !== '' && styles.deptChipTextActive]}>
+                  {newDate ? newDate.split('-').reverse().join('/') : 'Seleccionar fecha'}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -162,6 +194,18 @@ export default function ModalChecklist({ visible, onClose }) {
           </ScrollView>
         </View>
       </View>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={new Date(newDate || new Date().toISOString().slice(0, 10))}
+          mode="date"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          onChange={(event, date) => {
+            if (date) setNewDate(date.toISOString().slice(0, 10));
+            setShowDatePicker(false);
+          }}
+        />
+      )}
 
       {detallesItem && (
         <ModalDetalles

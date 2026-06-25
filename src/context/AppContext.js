@@ -173,6 +173,7 @@ function reducer(state, action) {
         title: action.payload.title,
         department: action.payload.department,
         details: action.payload.details || '',
+        date: action.payload.date || '',
       };
       return {
         ...state,

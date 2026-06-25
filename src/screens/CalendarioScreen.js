@@ -31,7 +31,7 @@ export default function CalendarioScreen() {
     department === 'todos' ||
     department === state.currentUserDepartment
   );
-  const visibleTemplates = state.checklistTemplates.filter(t => canViewDepartment(t.department));
+  const visibleTemplates = state.checklistTemplates.filter(t => canViewDepartment(t.department) && (!t.date || t.date === dateStr));
   const dayHistory = state.dailyHistory[dateStr];
   const dayTodos = state.todos.filter(t => t.date === dateStr && canViewDepartment(t.department));
 

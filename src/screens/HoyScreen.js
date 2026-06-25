@@ -229,7 +229,7 @@ export default function HoyScreen() {
     department === 'todos' ||
     department === state.currentUserDepartment
   );
-  const visibleTemplates = state.checklistTemplates.filter(t => canViewDepartment(t.department));
+  const visibleTemplates = state.checklistTemplates.filter(t => canViewDepartment(t.department) && (!t.date || t.date === state.hoyDate));
   const pendingChecklist = visibleTemplates.filter(t => !cl[t.id]).length;
 
   const dayTodos = state.todos.filter(t => t.date === state.hoyDate && canViewDepartment(t.department));
