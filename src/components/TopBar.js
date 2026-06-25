@@ -1,19 +1,17 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
 
-export default function TopBar({ title, onMenuPress, onDateChange }) {
+export default function TopBar({ title, onDateChange }) {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
       <View style={styles.inner}>
         <View style={styles.left}>
-          <TouchableOpacity style={styles.menuBtn} onPress={onMenuPress}>
-            <MaterialIcons name="menu" size={24} color={colors.primary} />
-          </TouchableOpacity>
+          <Image source={require('../assets/bee.png')} style={styles.beeIcon} />
           {title === 'Seleccionar fecha' ? (
             <TouchableOpacity style={styles.titleBtn} onPress={onDateChange}>
               <Text style={styles.titleText}>{title}</Text>
@@ -56,9 +54,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  menuBtn: {
-    padding: 8,
-    borderRadius: 50,
+  beeIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: 'contain',
   },
   titleBtn: {
     flexDirection: 'row',
