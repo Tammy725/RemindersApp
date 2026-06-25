@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "SyncManager",
+    "slug": "syncmanagerapp",
+    "scheme": "syncmanager",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tammyshabetay.syncmanager",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "SyncManager usa el micrófono para convertir notas de voz en tareas."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#f7f9fb"
+      },
+      "package": "com.tammyshabetay.syncmanager"
+    },
+    "plugins": [
+      "expo-font",
+      "@react-native-community/datetimepicker"
+    ]
+  }
+}
