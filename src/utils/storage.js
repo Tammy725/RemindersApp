@@ -25,14 +25,11 @@ export function estadoBase() {
     currentUserRole: 'Admin',
     currentUserDepartment: 'todos',
     checklistTemplates: [
-      { id: 0, title: '❓ antes de escuchar', department: 'todos', details: '' },
-      { id: 1, title: '👥 antes de asignar', department: 'todos', details: '' },
-      { id: 2, title: '🎯 antes de priorizar', department: 'todos', details: '' },
-      { id: 3, title: '👏 antes de cerrar', department: 'todos', details: '' },
-      { id: 4, title: '📢 antes de compartir', department: 'todos', details: '' },
-      { id: 5, title: '⚠️ antes de seguridad', department: 'todos', details: '' },
+      { id: 0, title: 'Feedback Semanal', department: 'todos', details: '' },
+      { id: 1, title: 'Objetivos Q4', department: 'todos', details: '' },
+      { id: 2, title: 'Bloqueos Críticos', department: 'todos', details: '' },
     ],
-    templateIdCounter: 6,
+    templateIdCounter: 3,
     _editingItemId: null,
   };
 }
@@ -87,24 +84,6 @@ export async function cargarEstado() {
             entry.checklist.forEach((val, idx) => { obj[idx] = val; });
             entry.checklist = obj;
           }
-        }
-      }
-      // Migrate old default templates (3 items) to new ones
-      if (Array.isArray(parsed.checklistTemplates) && parsed.checklistTemplates.length <= 3) {
-        const oldTitles = ['Feedback Semanal', 'Objetivos Q4', 'Bloqueos Críticos'];
-        const isOldDefaults = parsed.checklistTemplates.every(
-          (t, i) => i < 3 && t.title === oldTitles[i]
-        );
-        if (isOldDefaults || parsed.checklistTemplates.length === 0) {
-          parsed.checklistTemplates = [
-            { id: 0, title: '❓ antes de escuchar', department: 'todos', details: '' },
-            { id: 1, title: '👥 antes de asignar', department: 'todos', details: '' },
-            { id: 2, title: '🎯 antes de priorizar', department: 'todos', details: '' },
-            { id: 3, title: '👏 antes de cerrar', department: 'todos', details: '' },
-            { id: 4, title: '📢 antes de compartir', department: 'todos', details: '' },
-            { id: 5, title: '⚠️ antes de seguridad', department: 'todos', details: '' },
-          ];
-          parsed.templateIdCounter = 6;
         }
       }
       return parsed;
