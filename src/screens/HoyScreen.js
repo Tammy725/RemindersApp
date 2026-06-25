@@ -338,6 +338,12 @@ export default function HoyScreen() {
           <Text style={styles.scheduleBtnText}>Configurar horario (reuniones diarias)</Text>
         </TouchableOpacity>
 
+        {/* Meeting Title */}
+        <View style={styles.meetingHeader}>
+          <Text style={styles.meetingTitle}>Colmenando</Text>
+          <Text style={styles.meetingSubtitle}>Una dirección, un equipo, una colmena</Text>
+        </View>
+
         {/* Attendance */}
         <View style={styles.attCard}>
           <View>
@@ -750,6 +756,21 @@ const styles = StyleSheet.create({
   scheduleBtnText: {
     fontSize: 16,
     color: colors['on-surface'],
+  },
+  meetingHeader: {
+    marginBottom: 12,
+  },
+  meetingTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: colors['on-surface'],
+    fontFamily: Platform.OS === 'ios' ? 'Inter' : undefined,
+  },
+  meetingSubtitle: {
+    fontSize: 13,
+    color: colors['on-surface-variant'],
+    fontFamily: Platform.OS === 'ios' ? 'Inter' : undefined,
+    marginTop: 2,
   },
   attCard: {
     backgroundColor: colors['surface-container-lowest'],
