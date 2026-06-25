@@ -332,17 +332,17 @@ export default function HoyScreen() {
           </View>
         </View>
 
-        {/* Schedule Button */}
-        <TouchableOpacity style={styles.scheduleBtn} onPress={() => setShowHorarioModal(true)}>
-          <MaterialIcons name="add" size={18} color={colors['on-surface']} />
-          <Text style={styles.scheduleBtnText}>Configurar horario (reuniones diarias)</Text>
-        </TouchableOpacity>
-
         {/* Meeting Title */}
         <View style={styles.meetingHeader}>
           <Text style={styles.meetingTitle}>Colmenando</Text>
           <Text style={styles.meetingSubtitle}>Una dirección, un equipo, una colmena</Text>
         </View>
+
+        {/* Schedule Button */}
+        <TouchableOpacity style={styles.scheduleBtn} onPress={() => setShowHorarioModal(true)}>
+          <MaterialIcons name="add" size={18} color={colors['on-surface']} />
+          <Text style={styles.scheduleBtnText}>Configurar horario (reuniones diarias)</Text>
+        </TouchableOpacity>
 
         {/* Attendance */}
         <View style={styles.attCard}>
