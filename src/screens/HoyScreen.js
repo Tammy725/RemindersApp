@@ -391,8 +391,12 @@ export default function HoyScreen() {
                   size={20}
                   color={checked ? colors.primary : colors['outline-variant']}
                 />
-                <Text style={[styles.checkText, checked && styles.checkTextDone]}>{t.title}</Text>
-                <View style={{ flex: 1 }} />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.checkText, checked && styles.checkTextDone]}>{t.title}</Text>
+                  {t.details ? (
+                    <Text style={styles.checkDetails} numberOfLines={1} ellipsizeMode="tail">{t.details}</Text>
+                  ) : null}
+                </View>
                 {t.details ? (
                   <TouchableOpacity onPress={() => setDetallesItem(t)} style={styles.detailsIconBtn}>
                     <Feather name="external-link" size={14} color={colors.outline} />
@@ -879,6 +883,12 @@ const styles = StyleSheet.create({
   checkTextDone: {
     opacity: 0.4,
     textDecorationLine: 'line-through',
+  },
+  checkDetails: {
+    fontSize: 11,
+    color: colors.outline,
+    fontFamily: Platform.OS === 'ios' ? 'Inter' : undefined,
+    marginTop: 2,
   },
   detailsIconBtn: {
     width: 28,

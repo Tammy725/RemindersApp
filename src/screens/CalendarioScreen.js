@@ -150,10 +150,14 @@ export default function CalendarioScreen() {
                         size={20}
                         color={checked ? colors.primary : colors['outline-variant']}
                       />
-                      <Text style={[styles.cardItemText, checked && styles.cardItemTextDone]}>
-                        {item.title}
-                      </Text>
-                      <View style={{ flex: 1 }} />
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.cardItemText, checked && styles.cardItemTextDone]}>
+                          {item.title}
+                        </Text>
+                        {item.details ? (
+                          <Text style={styles.checkDetails} numberOfLines={1} ellipsizeMode="tail">{item.details}</Text>
+                        ) : null}
+                      </View>
                       {item.details ? (
                         <TouchableOpacity onPress={() => setDetallesItem(item)} style={styles.detailsIconBtn}>
                           <Feather name="external-link" size={14} color={colors.outline} />
@@ -320,6 +324,12 @@ const styles = StyleSheet.create({
   cardItemTextDone: {
     textDecorationLine: 'line-through',
     opacity: 0.5,
+  },
+  checkDetails: {
+    fontSize: 11,
+    color: colors.outline,
+    fontFamily: Platform.OS === 'ios' ? 'Inter' : undefined,
+    marginTop: 2,
   },
   emptyText: { textAlign: 'center', color: colors.outline, fontSize: 14, padding: 16 },
 });
