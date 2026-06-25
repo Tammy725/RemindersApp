@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import * as Print from 'expo-print';
@@ -145,9 +145,7 @@ export default function MetricasScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Charts */}
         <View style={styles.chartGrid}>
           <View style={styles.chartCard}>
@@ -201,8 +199,6 @@ export default function MetricasScreen() {
         <TouchableOpacity style={styles.reportBtn} onPress={generatePDF}>
           <Text style={styles.reportBtnText}>DESCARGAR REPORTE PDF</Text>
         </TouchableOpacity>
-      </View>
-      </TouchableWithoutFeedback>
       </ScrollView>
     </View>
   );

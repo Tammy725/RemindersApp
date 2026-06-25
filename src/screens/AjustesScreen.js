@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, Modal, ScrollView, StyleSheet, Platform, Linking, Alert, TouchableWithoutFeedback, Keyboard,
+  View, Text, TextInput, TouchableOpacity, Modal, ScrollView, StyleSheet, Platform, Linking, Alert,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
@@ -63,9 +63,7 @@ export default function AjustesScreen() {
   return (
     <View style={styles.container}>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Profile */}
         <View style={styles.profileCard}>
           <View style={styles.profileLeft}>
@@ -160,8 +158,6 @@ export default function AjustesScreen() {
             ))
           )}
         </View>
-      </View>
-      </TouchableWithoutFeedback>
       </ScrollView>
 
       <ModalChecklist visible={showChecklistModal} onClose={() => setShowChecklistModal(false)} />

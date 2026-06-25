@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Keyboard, Modal, Platform, Alert, TouchableWithoutFeedback,
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Keyboard, Modal, Platform, Alert,
 } from 'react-native';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -306,14 +306,12 @@ export default function HoyScreen() {
             styles.scrollContent,
             { paddingBottom: keyboardHeight > 0 ? keyboardHeight + 96 : 140 },
           ]}
-          keyboardShouldPersistTaps="handled"
+          keyboardShouldPersistTaps="always"
           contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
           onScroll={(e) => { scrollOffsetRef.current = e.nativeEvent.contentOffset.y; }}
           scrollEventThrottle={16}
         >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
         {/* Date Header + Counters */}
         <View style={styles.dateSection}>
           <View>
@@ -431,8 +429,6 @@ export default function HoyScreen() {
             ))
           )}
         </View>
-      </View>
-      </TouchableWithoutFeedback>
       </ScrollView>
 
       {/* Input bar fijo - estilo WhatsApp */}
