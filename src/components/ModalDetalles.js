@@ -24,7 +24,7 @@ export default function ModalDetalles({ visible, onClose, title, details, onSave
       <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && onClose()}>
         <View style={styles.content}>
           <View style={styles.header}>
-            <Text style={styles.title}>{title} - Detalles</Text>
+            <Text style={styles.title}>{title}</Text>
             <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
               <MaterialIcons name="close" size={24} color={colors.outline} />
             </TouchableOpacity>
