@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
 export default function MetricasScreen() {
@@ -10,7 +12,7 @@ export default function MetricasScreen() {
   const month = today.getMonth();
   const year = today.getFullYear();
 
-  const { pctAsistencia, meetingAttended, meetingDays, pctTareas, todoCompleted, todoTotal, pctChecklist, checkDone, checkTotal, streak } = useMemo(() => {
+  const { pctAsistencia, meetingAttended, meetingDays, pctTareas, todoCompleted, todoTotal, pctChecklist, checkDone, checkTotal } = useMemo(() => {
     const canViewDepartment = (department) => (
       state.currentUserDepartment === 'todos' ||
       !department ||
@@ -61,20 +63,6 @@ export default function MetricasScreen() {
     }
     const pctC = cTotal > 0 ? Math.round((cDone / cTotal) * 100) : 0;
 
-    // Racha
-    let s = 0;
-    let cursor = new Date(today);
-    while (true) {
-      const key = cursor.toISOString().slice(0, 10);
-      const entry = state.dailyHistory[key];
-      if (entry && entry.asistio === true) {
-        s++;
-        cursor.setDate(cursor.getDate() - 1);
-      } else {
-        break;
-      }
-    }
-
     return {
       pctAsistencia: pctA,
       meetingAttended: mAttended,
@@ -85,9 +73,75 @@ export default function MetricasScreen() {
       pctChecklist: pctC,
       checkDone: cDone,
       checkTotal: cTotal,
-      streak: s,
     };
   }, [state]);
+
+  const generatePDF = async () => {
+    try {
+      const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      const monthName = monthNames[today.getMonth()];
+      const yearName = today.getFullYear();
+      const dateStr = today.toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      const html = `
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body { font-family: -apple-system, Helvetica, Arial, sans-serif; padding: 32px; color: #1a1a1a; }
+              h1 { font-size: 22px; text-align: center; color: #1a3f6b; margin-bottom: 4px; }
+              .subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 28px; }
+              .section { margin-bottom: 24px; }
+              h2 { font-size: 16px; color: #1a3f6b; border-bottom: 2px solid #1a3f6b; padding-bottom: 6px; margin-bottom: 12px; }
+              .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e0e0e0; }
+              .label { color: #666; font-size: 14px; }
+              .value { font-weight: 700; font-size: 14px; }
+              .footer { text-align: center; color: #999; font-size: 11px; margin-top: 40px; }
+            </style>
+          </head>
+          <body>
+            <h1>Reporte de Métricas</h1>
+            <p class="subtitle">${monthName} ${yearName} — Generado el ${dateStr}</p>
+
+            <div class="section">
+              <h2>Asistencia a Reuniones</h2>
+              <div class="row"><span class="label">Porcentaje de asistencia</span><span class="value">${pctAsistencia}%</span></div>
+              <div class="row"><span class="label">Reuniones realizadas</span><span class="value">${meetingAttended} de ${meetingDays}</span></div>
+            </div>
+
+            <div class="section">
+              <h2>Tareas</h2>
+              <div class="row"><span class="label">Porcentaje completado</span><span class="value">${pctTareas}%</span></div>
+              <div class="row"><span class="label">Tareas completadas</span><span class="value">${todoCompleted} de ${todoTotal}</span></div>
+            </div>
+
+            <div class="section">
+              <h2>Checklist</h2>
+              <div class="row"><span class="label">Porcentaje completado</span><span class="value">${pctChecklist}%</span></div>
+              <div class="row"><span class="label">Ítems completados</span><span class="value">${checkDone} de ${checkTotal}</span></div>
+            </div>
+
+            <p class="footer">SyncManager</p>
+          </body>
+        </html>
+      `;
+
+      const { uri } = await Print.printToFileAsync({ html });
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Compartir reporte PDF',
+          UTI: 'com.adobe.pdf',
+        });
+      } else {
+        Alert.alert('PDF generado', `El reporte se guardó en:\n${uri}`);
+      }
+    } catch (e) {
+      Alert.alert('Error', 'No se pudo generar el PDF: ' + e.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -142,7 +196,7 @@ export default function MetricasScreen() {
         </View>
 
         {/* Download Report */}
-        <TouchableOpacity style={styles.reportBtn} onPress={() => alert('Generando reporte PDF...')}>
+        <TouchableOpacity style={styles.reportBtn} onPress={generatePDF}>
           <Text style={styles.reportBtnText}>DESCARGAR REPORTE PDF</Text>
         </TouchableOpacity>
       </ScrollView>
