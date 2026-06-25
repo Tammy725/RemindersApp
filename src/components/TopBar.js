@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   beeIcon: {
-    width: 36,
-    height: 36,
+    width: 37,
+    height: 60,
     resizeMode: 'contain',
   },
   titleBtn: {
