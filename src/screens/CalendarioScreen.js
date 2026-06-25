@@ -133,33 +133,33 @@ export default function CalendarioScreen() {
                 visibleTemplates.map(item => {
                   const checked = calChecklist[item.id] || false;
                   return (
-                    <View key={item.id} style={[styles.cardCheckItem, checked && styles.cardCheckItemDone]}>
-                      <TouchableOpacity
-                        style={styles.checkLeft}
-                        activeOpacity={1}
-                        onPress={() => {
-                          if (dateStr === todayStr) {
-                            dispatch({ type: 'TOGGLE_CHECKLIST_ITEM', payload: { id: item.id, value: !checked } });
-                          } else {
-                            dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: dateStr, id: item.id, value: !checked } });
-                          }
-                        }}
-                      >
-                        <MaterialIcons
-                          name={checked ? 'check-box' : 'check-box-outline-blank'}
-                          size={20}
-                          color={checked ? colors.primary : colors['outline-variant']}
-                        />
-                        <Text style={[styles.cardItemText, checked && styles.cardItemTextDone]}>
-                          {item.title}
-                        </Text>
-                      </TouchableOpacity>
+                    <TouchableOpacity
+                      key={item.id}
+                      style={[styles.cardCheckItem, checked && styles.cardCheckItemDone]}
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        if (dateStr === todayStr) {
+                          dispatch({ type: 'TOGGLE_CHECKLIST_ITEM', payload: { id: item.id, value: !checked } });
+                        } else {
+                          dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: dateStr, id: item.id, value: !checked } });
+                        }
+                      }}
+                    >
+                      <MaterialIcons
+                        name={checked ? 'check-box' : 'check-box-outline-blank'}
+                        size={20}
+                        color={checked ? colors.primary : colors['outline-variant']}
+                      />
+                      <Text style={[styles.cardItemText, checked && styles.cardItemTextDone]}>
+                        {item.title}
+                      </Text>
+                      <View style={{ flex: 1 }} />
                       {item.details ? (
                         <TouchableOpacity onPress={() => setDetallesItem(item)} style={styles.detailsIconBtn}>
                           <Feather name="external-link" size={14} color={colors.outline} />
                         </TouchableOpacity>
                       ) : null}
-                    </View>
+                    </TouchableOpacity>
                   );
                 })
               )}
@@ -308,12 +308,6 @@ const styles = StyleSheet.create({
   cardCheckItemDone: {
     backgroundColor: '#e8f5e9',
     borderColor: '#a5d6a7',
-  },
-  checkLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: 12,
   },
   detailsIconBtn: {
     width: 28,

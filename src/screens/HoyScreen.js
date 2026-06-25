@@ -368,31 +368,31 @@ export default function HoyScreen() {
           {visibleTemplates.map(t => {
             const checked = cl[t.id] || false;
             return (
-              <View key={t.id} style={[styles.checkItem, checked && styles.checkItemDone]}>
-                <TouchableOpacity
-                  style={styles.checkLeft}
-                  activeOpacity={1}
-                  onPress={() => {
-                    if (state.hoyDate === todayStr) {
-                      dispatch({ type: 'TOGGLE_CHECKLIST_ITEM', payload: { id: t.id, value: !checked } });
-                    } else {
-                      dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: state.hoyDate, id: t.id, value: !checked } });
-                    }
-                  }}
-                >
-                  <MaterialIcons
-                    name={checked ? 'check-box' : 'check-box-outline-blank'}
-                    size={20}
-                    color={checked ? colors.primary : colors['outline-variant']}
-                  />
-                  <Text style={[styles.checkText, checked && styles.checkTextDone]}>{t.title}</Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+                key={t.id}
+                style={[styles.checkItem, checked && styles.checkItemDone]}
+                activeOpacity={0.7}
+                onPress={() => {
+                  if (state.hoyDate === todayStr) {
+                    dispatch({ type: 'TOGGLE_CHECKLIST_ITEM', payload: { id: t.id, value: !checked } });
+                  } else {
+                    dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: state.hoyDate, id: t.id, value: !checked } });
+                  }
+                }}
+              >
+                <MaterialIcons
+                  name={checked ? 'check-box' : 'check-box-outline-blank'}
+                  size={20}
+                  color={checked ? colors.primary : colors['outline-variant']}
+                />
+                <Text style={[styles.checkText, checked && styles.checkTextDone]}>{t.title}</Text>
+                <View style={{ flex: 1 }} />
                 {t.details ? (
                   <TouchableOpacity onPress={() => setDetallesItem(t)} style={styles.detailsIconBtn}>
                     <Feather name="external-link" size={14} color={colors.outline} />
                   </TouchableOpacity>
                 ) : null}
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -422,7 +422,8 @@ export default function HoyScreen() {
                     color={t.completed ? colors.secondary : colors.outline}
                   />
                   <Text style={[styles.todoText, t.completed && styles.todoTextDone]}>{t.text}</Text>
-                <TouchableOpacity onPress={() => dispatch({ type: 'DELETE_TODO', payload: t.id })}>
+                  <View style={{ flex: 1 }} />
+                <TouchableOpacity onPress={() => dispatch({ type: 'DELETE_TODO', payload: t.id })} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
                   <MaterialIcons name="close" size={20} color={colors.outline} />
                 </TouchableOpacity>
               </TouchableOpacity>
@@ -857,12 +858,6 @@ const styles = StyleSheet.create({
   checkTextDone: {
     opacity: 0.4,
     textDecorationLine: 'line-through',
-  },
-  checkLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: 12,
   },
   detailsIconBtn: {
     width: 28,
