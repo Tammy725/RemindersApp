@@ -341,7 +341,7 @@ export default function HoyScreen() {
         {/* Meeting Title */}
         <View style={styles.meetingHeader}>
           <Text style={styles.meetingTitle}>Colmenando</Text>
-          <Text style={styles.meetingSubtitle}>Una dirección, un equipo, una colmena</Text>
+          <Text style={styles.meetingSubtitle} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5}>Una dirección, un equipo, una colmena</Text>
         </View>
 
         {/* Attendance */}
@@ -758,6 +758,9 @@ const styles = StyleSheet.create({
     color: colors['on-surface'],
   },
   meetingHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
     marginBottom: 12,
   },
   meetingTitle: {
@@ -770,7 +773,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors['on-surface-variant'],
     fontFamily: Platform.OS === 'ios' ? 'Inter' : undefined,
-    marginTop: 2,
+    textAlign: 'right',
+    flexShrink: 1,
+    marginLeft: 8,
   },
   attCard: {
     backgroundColor: colors['surface-container-lowest'],
