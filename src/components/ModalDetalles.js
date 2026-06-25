@@ -5,7 +5,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
 
-export default function ModalDetalles({ visible, onClose, title, details, onSave, editable, saveLabel = 'Guardar' }) {
+export default function ModalDetalles({ visible, onClose, title, details, onSave, editable }) {
   const [text, setText] = useState('');
 
   useEffect(() => {
@@ -25,9 +25,16 @@ export default function ModalDetalles({ visible, onClose, title, details, onSave
         <View style={styles.content}>
           <View style={styles.header}>
             <Text style={styles.title}>{title}</Text>
-            <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-              <MaterialIcons name="close" size={24} color={colors.outline} />
-            </TouchableOpacity>
+            <View style={styles.headerRight}>
+              {editable && (
+                <TouchableOpacity style={styles.headerBtn} onPress={handleSave}>
+                  <MaterialIcons name="check" size={24} color={colors.secondary} />
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity style={styles.headerBtn} onPress={onClose}>
+                <MaterialIcons name="close" size={24} color={colors.outline} />
+              </TouchableOpacity>
+            </View>
           </View>
 
           <TextInput
@@ -40,12 +47,6 @@ export default function ModalDetalles({ visible, onClose, title, details, onSave
             textAlignVertical="top"
             editable={editable}
           />
-
-          {editable && (
-            <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-              <Text style={styles.saveBtnText}>{saveLabel}</Text>
-            </TouchableOpacity>
-          )}
         </View>
       </TouchableOpacity>
     </Modal>
@@ -82,7 +83,11 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
   },
-  closeBtn: {
+  headerRight: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  headerBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -100,18 +105,5 @@ const styles = StyleSheet.create({
     color: colors['on-surface'],
     backgroundColor: colors.surface,
     marginBottom: 16,
-  },
-  saveBtn: {
-    height: 48,
-    backgroundColor: colors.black,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  saveBtnText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#ffffff',
-    fontFamily: Platform.OS === 'ios' ? 'Inter' : undefined,
   },
 });
