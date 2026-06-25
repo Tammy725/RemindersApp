@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Platform,
+  View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Platform, KeyboardAvoidingView, ScrollView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
@@ -21,33 +21,51 @@ export default function ModalDetalles({ visible, onClose, title, details, onSave
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && onClose()}>
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text style={styles.title}>{title}</Text>
-            <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-              <MaterialIcons name="close" size={24} color={colors.outline} />
-            </TouchableOpacity>
-          </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.overlay}
+      >
+        <TouchableOpacity
+          style={styles.overlayTouchable}
+          activeOpacity={1}
+          onPress={(e) => e.target === e.currentTarget && onClose()}
+        >
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={{ width: '100%', maxWidth: 600, paddingHorizontal: 16 }}
+          >
+            <ScrollView
+              style={styles.content}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.header}>
+                <Text style={styles.title}>{title}</Text>
+                <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+                  <MaterialIcons name="close" size={24} color={colors.outline} />
+                </TouchableOpacity>
+              </View>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Escribe los detalles..."
-            placeholderTextColor={colors['outline-variant']}
-            value={text}
-            onChangeText={setText}
-            multiline
-            textAlignVertical="top"
-            editable={editable}
-          />
+              <TextInput
+                style={styles.input}
+                placeholder="Escribe los detalles..."
+                placeholderTextColor={colors['outline-variant']}
+                value={text}
+                onChangeText={setText}
+                multiline
+                textAlignVertical="top"
+                editable={editable}
+              />
 
-          {editable && (
-            <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-              <Text style={styles.saveBtnText}>{saveLabel}</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </TouchableOpacity>
+              {editable && (
+                <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
+                  <Text style={styles.saveBtnText}>{saveLabel}</Text>
+                </TouchableOpacity>
+              )}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -58,15 +76,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
+  },
+  overlayTouchable: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     backgroundColor: '#fff',
     borderRadius: 16,
-    maxWidth: 600,
-    width: '100%',
-    maxHeight: '80%',
     padding: 20,
+    maxHeight: '80%',
   },
   header: {
     flexDirection: 'row',
