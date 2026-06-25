@@ -13,7 +13,7 @@ export default function TopBar({ title, onDateChange }) {
     <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
       <View style={styles.inner}>
         <View style={styles.left}>
-          <Image source={beeIcon} style={styles.beeIcon} />
+          <Image source={beeIcon} style={styles.beeIcon} fadeDuration={0} />
           {title === 'Seleccionar fecha' ? (
             <TouchableOpacity style={styles.titleBtn} onPress={onDateChange}>
               <Text style={styles.titleText}>{title}</Text>
