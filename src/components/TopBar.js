@@ -25,9 +25,7 @@ export default function TopBar({ title, onMenuPress, onDateChange }) {
         </View>
         <View style={styles.right}>
           <View style={styles.avatar}>
-            <View style={styles.avatarInner}>
-              <MaterialIcons name="person" size={24} color={colors.outline} />
-            </View>
+            <MaterialIcons name="person" size={24} color={colors.outline} />
           </View>
         </View>
       </View>
@@ -88,10 +86,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors['outline-variant'],
-  },
-  avatarInner: {
-    width: 32,
-    height: 32,
   },
   avatarImg: {
     width: '100%',

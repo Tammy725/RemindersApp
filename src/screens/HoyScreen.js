@@ -382,7 +382,6 @@ export default function HoyScreen() {
                   } else {
                     dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: state.hoyDate, id: t.id, value: !checked } });
                   }
-                  if (!checked) setShowConfetti(true);
                 }}
               >
                 <MaterialIcons
@@ -409,7 +408,10 @@ export default function HoyScreen() {
               <TouchableOpacity
                 key={t.id}
                 style={[styles.todoItem, t.completed && styles.todoItemDone]}
-                onPress={() => dispatch({ type: 'TOGGLE_TODO', payload: t.id })}
+                onPress={() => {
+                  dispatch({ type: 'TOGGLE_TODO', payload: t.id });
+                  if (!t.completed && pendingTodos === 1) setShowConfetti(true);
+                }}
                 activeOpacity={0.7}
               >
                   <MaterialIcons
