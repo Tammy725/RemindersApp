@@ -96,12 +96,12 @@ export default function ModalHorario({ visible, onClose }) {
 
           <View style={styles.presets}>
             <TouchableOpacity style={styles.preset} onPress={() => presetTime(8, 0, 'AM')}>
-              <Text style={styles.presetLabel}>Temprano</Text>
+              <Text style={styles.presetLabel}>Mañana</Text>
               <Text style={styles.presetTime}>08:00 AM</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.preset} onPress={() => presetTime(10, 30, 'AM')}>
-              <Text style={styles.presetLabel}>Media Mañana</Text>
-              <Text style={styles.presetTime}>10:30 AM</Text>
+            <TouchableOpacity style={styles.preset} onPress={() => presetTime(6, 0, 'PM')}>
+              <Text style={styles.presetLabel}>Tarde</Text>
+              <Text style={styles.presetTime}>06:00 PM</Text>
             </TouchableOpacity>
           </View>
 
