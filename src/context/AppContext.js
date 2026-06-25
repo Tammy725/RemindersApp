@@ -33,8 +33,10 @@ const initialState = {
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'SET_STATE':
-      return { ...state, ...action.payload, loaded: true };
+    case 'SET_STATE': {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      return { ...state, ...action.payload, hoyDate: todayStr, diaSel: new Date().getDate(), loaded: true };
+    }
     case 'SET_HOY_DATE':
       return { ...state, hoyDate: action.payload };
     case 'SET_CURRENT_USER':
