@@ -25,9 +25,9 @@ export function estadoBase() {
     currentUserRole: 'Admin',
     currentUserDepartment: 'todos',
     checklistTemplates: [
-      { id: 0, title: 'Feedback Semanal', department: 'todos' },
-      { id: 1, title: 'Objetivos Q4', department: 'todos' },
-      { id: 2, title: 'Bloqueos Críticos', department: 'todos' },
+      { id: 0, title: 'Feedback Semanal', department: 'todos', details: '' },
+      { id: 1, title: 'Objetivos Q4', department: 'todos', details: '' },
+      { id: 2, title: 'Bloqueos Críticos', department: 'todos', details: '' },
     ],
     templateIdCounter: 3,
     _editingItemId: null,

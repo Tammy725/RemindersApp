@@ -172,6 +172,7 @@ function reducer(state, action) {
         id: state.templateIdCounter,
         title: action.payload.title,
         department: action.payload.department,
+        details: action.payload.details || '',
       };
       return {
         ...state,
@@ -180,13 +181,22 @@ function reducer(state, action) {
       };
     }
     case 'EDIT_CHECKLIST_TEMPLATE': {
-      const { id, title } = action.payload;
+      const { id, title, details } = action.payload;
       return {
         ...state,
         checklistTemplates: state.checklistTemplates.map(t =>
-          t.id === id ? { ...t, title } : t
+          t.id === id ? { ...t, title: title !== undefined ? title : t.title, details: details !== undefined ? details : t.details } : t
         ),
         _editingItemId: null,
+      };
+    }
+    case 'SET_CHECKLIST_DETAILS': {
+      const { id, details } = action.payload;
+      return {
+        ...state,
+        checklistTemplates: state.checklistTemplates.map(t =>
+          t.id === id ? { ...t, details } : t
+        ),
       };
     }
     case 'DELETE_CHECKLIST_TEMPLATE':

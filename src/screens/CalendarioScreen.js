@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform,
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Feather } from '@expo/vector-icons';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
+import ModalDetalles from '../components/ModalDetalles';
 
 const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const dayNames = ['DO', 'LU', 'MA', 'MI', 'JU', 'VI', 'SA'];
 
 export default function CalendarioScreen() {
   const { state, dispatch } = useApp();
+  const [detallesItem, setDetallesItem] = useState(null);
 
   const firstDay = new Date(state.anioCal, state.mesCal, 1).getDay();
   const daysInMonth = new Date(state.anioCal, state.mesCal + 1, 0).getDate();
@@ -131,27 +133,33 @@ export default function CalendarioScreen() {
                 visibleTemplates.map(item => {
                   const checked = calChecklist[item.id] || false;
                   return (
-                    <TouchableOpacity
-                      key={item.id}
-                      style={[styles.cardCheckItem, checked && styles.cardCheckItemDone]}
-                      activeOpacity={1}
-                      onPress={() => {
-                        if (dateStr === todayStr) {
-                          dispatch({ type: 'TOGGLE_CHECKLIST_ITEM', payload: { id: item.id, value: !checked } });
-                        } else {
-                          dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: dateStr, id: item.id, value: !checked } });
-                        }
-                      }}
-                    >
-                      <MaterialIcons
-                        name={checked ? 'check-box' : 'check-box-outline-blank'}
-                        size={20}
-                        color={checked ? colors.primary : colors['outline-variant']}
-                      />
-                      <Text style={[styles.cardItemText, checked && styles.cardItemTextDone]}>
-                        {item.title}
-                      </Text>
-                    </TouchableOpacity>
+                    <View key={item.id} style={[styles.cardCheckItem, checked && styles.cardCheckItemDone]}>
+                      <TouchableOpacity
+                        style={styles.checkLeft}
+                        activeOpacity={1}
+                        onPress={() => {
+                          if (dateStr === todayStr) {
+                            dispatch({ type: 'TOGGLE_CHECKLIST_ITEM', payload: { id: item.id, value: !checked } });
+                          } else {
+                            dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: dateStr, id: item.id, value: !checked } });
+                          }
+                        }}
+                      >
+                        <MaterialIcons
+                          name={checked ? 'check-box' : 'check-box-outline-blank'}
+                          size={20}
+                          color={checked ? colors.primary : colors['outline-variant']}
+                        />
+                        <Text style={[styles.cardItemText, checked && styles.cardItemTextDone]}>
+                          {item.title}
+                        </Text>
+                      </TouchableOpacity>
+                      {item.details ? (
+                        <TouchableOpacity onPress={() => setDetallesItem(item)} style={styles.detailsIconBtn}>
+                          <Feather name="external-link" size={14} color={colors.outline} />
+                        </TouchableOpacity>
+                      ) : null}
+                    </View>
                   );
                 })
               )}
@@ -187,6 +195,16 @@ export default function CalendarioScreen() {
           </View>
         </View>
       </ScrollView>
+
+      {detallesItem && (
+        <ModalDetalles
+          visible={!!detallesItem}
+          onClose={() => setDetallesItem(null)}
+          title={detallesItem.title}
+          details={detallesItem.details || ''}
+          editable={false}
+        />
+      )}
     </View>
   );
 }
@@ -290,6 +308,19 @@ const styles = StyleSheet.create({
   cardCheckItemDone: {
     backgroundColor: '#e8f5e9',
     borderColor: '#a5d6a7',
+  },
+  checkLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 12,
+  },
+  detailsIconBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cardItemText: { flex: 1, fontSize: 16, color: colors['on-surface'] },
   cardItemTextDone: {

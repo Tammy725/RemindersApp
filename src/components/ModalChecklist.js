@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Platform, ScrollView,
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Feather } from '@expo/vector-icons';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
+import ModalDetalles from './ModalDetalles';
 
 export default function ModalChecklist({ visible, onClose }) {
   const { state, dispatch } = useApp();
   const [newTitle, setNewTitle] = useState('');
+  const [newDetails, setNewDetails] = useState('');
   const [selectedDept, setSelectedDept] = useState('todos');
   const [editText, setEditText] = useState('');
+  const [detallesItem, setDetallesItem] = useState(null);
 
   const filteredItems = state.checklistTemplates.filter(
     t => t.department === selectedDept || selectedDept === 'todos',
@@ -20,9 +23,10 @@ export default function ModalChecklist({ visible, onClose }) {
     if (!newTitle.trim()) return;
     dispatch({
       type: 'ADD_CHECKLIST_TEMPLATE',
-      payload: { title: newTitle.trim(), department: selectedDept },
+      payload: { title: newTitle.trim(), department: selectedDept, details: newDetails },
     });
     setNewTitle('');
+    setNewDetails('');
   };
 
   const startEdit = (item) => {
@@ -36,6 +40,18 @@ export default function ModalChecklist({ visible, onClose }) {
   };
 
   const cancelEdit = () => dispatch({ type: 'SET_EDITING_ITEM', payload: null });
+
+  const openDetalles = (item) => setDetallesItem(item);
+  const closeDetalles = () => setDetallesItem(null);
+
+  const saveDetalles = (detailsText) => {
+    if (!detallesItem) return;
+    if (detallesItem.id === null) {
+      setNewDetails(detailsText);
+    } else {
+      dispatch({ type: 'SET_CHECKLIST_DETAILS', payload: { id: detallesItem.id, details: detailsText } });
+    }
+  };
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -83,6 +99,12 @@ export default function ModalChecklist({ visible, onClose }) {
               onChangeText={setNewTitle}
               onSubmitEditing={addItem}
             />
+            <TouchableOpacity
+              style={styles.detailsNewBtn}
+              onPress={() => setDetallesItem({ id: null, title: newTitle || 'Nuevo ítem', details: newDetails })}
+            >
+              <Feather name="external-link" size={16} color={colors.outline} />
+            </TouchableOpacity>
             <TouchableOpacity style={styles.addBtn} onPress={addItem}>
               <MaterialIcons name="add" size={18} color="#fff" />
             </TouchableOpacity>
@@ -113,6 +135,9 @@ export default function ModalChecklist({ visible, onClose }) {
                   ) : (
                     <>
                       <Text style={styles.itemText}>{item.title}</Text>
+                      <TouchableOpacity onPress={() => openDetalles(item)} style={styles.smallBtn}>
+                        <Feather name="external-link" size={14} color={colors.outline} />
+                      </TouchableOpacity>
                       <TouchableOpacity onPress={() => startEdit(item)} style={styles.smallBtn}>
                         <MaterialIcons name="edit" size={16} color={colors.outline} />
                       </TouchableOpacity>
@@ -130,6 +155,17 @@ export default function ModalChecklist({ visible, onClose }) {
           </ScrollView>
         </View>
       </TouchableOpacity>
+
+      {detallesItem && (
+        <ModalDetalles
+          visible={!!detallesItem}
+          onClose={closeDetalles}
+          title={detallesItem.title}
+          details={detallesItem.details || ''}
+          onSave={saveDetalles}
+          editable={true}
+        />
+      )}
     </Modal>
   );
 }
@@ -223,6 +259,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginBottom: 16,
+    alignItems: 'center',
   },
   input: {
     flex: 1,
@@ -234,6 +271,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     fontSize: 16,
     color: colors['on-surface'],
+  },
+  detailsNewBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors['outline-variant'],
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
   },
   addBtn: {
     width: 36,

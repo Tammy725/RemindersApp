@@ -3,7 +3,7 @@ import ConfettiCannon from 'react-native-confetti-cannon';
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Keyboard, Modal, Platform, Alert,
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
@@ -11,6 +11,7 @@ import * as FileSystem from 'expo-file-system';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
 import ModalHorario from '../components/ModalHorario';
+import ModalDetalles from '../components/ModalDetalles';
 
 const DAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
@@ -32,6 +33,7 @@ export default function HoyScreen() {
   const [voiceDatePickerIndex, setVoiceDatePickerIndex] = useState(null);
   const [editingVoiceTaskId, setEditingVoiceTaskId] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [detallesItem, setDetallesItem] = useState(null);
   const toDisplay = (ymd) => {
     if (!ymd) return '';
     const [y, m, d] = ymd.split('-');
@@ -366,25 +368,31 @@ export default function HoyScreen() {
           {visibleTemplates.map(t => {
             const checked = cl[t.id] || false;
             return (
-              <TouchableOpacity
-                key={t.id}
-                style={[styles.checkItem, checked && styles.checkItemDone]}
-                activeOpacity={1}
-                onPress={() => {
-                  if (state.hoyDate === todayStr) {
-                    dispatch({ type: 'TOGGLE_CHECKLIST_ITEM', payload: { id: t.id, value: !checked } });
-                  } else {
-                    dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: state.hoyDate, id: t.id, value: !checked } });
-                  }
-                }}
-              >
-                <MaterialIcons
-                  name={checked ? 'check-box' : 'check-box-outline-blank'}
-                  size={20}
-                  color={checked ? colors.primary : colors['outline-variant']}
-                />
-                <Text style={[styles.checkText, checked && styles.checkTextDone]}>{t.title}</Text>
-              </TouchableOpacity>
+              <View key={t.id} style={[styles.checkItem, checked && styles.checkItemDone]}>
+                <TouchableOpacity
+                  style={styles.checkLeft}
+                  activeOpacity={1}
+                  onPress={() => {
+                    if (state.hoyDate === todayStr) {
+                      dispatch({ type: 'TOGGLE_CHECKLIST_ITEM', payload: { id: t.id, value: !checked } });
+                    } else {
+                      dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: state.hoyDate, id: t.id, value: !checked } });
+                    }
+                  }}
+                >
+                  <MaterialIcons
+                    name={checked ? 'check-box' : 'check-box-outline-blank'}
+                    size={20}
+                    color={checked ? colors.primary : colors['outline-variant']}
+                  />
+                  <Text style={[styles.checkText, checked && styles.checkTextDone]}>{t.title}</Text>
+                </TouchableOpacity>
+                {t.details ? (
+                  <TouchableOpacity onPress={() => setDetallesItem(t)} style={styles.detailsIconBtn}>
+                    <Feather name="external-link" size={14} color={colors.outline} />
+                  </TouchableOpacity>
+                ) : null}
+              </View>
             );
           })}
         </View>
@@ -615,6 +623,16 @@ export default function HoyScreen() {
 
       <ModalHorario visible={showHorarioModal} onClose={() => setShowHorarioModal(false)} />
 
+      {detallesItem && (
+        <ModalDetalles
+          visible={!!detallesItem}
+          onClose={() => setDetallesItem(null)}
+          title={detallesItem.title}
+          details={detallesItem.details || ''}
+          editable={false}
+        />
+      )}
+
       {showConfetti && (
         <ConfettiCannon
           count={80}
@@ -839,6 +857,19 @@ const styles = StyleSheet.create({
   checkTextDone: {
     opacity: 0.4,
     textDecorationLine: 'line-through',
+  },
+  checkLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 12,
+  },
+  detailsIconBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   inputBar: {
     position: 'absolute',
