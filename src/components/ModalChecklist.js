@@ -55,7 +55,8 @@ export default function ModalChecklist({ visible, onClose }) {
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && onClose()}>
+      <View style={styles.overlay}>
+        <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={onClose} />
         <View style={styles.content}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -155,7 +156,7 @@ export default function ModalChecklist({ visible, onClose }) {
             )}
           </ScrollView>
         </View>
-      </TouchableOpacity>
+      </View>
 
       {detallesItem && (
         <ModalDetalles
