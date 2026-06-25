@@ -47,7 +47,12 @@ export default function ModalChecklist({ visible, onClose }) {
   const saveDetalles = (detailsText) => {
     if (!detallesItem) return;
     if (detallesItem.id === null) {
-      setNewDetails(detailsText);
+      dispatch({
+        type: 'ADD_CHECKLIST_TEMPLATE',
+        payload: { title: detallesItem.title.trim(), department: selectedDept, details: detailsText },
+      });
+      setNewTitle('');
+      setNewDetails('');
     } else {
       dispatch({ type: 'SET_CHECKLIST_DETAILS', payload: { id: detallesItem.id, details: detailsText } });
     }
@@ -166,6 +171,7 @@ export default function ModalChecklist({ visible, onClose }) {
           details={detallesItem.details || ''}
           onSave={saveDetalles}
           editable={true}
+          saveLabel={detallesItem.id === null ? 'Agregar' : undefined}
         />
       )}
     </Modal>

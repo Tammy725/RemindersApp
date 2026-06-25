@@ -5,7 +5,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
 
-export default function ModalDetalles({ visible, onClose, title, details, onSave, editable }) {
+export default function ModalDetalles({ visible, onClose, title, details, onSave, editable, saveLabel = 'Guardar' }) {
   const [text, setText] = useState('');
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function ModalDetalles({ visible, onClose, title, details, onSave
 
           {editable && (
             <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-              <Text style={styles.saveBtnText}>Guardar</Text>
+              <Text style={styles.saveBtnText}>{saveLabel}</Text>
             </TouchableOpacity>
           )}
         </View>
