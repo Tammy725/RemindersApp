@@ -100,10 +100,11 @@ export default function ModalChecklist({ visible, onClose }) {
               onSubmitEditing={addItem}
             />
             <TouchableOpacity
-              style={styles.detailsNewBtn}
-              onPress={() => setDetallesItem({ id: null, title: newTitle || 'Nuevo ítem', details: newDetails })}
+              style={[styles.detailsNewBtn, !newTitle.trim() && styles.detailsNewBtnDisabled]}
+              onPress={() => setDetallesItem({ id: null, title: newTitle, details: newDetails })}
+              disabled={!newTitle.trim()}
             >
-              <Feather name="external-link" size={16} color={colors.outline} />
+              <Feather name="external-link" size={16} color={!newTitle.trim() ? colors['outline-variant'] : colors.outline} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.addBtn} onPress={addItem}>
               <MaterialIcons name="add" size={18} color="#fff" />
@@ -281,6 +282,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.surface,
+  },
+  detailsNewBtnDisabled: {
+    opacity: 0.4,
+    borderColor: colors['outline-variant'],
   },
   addBtn: {
     width: 36,
