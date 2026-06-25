@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
-    minHeight: 200,
+    height: 200,
     borderWidth: 1,
     borderColor: colors['outline-variant'],
     borderRadius: 12,
