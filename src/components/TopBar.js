@@ -4,6 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
 
+const beeIcon = require('../../assets/bee.png');
+
 export default function TopBar({ title, onDateChange }) {
   const insets = useSafeAreaInsets();
 
@@ -11,7 +13,7 @@ export default function TopBar({ title, onDateChange }) {
     <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
       <View style={styles.inner}>
         <View style={styles.left}>
-          <Image source={require('../assets/bee.png')} style={styles.beeIcon} />
+          <Image source={beeIcon} style={styles.beeIcon} />
           {title === 'Seleccionar fecha' ? (
             <TouchableOpacity style={styles.titleBtn} onPress={onDateChange}>
               <Text style={styles.titleText}>{title}</Text>
@@ -55,8 +57,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   beeIcon: {
-    width: 28,
-    height: 28,
+    width: 36,
+    height: 36,
     resizeMode: 'contain',
   },
   titleBtn: {
