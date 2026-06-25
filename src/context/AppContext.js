@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { Linking } from 'react-native';
 import { cargarEstado, guardarEstado } from '../utils/storage';
+import { requestPermissions, scheduleDailyReminder } from '../utils/notifications';
 
 const AppContext = createContext();
 
@@ -249,6 +250,17 @@ export function AppProvider({ children }) {
       guardarEstado(state);
     }
   }, [state, state.loaded]);
+
+  // Schedule daily notification when meeting time changes
+  useEffect(() => {
+    if (!state.loaded) return;
+    (async () => {
+      const granted = await requestPermissions();
+      if (granted) {
+        await scheduleDailyReminder(state.hora, state.minuto, state.periodo);
+      }
+    })();
+  }, [state.hora, state.minuto, state.periodo, state.loaded]);
 
   const saveTodayHistory = useCallback(() => {
     const todayStr = new Date().toISOString().slice(0, 10);
