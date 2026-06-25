@@ -4,8 +4,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
-import TopBar from '../components/TopBar';
-
 export default function MetricasScreen() {
   const { state } = useApp();
   const today = new Date();
@@ -93,8 +91,6 @@ export default function MetricasScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar title="Metricas" />
-
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Charts */}
         <View style={styles.chartGrid}>

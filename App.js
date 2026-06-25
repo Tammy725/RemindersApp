@@ -11,6 +11,7 @@ import MetricasScreen from './src/screens/MetricasScreen';
 import AjustesScreen from './src/screens/AjustesScreen';
 import BottomNav from './src/components/BottomNav';
 import FabButton from './src/components/FabButton';
+import TopBar from './src/components/TopBar';
 import colors from './src/theme/colors';
 
 SplashScreen.preventAutoHideAsync();
@@ -37,9 +38,20 @@ function MainNavigator() {
     dispatch({ type: 'TOGGLE_GRABANDO' });
   }, [activeTab, dispatch]);
 
+  const getTopBarTitle = () => {
+    switch (activeTab) {
+      case 'Hoy': return 'Tareas del Día';
+      case 'Calendario': return 'Calendario';
+      case 'Metricas': return 'Metricas';
+      case 'Ajustes': return 'Ajustes';
+      default: return 'Tareas del Día';
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
+      <TopBar title={getTopBarTitle()} />
       {renderScreen()}
       {activeTab === 'Hoy' && (
         <FabButton

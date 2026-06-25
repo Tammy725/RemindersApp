@@ -11,7 +11,6 @@ import * as FileSystem from 'expo-file-system';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
 import ModalHorario from '../components/ModalHorario';
-import TopBar from '../components/TopBar';
 
 const DAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
@@ -298,11 +297,6 @@ export default function HoyScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar
-        title="Tareas del Día"
-        onDateChange={handleDateChange}
-      />
-
       <ScrollView
           ref={scrollRef}
           style={styles.scroll}

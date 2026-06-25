@@ -5,7 +5,6 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
-import TopBar from '../components/TopBar';
 
 const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const dayNames = ['DO', 'LU', 'MA', 'MI', 'JU', 'VI', 'SA'];
@@ -45,8 +44,6 @@ export default function CalendarioScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar title="Calendario" />
-
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         <View style={styles.grid}>
           {/* Calendar */}

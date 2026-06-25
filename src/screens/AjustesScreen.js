@@ -6,7 +6,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
-import TopBar from '../components/TopBar';
+
 import ModalChecklist from '../components/ModalChecklist';
 
 const APP_INVITE_LINK = 'syncmanager://invite';
@@ -62,7 +62,6 @@ export default function AjustesScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar title="Ajustes" />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Profile */}
