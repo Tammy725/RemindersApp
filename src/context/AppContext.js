@@ -27,6 +27,7 @@ const initialState = {
   currentUserDepartment: 'todos',
   checklistTemplates: [],
   templateIdCounter: 3,
+  adminGenerales: [],
   _editingItemId: null,
   _invitarEquipoId: null,
   loaded: false,
@@ -209,6 +210,16 @@ function reducer(state, action) {
       };
     case 'SET_EDITING_ITEM':
       return { ...state, _editingItemId: action.payload };
+    case 'ADD_ADMIN_GENERAL': {
+      const nuevoAdmin = {
+        id: state.adminGenerales.length,
+        telefono: action.payload.telefono,
+        fecha: localDateString(),
+      };
+      return { ...state, adminGenerales: [...state.adminGenerales, nuevoAdmin] };
+    }
+    case 'DELETE_ADMIN_GENERAL':
+      return { ...state, adminGenerales: state.adminGenerales.filter(a => a.id !== action.payload) };
     default:
       return state;
   }

@@ -21,6 +21,9 @@ export default function AjustesScreen() {
   const [invitarTelefono, setInvitarTelefono] = useState('');
   const [invitarRol, setInvitarRol] = useState('Miembro');
   const [invitarEquipoId, setInvitarEquipoId] = useState(null);
+  const [showAdminListModal, setShowAdminListModal] = useState(false);
+  const [showAddAdminModal, setShowAddAdminModal] = useState(false);
+  const [addAdminTelefono, setAddAdminTelefono] = useState('');
 
   const isAdminGeneral = state.currentUserRole === 'Admin' && state.currentUserDepartment === 'todos';
   const visibleEquipos = state.currentUserDepartment === 'todos'
@@ -32,6 +35,27 @@ export default function AjustesScreen() {
     dispatch({ type: 'ADD_EQUIPO', payload: newEquipoName.trim() });
     setNewEquipoName('');
     setShowEquipoModal(false);
+  };
+
+  const enviarInvitacionAdmin = async () => {
+    const telefono = addAdminTelefono.trim();
+    if (!telefono) return;
+
+    const inviteLink = `${APP_INVITE_LINK}?role=Admin&department=todos`;
+    const mensaje = `Te invitaron a SyncManager como Administrador General. Abre la app aquí: ${inviteLink}. Si no la tienes instalada, descárgala aquí: ${APP_DOWNLOAD_LINK}`;
+    const separator = Platform.OS === 'ios' ? '&' : '?';
+    const smsUrl = `sms:${telefono}${separator}body=${encodeURIComponent(mensaje)}`;
+
+    dispatch({ type: 'ADD_ADMIN_GENERAL', payload: { telefono } });
+    setAddAdminTelefono('');
+    setShowAddAdminModal(false);
+
+    const canOpenSms = await Linking.canOpenURL(smsUrl);
+    if (canOpenSms) {
+      await Linking.openURL(smsUrl);
+    } else {
+      Alert.alert('No se pudo abrir Mensajes', 'Revisa que este dispositivo pueda enviar SMS.');
+    }
   };
 
   const enviarInvitacion = async () => {
@@ -73,9 +97,17 @@ export default function AjustesScreen() {
             <View>
               <Text style={styles.profileName}>Tammyshabetay</Text>
               <Text style={styles.profileEmail}>tammy@shabetay.com</Text>
-              <View style={styles.roleBadge}>
-                <Text style={styles.roleBadgeText}>{state.currentUserRole}</Text>
-              </View>
+              {isAdminGeneral ? (
+                <TouchableOpacity onPress={() => setShowAdminListModal(true)}>
+                  <View style={styles.roleBadge}>
+                    <Text style={styles.roleBadgeText}>{state.currentUserRole}</Text>
+                  </View>
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.roleBadge}>
+                  <Text style={styles.roleBadgeText}>{state.currentUserRole}</Text>
+                </View>
+              )}
             </View>
           </View>
           {state.currentUserRole === 'Admin' && (
@@ -222,6 +254,64 @@ export default function AjustesScreen() {
               </TouchableOpacity>
             </View>
             <TouchableOpacity style={styles.saveBtn} onPress={enviarInvitacion}>
+              <Text style={styles.saveBtnText}>Enviar invitación</Text>
+              <MaterialIcons name="send" size={20} color={colors['on-secondary']} />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Admin List Modal */}
+      <Modal visible={showAdminListModal} transparent animationType="fade" onRequestClose={() => setShowAdminListModal(false)}>
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && setShowAdminListModal(false)}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Administradores Generales</Text>
+              <TouchableOpacity onPress={() => setShowAdminListModal(false)}>
+                <MaterialIcons name="close" size={24} color={colors.outline} />
+              </TouchableOpacity>
+            </View>
+            {state.adminGenerales.length === 0 ? (
+              <Text style={styles.emptyText}>No hay administradores generales aún.</Text>
+            ) : (
+              <ScrollView style={{ maxHeight: 250 }}>
+                {state.adminGenerales.map(a => (
+                  <View key={a.id} style={styles.adminRow}>
+                    <Text style={styles.adminTelefono}>{a.telefono}</Text>
+                    <TouchableOpacity onPress={() => dispatch({ type: 'DELETE_ADMIN_GENERAL', payload: a.id })}>
+                      <MaterialIcons name="close" size={18} color={colors.error} />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </ScrollView>
+            )}
+            <TouchableOpacity style={styles.saveBtn} onPress={() => { setShowAdminListModal(false); setShowAddAdminModal(true); }}>
+              <Text style={styles.saveBtnText}>Agregar Administrador</Text>
+              <MaterialIcons name="add" size={20} color={colors['on-secondary']} />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Add Admin Modal */}
+      <Modal visible={showAddAdminModal} transparent animationType="fade" onRequestClose={() => setShowAddAdminModal(false)}>
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && setShowAddAdminModal(false)}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Agregar Administrador General</Text>
+              <TouchableOpacity onPress={() => setShowAddAdminModal(false)}>
+                <MaterialIcons name="close" size={24} color={colors.outline} />
+              </TouchableOpacity>
+            </View>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Número de teléfono"
+              placeholderTextColor={colors.outline}
+              value={addAdminTelefono}
+              onChangeText={setAddAdminTelefono}
+              keyboardType="phone-pad"
+            />
+            <TouchableOpacity style={styles.saveBtn} onPress={enviarInvitacionAdmin}>
               <Text style={styles.saveBtnText}>Enviar invitación</Text>
               <MaterialIcons name="send" size={20} color={colors['on-secondary']} />
             </TouchableOpacity>
@@ -411,5 +501,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: colors.white,
+  },
+  adminRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: colors['outline-variant'],
+  },
+  adminTelefono: {
+    fontSize: 16,
+    color: colors['on-surface'],
+  },
+  emptyText: {
+    fontSize: 14,
+    color: colors.outline,
+    textAlign: 'center',
+    paddingVertical: 24,
   },
 });

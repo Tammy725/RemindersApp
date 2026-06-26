@@ -31,6 +31,7 @@ export function estadoBase() {
       { id: 2, title: 'Bloqueos Críticos', department: 'todos', details: '', date: '' },
     ],
     templateIdCounter: 3,
+    adminGenerales: [],
     _editingItemId: null,
   };
 }
