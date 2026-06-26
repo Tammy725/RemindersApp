@@ -341,7 +341,7 @@ export default function HoyScreen() {
 
         {/* Meeting Title */}
         <View style={styles.meetingHeader}>
-          <Text style={styles.meetingTitle}>Colmenando 🐝</Text>
+          <Text style={styles.meetingTitle}>Minuto ICO 🐝</Text>
           <Text style={styles.meetingSubtitle}>Una dirección, un equipo, una colmena 🍯</Text>
         </View>
 
