@@ -90,6 +90,7 @@ export default function CalendarioScreen() {
                   (state.mesCal + 1).toString().padStart(2, '0') +
                   '-' +
                   d.toString().padStart(2, '0');
+                const hasReunion = state.dailyHistory[dateKey]?.asistio === true;
                 const hasPendingTodos = state.todos.some(
                   t => t.date === dateKey && !t.completed && canViewDepartment(t.department),
                 );
@@ -158,7 +159,10 @@ export default function CalendarioScreen() {
                       {item.details ? (
                         <TouchableOpacity onPress={() => setDetallesItem(item)} style={styles.detailsIconBtn}>
                           <Feather name="external-link" size={14} color={colors.outline} />
-                        </TouchableOpacity>
+                    {hasReunion && (
+                      <View style={[styles.dotBlack, isSel && styles.dotWhite]} />
+                    )}
+                  </TouchableOpacity>
                       ) : null}
                     </TouchableOpacity>
                   );
@@ -262,6 +266,17 @@ const styles = StyleSheet.create({
   dayCellTextSelected: { color: colors.black, fontWeight: '700' },
   dayCellPending: { color: colors.error, fontWeight: '700' },
   dayCellToday: { fontWeight: '700' },
+  dotBlack: {
+    position: 'absolute',
+    bottom: 2,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: colors.black,
+  },
+  dotWhite: {
+    backgroundColor: colors.black,
+  },
   details: { gap: 16 },
   detailsTitle: { fontSize: 24, fontWeight: '600', color: colors['on-surface'] },
   cardChecklist: {
