@@ -271,21 +271,23 @@ export default function AjustesScreen() {
                 <MaterialIcons name="close" size={24} color={colors.outline} />
               </TouchableOpacity>
             </View>
-            {state.adminGenerales.length === 0 ? (
-              <Text style={styles.emptyText}>No hay administradores generales aún.</Text>
-            ) : (
-              <ScrollView style={{ maxHeight: 250 }}>
-                {state.adminGenerales.map(a => (
-                  <View key={a.id} style={styles.adminRow}>
-                    <Text style={styles.adminTelefono}>{a.telefono}</Text>
-                    <TouchableOpacity onPress={() => dispatch({ type: 'DELETE_ADMIN_GENERAL', payload: a.id })}>
-                      <MaterialIcons name="close" size={18} color={colors.error} />
-                    </TouchableOpacity>
-                  </View>
-                ))}
+            <ScrollView style={{ maxHeight: 250 }}>
+                <View style={styles.adminRow}>
+                  <Text style={styles.adminTelefono}>Tú</Text>
+                  <Text style={styles.adminTuLabel}>Admin General</Text>
+                </View>
+                {state.adminGenerales.length === 0 ? null : (
+                  state.adminGenerales.map(a => (
+                    <View key={a.id} style={styles.adminRow}>
+                      <Text style={styles.adminTelefono}>{a.telefono}</Text>
+                      <TouchableOpacity onPress={() => dispatch({ type: 'DELETE_ADMIN_GENERAL', payload: a.id })}>
+                        <MaterialIcons name="close" size={18} color={colors.error} />
+                      </TouchableOpacity>
+                    </View>
+                  ))
+                )}
               </ScrollView>
-            )}
-            <TouchableOpacity style={styles.saveBtn} onPress={() => { setShowAdminListModal(false); setShowAddAdminModal(true); }}>
+            <TouchableOpacity style={styles.saveBtn} onPress={() => setShowAddAdminModal(true)}>
               <Text style={styles.saveBtnText}>Agregar Administrador</Text>
               <MaterialIcons name="add" size={20} color={colors['on-secondary']} />
             </TouchableOpacity>
@@ -514,6 +516,11 @@ const styles = StyleSheet.create({
   adminTelefono: {
     fontSize: 16,
     color: colors['on-surface'],
+  },
+  adminTuLabel: {
+    fontSize: 12,
+    color: colors.outline,
+    fontWeight: '500',
   },
   emptyText: {
     fontSize: 14,
