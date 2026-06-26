@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Platform, ScrollView,
 } from 'react-native';
@@ -11,13 +11,19 @@ import ModalDetalles from './ModalDetalles';
 
 export default function ModalChecklist({ visible, onClose }) {
   const { state, dispatch } = useApp();
+  const isDeptAdmin = state.currentUserRole === 'Admin' && state.currentUserDepartment !== 'todos';
+  const isAdminGeneral = state.currentUserRole === 'Admin' && state.currentUserDepartment === 'todos';
   const [newTitle, setNewTitle] = useState('');
   const [newDetails, setNewDetails] = useState('');
-  const [selectedDept, setSelectedDept] = useState('todos');
+  const [selectedDept, setSelectedDept] = useState(isDeptAdmin ? state.currentUserDepartment : 'todos');
   const [newDate, setNewDate] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [editText, setEditText] = useState('');
   const [detallesItem, setDetallesItem] = useState(null);
+
+  useEffect(() => {
+    if (isDeptAdmin) setSelectedDept(state.currentUserDepartment);
+  }, [isDeptAdmin, state.currentUserDepartment]);
 
   const filteredItems = state.checklistTemplates.filter(
     t => t.department === selectedDept || selectedDept === 'todos',
@@ -85,21 +91,34 @@ export default function ModalChecklist({ visible, onClose }) {
           <View style={styles.section}>
             <Text style={styles.label}>Departamento</Text>
             <View style={styles.deptRow}>
-              <TouchableOpacity
-                style={[styles.deptChip, selectedDept === 'todos' && styles.deptChipActive]}
-                onPress={() => setSelectedDept('todos')}
-              >
-                <Text style={[styles.deptChipText, selectedDept === 'todos' && styles.deptChipTextActive]}>Todos</Text>
-              </TouchableOpacity>
-              {state.equipos.map(eq => (
-                <TouchableOpacity
-                  key={eq.id}
-                  style={[styles.deptChip, selectedDept === eq.name && styles.deptChipActive]}
-                  onPress={() => setSelectedDept(eq.name)}
-                >
-                  <Text style={[styles.deptChipText, selectedDept === eq.name && styles.deptChipTextActive]}>{eq.name}</Text>
-                </TouchableOpacity>
-              ))}
+              {isAdminGeneral ? (
+                <>
+                  <TouchableOpacity
+                    style={[styles.deptChip, selectedDept === 'todos' && styles.deptChipActive]}
+                    onPress={() => setSelectedDept('todos')}
+                  >
+                    <Text style={[styles.deptChipText, selectedDept === 'todos' && styles.deptChipTextActive]}>Todos</Text>
+                  </TouchableOpacity>
+                  {state.equipos.map(eq => (
+                    <TouchableOpacity
+                      key={eq.id}
+                      style={[styles.deptChip, selectedDept === eq.name && styles.deptChipActive]}
+                      onPress={() => setSelectedDept(eq.name)}
+                    >
+                      <Text style={[styles.deptChipText, selectedDept === eq.name && styles.deptChipTextActive]}>{eq.name}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </>
+              ) : (
+                state.equipos.filter(eq => eq.name === state.currentUserDepartment).map(eq => (
+                  <TouchableOpacity
+                    key={eq.id}
+                    style={[styles.deptChip, styles.deptChipActive]}
+                  >
+                    <Text style={[styles.deptChipText, styles.deptChipTextActive]}>{eq.name}</Text>
+                  </TouchableOpacity>
+                ))
+              )}
             </View>
           </View>
 

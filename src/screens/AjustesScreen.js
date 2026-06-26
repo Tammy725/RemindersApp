@@ -22,7 +22,7 @@ export default function AjustesScreen() {
   const [invitarRol, setInvitarRol] = useState('Miembro');
   const [invitarEquipoId, setInvitarEquipoId] = useState(null);
 
-  const isAdmin = state.currentUserRole === 'Admin';
+  const isAdminGeneral = state.currentUserRole === 'Admin' && state.currentUserDepartment === 'todos';
   const visibleEquipos = state.currentUserDepartment === 'todos'
     ? state.equipos
     : state.equipos.filter(eq => eq.name === state.currentUserDepartment);
@@ -78,7 +78,7 @@ export default function AjustesScreen() {
               </View>
             </View>
           </View>
-          {isAdmin && (
+                        {isAdminGeneral && (
             <TouchableOpacity style={styles.editChecklistBtn} onPress={() => setShowChecklistModal(true)}>
               <MaterialIcons name="edit" size={18} color={colors.outline} />
               <Text style={styles.editChecklistLabel}>Editar{"\n"}Checklist</Text>
@@ -90,7 +90,7 @@ export default function AjustesScreen() {
         <View style={styles.equiposSection}>
           <View style={styles.equiposHeader}>
             <Text style={styles.equiposTitle}>Equipos / Departamentos</Text>
-            {isAdmin && (
+                  {isAdminGeneral && (
               <TouchableOpacity style={styles.addEquipoBtn} onPress={() => setShowEquipoModal(true)}>
                 <Text style={styles.addEquipoBtnText}>Agregar equipo</Text>
                 <MaterialIcons name="add" size={16} color={colors.outline} />
@@ -105,7 +105,7 @@ export default function AjustesScreen() {
               <View key={eq.id} style={styles.equipoCard}>
                 <View style={styles.equipoHeader}>
                   <Text style={styles.equipoName}>{eq.name}</Text>
-                  {isAdmin && (
+            {isAdminGeneral && (
                     <View style={styles.equipoActions}>
                       <TouchableOpacity
                         style={styles.equipoActionBtn}
@@ -143,7 +143,7 @@ export default function AjustesScreen() {
                             <Text style={styles.miembroMeta}>{m.rol} • {m.fecha}</Text>
                           </View>
                         </View>
-                        {isAdmin && (
+          {state.currentUserRole === 'Admin' && (
                           <TouchableOpacity
                             onPress={() => dispatch({ type: 'DELETE_MIEMBRO', payload: { equipoId: eq.id, idx } })}
                           >
