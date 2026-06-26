@@ -114,7 +114,9 @@ export default function CalendarioScreen() {
                     >
                       {d}
                     </Text>
-
+                    {hasReunion && (
+                      <View style={[styles.dotBlack, isSel && styles.dotWhite]} />
+                    )}
                   </TouchableOpacity>
                 );
               })}
@@ -159,10 +161,7 @@ export default function CalendarioScreen() {
                       {item.details ? (
                         <TouchableOpacity onPress={() => setDetallesItem(item)} style={styles.detailsIconBtn}>
                           <Feather name="external-link" size={14} color={colors.outline} />
-                    {hasReunion && (
-                      <View style={[styles.dotBlack, isSel && styles.dotWhite]} />
-                    )}
-                  </TouchableOpacity>
+                        </TouchableOpacity>
                       ) : null}
                     </TouchableOpacity>
                   );
