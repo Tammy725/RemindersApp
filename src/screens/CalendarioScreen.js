@@ -90,7 +90,7 @@ export default function CalendarioScreen() {
                   (state.mesCal + 1).toString().padStart(2, '0') +
                   '-' +
                   d.toString().padStart(2, '0');
-                const hasReunion = state.dailyHistory[dateKey]?.asistio === true;
+                const hasReunion = state.dailyHistory[dateKey]?.asistio === true && dateKey <= todayStr;
                 const hasPendingTodos = state.todos.some(
                   t => t.date === dateKey && !t.completed && canViewDepartment(t.department),
                 );
