@@ -5,8 +5,6 @@ import {
 } from 'react-native';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
 
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
@@ -16,23 +14,14 @@ import ModalDetalles from '../components/ModalDetalles';
 
 const DAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-const VOICE_BACKEND_URL = process.env.EXPO_PUBLIC_VOICE_BACKEND_URL || 'http://localhost:8787';
-const VOICE_DEMO_MODE = process.env.EXPO_PUBLIC_VOICE_DEMO_MODE !== 'false';
 
 export default function HoyScreen() {
   const { state, dispatch } = useApp();
   const scrollRef = useRef(null);
   const scrollOffsetRef = useRef(0);
-  const recordingRef = useRef(null);
   const [showHorarioModal, setShowHorarioModal] = useState(false);
   const [newTodoText, setNewTodoText] = useState('');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [voiceLoading, setVoiceLoading] = useState(false);
-  const [showVoiceModal, setShowVoiceModal] = useState(false);
-  const [voiceTasks, setVoiceTasks] = useState([]);
-  const [voiceError, setVoiceError] = useState('');
-  const [voiceDatePickerIndex, setVoiceDatePickerIndex] = useState(null);
-  const [editingVoiceTaskId, setEditingVoiceTaskId] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [detallesItem, setDetallesItem] = useState(null);
   const toDisplay = (ymd) => {
@@ -60,19 +49,6 @@ export default function HoyScreen() {
   const handleTodoDateChange = (event, date) => {
     if (date) setNewTodoDate(formatDate(date));
     setShowDatePicker(false);
-  };
-  const selectedVoiceDate = () => {
-    const task = voiceTasks[voiceDatePickerIndex] || {};
-    const ymd = task.date || state.hoyDate;
-    return new Date(`${ymd}T12:00:00`);
-  };
-  const updateVoiceTask = (index, patch) => {
-    setVoiceTasks(tasks => tasks.map((task, i) => (
-      i === index ? { ...task, ...patch } : task
-    )));
-  };
-  const deleteVoiceTask = (index) => {
-    setVoiceTasks(tasks => tasks.filter((_, i) => i !== index));
   };
   const scrollToTaskInput = () => {
     requestAnimationFrame(() => {
@@ -111,109 +87,6 @@ export default function HoyScreen() {
       willHide.remove(); didHide.remove();
     };
   }, []);
-
-  const transcribeVoiceNote = async (uri) => {
-    if (VOICE_DEMO_MODE) {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      await new Promise(resolve => setTimeout(resolve, 900));
-      return [
-        {
-          title: 'Enviar email de seguimiento al cliente',
-          date: state.hoyDate,
-        },
-        {
-          title: 'Llamar al proveedor para confirmar la entrega',
-          date: localDateString(tomorrow),
-        },
-        {
-          title: 'Revisar y actualizar la lista de pendientes del equipo',
-          date: state.hoyDate,
-        },
-      ];
-    }
-
-    const audioBase64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    const response = await fetch(`${VOICE_BACKEND_URL}/transcribe-tasks`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        audioBase64,
-        mimeType: Platform.OS === 'ios' ? 'audio/m4a' : 'audio/mp4',
-        today: localDateString(),
-        department: state.currentUserDepartment,
-      }),
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      throw new Error(payload?.error || 'No se pudo transcribir la nota de voz.');
-    }
-    return Array.isArray(payload.tasks) ? payload.tasks : [];
-  };
-
-  const startVoiceRecording = async () => {
-    try {
-      setVoiceError('');
-      const permission = await Audio.requestPermissionsAsync();
-      if (!permission.granted) {
-        dispatch({ type: 'TOGGLE_GRABANDO' });
-        Alert.alert('Permiso requerido', 'Activa el permiso del micrófono para grabar tareas.');
-        return;
-      }
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY,
-      );
-      recordingRef.current = recording;
-    } catch (e) {
-      recordingRef.current = null;
-      if (state.grabando) dispatch({ type: 'TOGGLE_GRABANDO' });
-      Alert.alert('No se pudo grabar', e.message || 'Intenta otra vez.');
-    }
-  };
-
-  const stopVoiceRecording = async () => {
-    const recording = recordingRef.current;
-    if (!recording) return;
-    recordingRef.current = null;
-    setShowVoiceModal(true);
-    setVoiceLoading(true);
-    setVoiceTasks([]);
-    setVoiceError('');
-
-    try {
-      await recording.stopAndUnloadAsync();
-      await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
-      const uri = recording.getURI();
-      const tasks = await transcribeVoiceNote(uri);
-      setVoiceTasks(tasks.map((task, index) => ({
-        id: `${Date.now()}-${index}`,
-        title: task.title || '',
-        date: task.date || state.hoyDate,
-      })).filter(task => task.title.trim()));
-      setEditingVoiceTaskId(null);
-      if (tasks.length === 0) {
-        setVoiceError('No encontré tareas claras en la nota de voz.');
-      }
-    } catch (e) {
-      setVoiceError(e.message || 'No se pudo procesar la nota de voz.');
-    } finally {
-      setVoiceLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (state.grabando) {
-      startVoiceRecording();
-    } else {
-      stopVoiceRecording();
-    }
-  }, [state.grabando]);
 
   const d = new Date(state.hoyDate + 'T12:00:00');
   const dayName = DAYS[d.getDay()];
@@ -278,25 +151,7 @@ export default function HoyScreen() {
       },
     });
     setNewTodoText('');
-  };
-
-  const addVoiceTasks = () => {
-    const validTasks = voiceTasks.filter(task => task.title.trim());
-    validTasks.forEach(task => {
-      dispatch({
-        type: 'ADD_TODO',
-        payload: {
-          text: task.title.trim(),
-          date: task.date || state.hoyDate,
-          department: state.currentUserDepartment,
-        },
-      });
-    });
-    setShowVoiceModal(false);
-    setVoiceTasks([]);
-    setVoiceError('');
-    setEditingVoiceTaskId(null);
-  };
+  }; // end of handleAddTodo
 
   return (
     <View style={styles.container}>
@@ -499,142 +354,6 @@ export default function HoyScreen() {
           </View>
         </TouchableOpacity>
       </Modal>
-
-      <Modal
-        visible={showVoiceModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => !voiceLoading && setShowVoiceModal(false)}
-      >
-        <View style={styles.voiceOverlay}>
-          <View style={styles.voiceModal}>
-            <View style={styles.voiceHeader}>
-              <Text style={styles.voiceTitle}>Lista de tareas por agregar</Text>
-              {!voiceLoading && (
-                <TouchableOpacity onPress={() => setShowVoiceModal(false)}>
-                  <MaterialIcons name="close" size={24} color={colors.outline} />
-                </TouchableOpacity>
-              )}
-            </View>
-
-            {voiceLoading ? (
-              <View style={styles.voiceLoadingBox}>
-                <MaterialIcons name="graphic-eq" size={28} color={colors.primary} />
-                <Text style={styles.voiceLoadingText}>Transcribiendo y ordenando tareas...</Text>
-              </View>
-            ) : (
-              <>
-                {voiceError ? <Text style={styles.voiceError}>{voiceError}</Text> : null}
-                <ScrollView style={styles.voiceTaskList} keyboardShouldPersistTaps="handled">
-                  {voiceTasks.map((task, index) => {
-                    const isEditing = editingVoiceTaskId === task.id;
-                    return (
-                    <View key={task.id} style={styles.voiceTaskItem}>
-                      <TextInput
-                        style={[styles.voiceTaskInput, !isEditing && styles.voiceTaskInputReadOnly]}
-                        multiline
-                        editable={isEditing}
-                        value={task.title}
-                        onChangeText={(text) => updateVoiceTask(index, { title: text })}
-                      />
-                      <View style={styles.voiceTaskActions}>
-                        <TouchableOpacity
-                          style={styles.voiceDateBtn}
-                          onPress={() => setVoiceDatePickerIndex(index)}
-                        >
-                          <MaterialIcons name="calendar-today" size={16} color={colors['on-surface']} />
-                          <Text style={styles.voiceDateText}>{toDisplay(task.date)}</Text>
-                        </TouchableOpacity>
-                        <View style={styles.voiceIconActions}>
-                          <TouchableOpacity
-                            style={styles.voiceIconBtn}
-                            onPress={() => {
-                              if (isEditing) {
-                                Keyboard.dismiss();
-                                setEditingVoiceTaskId(null);
-                              } else {
-                                setEditingVoiceTaskId(task.id);
-                              }
-                            }}
-                          >
-                            <MaterialIcons
-                              name={isEditing ? 'check' : 'edit'}
-                              size={18}
-                              color={isEditing ? colors.secondary : colors.outline}
-                            />
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={styles.voiceIconBtn}
-                            onPress={() => {
-                              if (editingVoiceTaskId === task.id) {
-                                Keyboard.dismiss();
-                                setEditingVoiceTaskId(null);
-                              }
-                              deleteVoiceTask(index);
-                            }}
-                          >
-                            <MaterialIcons name="delete" size={18} color={colors.outline} />
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  );
-                  })}
-                </ScrollView>
-                <TouchableOpacity
-                  style={[styles.voiceSaveBtn, voiceTasks.length === 0 && styles.voiceSaveBtnDisabled]}
-                  onPress={addVoiceTasks}
-                  disabled={voiceTasks.length === 0}
-                >
-                  <Text style={styles.voiceSaveText}>Agregar tareas</Text>
-                  <MaterialIcons name="done-all" size={20} color={colors['on-secondary']} />
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        visible={voiceDatePickerIndex !== null && Platform.OS !== 'android'}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setVoiceDatePickerIndex(null)}
-      >
-        <TouchableOpacity
-          style={styles.datePickerOverlay}
-          activeOpacity={1}
-          onPress={(e) => e.target === e.currentTarget && setVoiceDatePickerIndex(null)}
-        >
-          <View style={styles.datePickerModal}>
-            <DateTimePicker
-              value={selectedVoiceDate()}
-              mode="date"
-              display="inline"
-              onChange={(event, date) => {
-                if (date && voiceDatePickerIndex !== null) {
-                  updateVoiceTask(voiceDatePickerIndex, { date: toYmd(formatDate(date)) });
-                }
-                setVoiceDatePickerIndex(null);
-              }}
-            />
-          </View>
-        </TouchableOpacity>
-      </Modal>
-
-      {voiceDatePickerIndex !== null && Platform.OS === 'android' && (
-        <DateTimePicker
-          value={selectedVoiceDate()}
-          mode="date"
-          display="default"
-          onChange={(event, date) => {
-            if (date) {
-              updateVoiceTask(voiceDatePickerIndex, { date: toYmd(formatDate(date)) });
-            }
-            setVoiceDatePickerIndex(null);
-          }}
-        />
-      )}
 
       <ModalHorario visible={showHorarioModal} onClose={() => setShowHorarioModal(false)} />
 
@@ -1008,120 +727,5 @@ const styles = StyleSheet.create({
     color: colors.outline,
     fontSize: 14,
     padding: 16,
-  },
-  voiceOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  voiceModal: {
-    width: '100%',
-    maxWidth: 460,
-    maxHeight: '82%',
-    borderRadius: 12,
-    backgroundColor: colors.white,
-    padding: 18,
-  },
-  voiceHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 14,
-  },
-  voiceTitle: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors['on-surface'],
-  },
-  voiceLoadingBox: {
-    minHeight: 140,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 10,
-  },
-  voiceLoadingText: {
-    fontSize: 15,
-    color: colors.outline,
-    textAlign: 'center',
-  },
-  voiceError: {
-    fontSize: 14,
-    color: colors.error,
-    marginBottom: 10,
-  },
-  voiceTaskList: {
-    maxHeight: 420,
-  },
-  voiceTaskItem: {
-    borderWidth: 1,
-    borderColor: colors['outline-variant'],
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
-    backgroundColor: colors['surface-container-lowest'],
-  },
-  voiceTaskInput: {
-    minHeight: 44,
-    fontSize: 16,
-    color: colors['on-surface'],
-    padding: 0,
-    textAlignVertical: 'top',
-  },
-  voiceTaskInputReadOnly: {
-    color: colors['on-surface'],
-  },
-  voiceTaskActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  voiceDateBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    borderWidth: 1,
-    borderColor: colors['outline-variant'],
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    backgroundColor: colors.white,
-  },
-  voiceDateText: {
-    fontSize: 14,
-    color: colors['on-surface'],
-  },
-  voiceIconActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  voiceIconBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  voiceSaveBtn: {
-    marginTop: 8,
-    height: 46,
-    borderRadius: 8,
-    backgroundColor: colors.secondary,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 8,
-  },
-  voiceSaveBtnDisabled: {
-    opacity: 0.45,
-  },
-  voiceSaveText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors['on-secondary'],
   },
 });

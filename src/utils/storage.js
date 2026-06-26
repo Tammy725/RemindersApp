@@ -13,7 +13,6 @@ export function estadoBase() {
     dailyHistory: {},
     hoyDate: todayStr,
     asistio: null,
-    grabando: false,
     hora: 9,
     minuto: 30,
     periodo: 'AM',

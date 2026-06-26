@@ -13,7 +13,6 @@ const initialState = {
   dailyHistory: {},
   hoyDate: localDateString(),
   asistio: null,
-  grabando: false,
   hora: 9,
   minuto: 30,
   periodo: 'AM',
@@ -104,8 +103,6 @@ function reducer(state, action) {
         },
       };
     }
-    case 'TOGGLE_GRABANDO':
-      return { ...state, grabando: !state.grabando };
     case 'SET_HORA':
       return { ...state, hora: action.payload };
     case 'SET_MINUTO':
