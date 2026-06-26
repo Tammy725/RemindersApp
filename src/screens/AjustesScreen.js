@@ -194,6 +194,32 @@ export default function AjustesScreen() {
 
       <ModalChecklist visible={showChecklistModal} onClose={() => setShowChecklistModal(false)} />
 
+      {/* Modal Equipo */}
+      <Modal visible={showEquipoModal} transparent animationType="fade" onRequestClose={() => setShowEquipoModal(false)}>
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && setShowEquipoModal(false)}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Nuevo equipo</Text>
+              <TouchableOpacity onPress={() => setShowEquipoModal(false)}>
+                <MaterialIcons name="close" size={24} color={colors.outline} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.inputLabel}>Nombre del departamento o equipo</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Ej: Recursos Humanos, Ventas, Logística..."
+              placeholderTextColor={colors.outline}
+              value={newEquipoName}
+              onChangeText={setNewEquipoName}
+            />
+            <TouchableOpacity style={styles.saveBtn} onPress={addEquipo}>
+              <Text style={styles.saveBtnText}>Guardar</Text>
+              <MaterialIcons name="done-all" size={20} color={colors['on-secondary']} />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
       {/* Modal Invitar */}
       <Modal visible={showInvitarModal} transparent animationType="fade" onRequestClose={() => setShowInvitarModal(false)}>
         <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && setShowInvitarModal(false)}>
