@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -11,13 +11,11 @@ export default function TopBar({ title, onDateChange }) {
   const insets = useSafeAreaInsets();
   const [showSwarm, setShowSwarm] = useState(false);
   const [beeOrigin, setBeeOrigin] = useState({ x: 0, y: 0 });
-  const beeRef = useRef(null);
 
-  const handleBeePress = () => {
-    beeRef.current?.measureInWindow((x, y) => {
-      setBeeOrigin({ x: x + 18, y: y + 18 });
-      setShowSwarm(true);
-    });
+  const handleBeePress = (e) => {
+    const { pageX, pageY } = e.nativeEvent;
+    setBeeOrigin({ x: pageX, y: pageY });
+    setShowSwarm(true);
   };
 
   return (
@@ -26,7 +24,7 @@ export default function TopBar({ title, onDateChange }) {
         <View style={styles.inner}>
           <View style={styles.left}>
             <TouchableOpacity onPress={handleBeePress} activeOpacity={0.7}>
-              <Image ref={beeRef} source={beeIcon} style={styles.beeIcon} fadeDuration={0} />
+              <Image source={beeIcon} style={styles.beeIcon} fadeDuration={0} />
             </TouchableOpacity>
             {title === 'Seleccionar fecha' ? (
               <TouchableOpacity style={styles.titleBtn} onPress={onDateChange}>
