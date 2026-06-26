@@ -78,7 +78,7 @@ export default function AjustesScreen() {
               </View>
             </View>
           </View>
-                        {isAdminGeneral && (
+          {state.currentUserRole === 'Admin' && (
             <TouchableOpacity style={styles.editChecklistBtn} onPress={() => setShowChecklistModal(true)}>
               <MaterialIcons name="edit" size={18} color={colors.outline} />
               <Text style={styles.editChecklistLabel}>Editar{"\n"}Checklist</Text>
@@ -143,7 +143,7 @@ export default function AjustesScreen() {
                             <Text style={styles.miembroMeta}>{m.rol} • {m.fecha}</Text>
                           </View>
                         </View>
-          {state.currentUserRole === 'Admin' && (
+                        {isAdminGeneral && (
                           <TouchableOpacity
                             onPress={() => dispatch({ type: 'DELETE_MIEMBRO', payload: { equipoId: eq.id, idx } })}
                           >
