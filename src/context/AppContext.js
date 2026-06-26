@@ -21,12 +21,10 @@ const initialState = {
   mesCal: new Date().getMonth(),
   anioCal: new Date().getFullYear(),
   diaSel: new Date().getDate(),
-  equipos: [
-    { id: 0, name: 'Compras', miembros: [] },
-  ],
-  equipoIdCounter: 1,
-  currentUserRole: 'Miembro',
-  currentUserDepartment: 'Compras',
+  equipos: [],
+  equipoIdCounter: 0,
+  currentUserRole: 'Admin',
+  currentUserDepartment: 'todos',
   checklistTemplates: [],
   templateIdCounter: 3,
   _editingItemId: null,
@@ -39,7 +37,7 @@ function reducer(state, action) {
   switch (action.type) {
     case 'SET_STATE': {
       const todayStr = localDateString();
-      return { ...state, ...action.payload, hoyDate: todayStr, currentUserRole: 'Miembro', currentUserDepartment: 'Compras', diaSel: new Date().getDate(), loaded: true };
+      return { ...state, ...action.payload, hoyDate: todayStr, diaSel: new Date().getDate(), loaded: true };
     }
     case 'SET_HOY_DATE':
       return { ...state, hoyDate: action.payload };

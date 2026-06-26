@@ -21,12 +21,10 @@ export function estadoBase() {
     mesCal: today.getMonth(),
     anioCal: today.getFullYear(),
     diaSel: today.getDate(),
-    equipos: [
-      { id: 0, name: 'Compras', miembros: [] },
-    ],
-    equipoIdCounter: 1,
-    currentUserRole: 'Miembro',
-    currentUserDepartment: 'Compras',
+    equipos: [],
+    equipoIdCounter: 0,
+    currentUserRole: 'Admin',
+    currentUserDepartment: 'todos',
     checklistTemplates: [
       { id: 0, title: 'Feedback Semanal', department: 'todos', details: '', date: '' },
       { id: 1, title: 'Objetivos Q4', department: 'todos', details: '', date: '' },
