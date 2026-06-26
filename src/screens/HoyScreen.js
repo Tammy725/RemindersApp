@@ -10,6 +10,7 @@ import * as FileSystem from 'expo-file-system';
 
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
+import { localDateString } from '../utils/dates';
 import ModalHorario from '../components/ModalHorario';
 import ModalDetalles from '../components/ModalDetalles';
 
@@ -123,7 +124,7 @@ export default function HoyScreen() {
         },
         {
           title: 'Llamar al proveedor para confirmar la entrega',
-          date: tomorrow.toISOString().slice(0, 10),
+          date: localDateString(tomorrow),
         },
         {
           title: 'Revisar y actualizar la lista de pendientes del equipo',
@@ -141,7 +142,7 @@ export default function HoyScreen() {
       body: JSON.stringify({
         audioBase64,
         mimeType: Platform.OS === 'ios' ? 'audio/m4a' : 'audio/mp4',
-        today: new Date().toISOString().slice(0, 10),
+        today: localDateString(),
         department: state.currentUserDepartment,
       }),
     });
@@ -219,7 +220,7 @@ export default function HoyScreen() {
   const fullDate = `${d.getDate()} de ${MONTHS[d.getMonth()]}, ${d.getFullYear()}`;
   const attTime = `${state.hora.toString().padStart(2, '0')}:${state.minuto.toString().padStart(2, '0')} ${state.periodo}`;
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = localDateString();
   const cl = state.hoyDate === todayStr
     ? state.checklist
     : (state.dailyHistory[state.hoyDate]?.checklist || {});
@@ -245,7 +246,7 @@ export default function HoyScreen() {
   };
 
   const setAttendance = (val) => {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = localDateString();
     if (state.hoyDate === todayStr) {
       dispatch({ type: 'SET_ASISTIO', payload: state.asistio === val ? null : val });
     } else {

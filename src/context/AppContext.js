@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { Linking } from 'react-native';
 import { cargarEstado, guardarEstado } from '../utils/storage';
+import { localDateString } from '../utils/dates';
 import { requestPermissions, scheduleDailyReminder } from '../utils/notifications';
 
 const AppContext = createContext();
@@ -10,7 +11,7 @@ const initialState = {
   todos: [],
   todoIdCounter: 0,
   dailyHistory: {},
-  hoyDate: new Date().toISOString().slice(0, 10),
+  hoyDate: localDateString(),
   asistio: null,
   grabando: false,
   hora: 9,
@@ -29,13 +30,13 @@ const initialState = {
   _editingItemId: null,
   _invitarEquipoId: null,
   loaded: false,
-  todayDate: new Date().toISOString().slice(0, 10),
+  todayDate: localDateString(),
 };
 
 function reducer(state, action) {
   switch (action.type) {
     case 'SET_STATE': {
-      const todayStr = new Date().toISOString().slice(0, 10);
+      const todayStr = localDateString();
       return { ...state, ...action.payload, hoyDate: todayStr, diaSel: new Date().getDate(), loaded: true };
     }
     case 'SET_HOY_DATE':
@@ -147,7 +148,7 @@ function reducer(state, action) {
             ...e,
             miembros: [
               ...e.miembros,
-              { telefono: telefono || email, rol, fecha: new Date().toISOString().slice(0, 10) },
+              { telefono: telefono || email, rol, fecha: localDateString() },
             ],
           };
         }
@@ -274,7 +275,7 @@ export function AppProvider({ children }) {
   }, [state.hora, state.minuto, state.periodo, state.loaded]);
 
   const saveTodayHistory = useCallback(() => {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = localDateString();
     if (!state.dailyHistory[todayStr]) {
       state.dailyHistory[todayStr] = { checklist: {}, asistio: null };
     }

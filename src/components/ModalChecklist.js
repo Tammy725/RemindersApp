@@ -6,6 +6,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 import colors from '../theme/colors';
 import { useApp } from '../context/AppContext';
+import { localDateString } from '../utils/dates';
 import ModalDetalles from './ModalDetalles';
 
 export default function ModalChecklist({ visible, onClose }) {
@@ -117,7 +118,7 @@ export default function ModalChecklist({ visible, onClose }) {
                   setShowDatePicker(true);
                   if (newDate === '') {
                     const today = new Date();
-                    setNewDate(today.toISOString().slice(0, 10));
+                    setNewDate(localDateString(today));
                   }
                 }}
               >
@@ -197,11 +198,11 @@ export default function ModalChecklist({ visible, onClose }) {
 
       {showDatePicker && Platform.OS === 'android' && (
         <DateTimePicker
-          value={new Date(newDate || new Date().toISOString().slice(0, 10))}
+          value={new Date(newDate || localDateString())}
           mode="date"
           display="default"
           onChange={(event, date) => {
-            if (date) setNewDate(date.toISOString().slice(0, 10));
+            if (date) setNewDate(localDateString(date));
             setShowDatePicker(false);
           }}
         />
@@ -220,11 +221,11 @@ export default function ModalChecklist({ visible, onClose }) {
         >
           <View style={styles.datePickerModal}>
             <DateTimePicker
-              value={new Date(newDate || new Date().toISOString().slice(0, 10))}
+              value={new Date(newDate || localDateString())}
               mode="date"
               display="inline"
               onChange={(event, date) => {
-                if (date) setNewDate(date.toISOString().slice(0, 10));
+                if (date) setNewDate(localDateString(date));
                 setShowDatePicker(false);
               }}
             />

@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { localDateString } from './dates';
 
 const STORE_KEY = 'syncmanager_state';
 
 export function estadoBase() {
   const today = new Date();
-  const todayStr = today.toISOString().slice(0, 10);
+  const todayStr = localDateString(today);
   return {
     checklist: { '0': false, '1': false, '2': false },
     todos: [],
@@ -54,7 +55,7 @@ export async function cargarEstado() {
           'Enviar invitación Sync trimestral',
           'Actualizar documentación de procesos',
         ];
-        const todayStr = new Date().toISOString().slice(0, 10);
+        const todayStr = localDateString();
         parsed.todos = parsed.todos.map((done, i) => ({
           id: i,
           text: oldTexts[i] || 'Tarea ' + (i + 1),
@@ -95,7 +96,7 @@ export async function cargarEstado() {
 }
 
 export async function guardarEstado(state) {
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = localDateString();
   if (!state.dailyHistory[todayStr]) {
     state.dailyHistory[todayStr] = { checklist: {}, asistio: null };
   }
