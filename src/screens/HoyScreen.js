@@ -384,6 +384,9 @@ export default function HoyScreen() {
                   } else {
                     dispatch({ type: 'TOGGLE_DAILY_CHECKLIST_ITEM', payload: { date: state.hoyDate, id: t.id, value: !checked } });
                   }
+                  if (!checked && pendingChecklist === 1) {
+                    setShowConfetti(true);
+                  }
                 }}
               >
                 <MaterialIcons
