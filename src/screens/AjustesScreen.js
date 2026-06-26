@@ -22,8 +22,8 @@ export default function AjustesScreen() {
   const [invitarRol, setInvitarRol] = useState('Miembro');
   const [invitarEquipoId, setInvitarEquipoId] = useState(null);
   const [showAdminListModal, setShowAdminListModal] = useState(false);
-  const [showAddAdminModal, setShowAddAdminModal] = useState(false);
   const [addAdminTelefono, setAddAdminTelefono] = useState('');
+  const [showAddAdminForm, setShowAddAdminForm] = useState(false);
 
   const isAdminGeneral = state.currentUserRole === 'Admin' && state.currentUserDepartment === 'todos';
   const visibleEquipos = state.currentUserDepartment === 'todos'
@@ -48,7 +48,7 @@ export default function AjustesScreen() {
 
     dispatch({ type: 'ADD_ADMIN_GENERAL', payload: { telefono } });
     setAddAdminTelefono('');
-    setShowAddAdminModal(false);
+    setShowAddAdminForm(false);
 
     const canOpenSms = await Linking.canOpenURL(smsUrl);
     if (canOpenSms) {
@@ -194,32 +194,6 @@ export default function AjustesScreen() {
 
       <ModalChecklist visible={showChecklistModal} onClose={() => setShowChecklistModal(false)} />
 
-      {/* Modal Equipo */}
-      <Modal visible={showEquipoModal} transparent animationType="fade" onRequestClose={() => setShowEquipoModal(false)}>
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && setShowEquipoModal(false)}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Nuevo equipo</Text>
-              <TouchableOpacity onPress={() => setShowEquipoModal(false)}>
-                <MaterialIcons name="close" size={24} color={colors.outline} />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.inputLabel}>Nombre del departamento o equipo</Text>
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Ej: Recursos Humanos, Ventas, Logística..."
-              placeholderTextColor={colors.outline}
-              value={newEquipoName}
-              onChangeText={setNewEquipoName}
-            />
-            <TouchableOpacity style={styles.saveBtn} onPress={addEquipo}>
-              <Text style={styles.saveBtnText}>Guardar</Text>
-              <MaterialIcons name="done-all" size={20} color={colors['on-secondary']} />
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-
       {/* Modal Invitar */}
       <Modal visible={showInvitarModal} transparent animationType="fade" onRequestClose={() => setShowInvitarModal(false)}>
         <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && setShowInvitarModal(false)}>
@@ -271,55 +245,53 @@ export default function AjustesScreen() {
                 <MaterialIcons name="close" size={24} color={colors.outline} />
               </TouchableOpacity>
             </View>
-            <ScrollView style={{ maxHeight: 250 }}>
-                <View style={styles.adminRow}>
-                  <Text style={styles.adminTelefono}>Tú</Text>
-                  <Text style={styles.adminTuLabel}>Admin General</Text>
+            <ScrollView style={{ maxHeight: 200 }}>
+              <View style={styles.adminRow}>
+                <Text style={styles.adminTelefono}>Tú</Text>
+                <Text style={styles.adminTuLabel}>Admin General</Text>
+              </View>
+              {state.adminGenerales.map(a => (
+                <View key={a.id} style={styles.adminRow}>
+                  <Text style={styles.adminTelefono}>{a.telefono}</Text>
+                  <TouchableOpacity onPress={() => dispatch({ type: 'DELETE_ADMIN_GENERAL', payload: a.id })}>
+                    <MaterialIcons name="close" size={18} color={colors.error} />
+                  </TouchableOpacity>
                 </View>
-                {state.adminGenerales.length === 0 ? null : (
-                  state.adminGenerales.map(a => (
-                    <View key={a.id} style={styles.adminRow}>
-                      <Text style={styles.adminTelefono}>{a.telefono}</Text>
-                      <TouchableOpacity onPress={() => dispatch({ type: 'DELETE_ADMIN_GENERAL', payload: a.id })}>
-                        <MaterialIcons name="close" size={18} color={colors.error} />
-                      </TouchableOpacity>
-                    </View>
-                  ))
-                )}
-              </ScrollView>
-            <TouchableOpacity style={styles.saveBtn} onPress={() => setShowAddAdminModal(true)}>
-              <Text style={styles.saveBtnText}>Agregar Administrador</Text>
-              <MaterialIcons name="add" size={20} color={colors['on-secondary']} />
-            </TouchableOpacity>
+              ))}
+            </ScrollView>
+            {showAddAdminForm ? (
+              <View style={{ marginTop: 12 }}>
+                <TextInput
+                  style={styles.modalInput}
+                  placeholder="Número de teléfono"
+                  placeholderTextColor={colors.outline}
+                  value={addAdminTelefono}
+                  onChangeText={setAddAdminTelefono}
+                  keyboardType="phone-pad"
+                />
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <TouchableOpacity
+                    style={[styles.saveBtn, { flex: 1, backgroundColor: colors['surface-container-high'] }]}
+                    onPress={() => { setShowAddAdminForm(false); setAddAdminTelefono(''); }}
+                  >
+                    <Text style={[styles.saveBtnText, { color: colors['on-surface'] }]}>Cancelar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.saveBtn, { flex: 1 }]} onPress={enviarInvitacionAdmin}>
+                    <Text style={styles.saveBtnText}>Enviar</Text>
+                    <MaterialIcons name="send" size={20} color={colors['on-secondary']} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <TouchableOpacity style={styles.saveBtn} onPress={() => setShowAddAdminForm(true)}>
+                <Text style={styles.saveBtnText}>Agregar Administrador</Text>
+                <MaterialIcons name="add" size={20} color={colors['on-secondary']} />
+              </TouchableOpacity>
+            )}
           </View>
         </TouchableOpacity>
       </Modal>
 
-      {/* Add Admin Modal */}
-      <Modal visible={showAddAdminModal} transparent animationType="fade" onRequestClose={() => setShowAddAdminModal(false)}>
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={(e) => e.target === e.currentTarget && setShowAddAdminModal(false)}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Agregar Administrador General</Text>
-              <TouchableOpacity onPress={() => setShowAddAdminModal(false)}>
-                <MaterialIcons name="close" size={24} color={colors.outline} />
-              </TouchableOpacity>
-            </View>
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Número de teléfono"
-              placeholderTextColor={colors.outline}
-              value={addAdminTelefono}
-              onChangeText={setAddAdminTelefono}
-              keyboardType="phone-pad"
-            />
-            <TouchableOpacity style={styles.saveBtn} onPress={enviarInvitacionAdmin}>
-              <Text style={styles.saveBtnText}>Enviar invitación</Text>
-              <MaterialIcons name="send" size={20} color={colors['on-secondary']} />
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
     </View>
   );
 }
