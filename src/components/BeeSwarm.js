@@ -36,7 +36,7 @@ export default function BeeSwarm({ origin, onDone }) {
   }, []);
 
   return (
-    <View style={styles.overlay} pointerEvents="none">
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
       {bees.map((b, i) => (
         <Animated.Image
           key={i}
@@ -64,14 +64,6 @@ export default function BeeSwarm({ origin, onDone }) {
 }
 
 const styles = StyleSheet.create({
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 9999,
-  },
   bee: {
     position: 'absolute',
     width: BEE_SIZE,
