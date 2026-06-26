@@ -1,35 +1,53 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
+import BeeSwarm from './BeeSwarm';
 
 const beeIcon = require('../../assets/bee.png');
 
 export default function TopBar({ title, onDateChange }) {
   const insets = useSafeAreaInsets();
+  const [showSwarm, setShowSwarm] = useState(false);
+  const [beeOrigin, setBeeOrigin] = useState({ x: 0, y: 0 });
+  const beeRef = useRef(null);
+
+  const handleBeePress = () => {
+    beeRef.current?.measureInWindow((x, y) => {
+      setBeeOrigin({ x: x + 18, y: y + 18 });
+      setShowSwarm(true);
+    });
+  };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
-      <View style={styles.inner}>
-        <View style={styles.left}>
-          <Image source={beeIcon} style={styles.beeIcon} fadeDuration={0} />
-          {title === 'Seleccionar fecha' ? (
-            <TouchableOpacity style={styles.titleBtn} onPress={onDateChange}>
-              <Text style={styles.titleText}>{title}</Text>
-              <MaterialIcons name="expand-more" size={16} color={colors['on-surface']} />
+    <>
+      <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
+        <View style={styles.inner}>
+          <View style={styles.left}>
+            <TouchableOpacity onPress={handleBeePress} activeOpacity={0.7}>
+              <Image ref={beeRef} source={beeIcon} style={styles.beeIcon} fadeDuration={0} />
             </TouchableOpacity>
-          ) : (
-            <Text style={styles.titleText}>{title}</Text>
-          )}
-        </View>
-        <View style={styles.right}>
-          <View style={styles.avatar}>
-            <MaterialIcons name="person" size={24} color={colors.outline} />
+            {title === 'Seleccionar fecha' ? (
+              <TouchableOpacity style={styles.titleBtn} onPress={onDateChange}>
+                <Text style={styles.titleText}>{title}</Text>
+                <MaterialIcons name="expand-more" size={16} color={colors['on-surface']} />
+              </TouchableOpacity>
+            ) : (
+              <Text style={styles.titleText}>{title}</Text>
+            )}
+          </View>
+          <View style={styles.right}>
+            <View style={styles.avatar}>
+              <MaterialIcons name="person" size={24} color={colors.outline} />
+            </View>
           </View>
         </View>
       </View>
-    </View>
+      {showSwarm && (
+        <BeeSwarm origin={beeOrigin} onDone={() => setShowSwarm(false)} />
+      )}
+    </>
   );
 }
 
