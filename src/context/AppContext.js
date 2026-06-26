@@ -37,7 +37,7 @@ function reducer(state, action) {
   switch (action.type) {
     case 'SET_STATE': {
       const todayStr = localDateString();
-      return { ...state, ...action.payload, hoyDate: todayStr, diaSel: new Date().getDate(), loaded: true };
+      return { ...state, ...action.payload, hoyDate: todayStr, currentUserRole: 'Admin', currentUserDepartment: 'todos', diaSel: new Date().getDate(), loaded: true };
     }
     case 'SET_HOY_DATE':
       return { ...state, hoyDate: action.payload };
